@@ -1,6 +1,6 @@
 <template>
   <BaseCard class="text-center">
-    <div class="p-card w-full p-4">Nothing</div>
+    <div class="p-card w-full p-4">Bis jetzt noch nichts...</div>
   </BaseCard>
 </template>
 

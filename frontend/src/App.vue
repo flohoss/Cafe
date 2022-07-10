@@ -1,12 +1,10 @@
 <template>
   <TheNavigation @logout="logout" />
-  <div class="container">
-    <router-view v-slot="{ Component }" mode="out-in">
-      <transition>
-        <component :is="Component" />
-      </transition>
-    </router-view>
-  </div>
+  <router-view v-slot="{ Component }" mode="out-in">
+    <transition>
+      <component :is="Component" />
+    </transition>
+  </router-view>
 </template>
 
 <script lang="ts">
@@ -103,7 +101,7 @@ body {
 
 <style scoped>
 .v-enter-active {
-  transition: all 0.3s ease;
+  transition: all 0.2s ease-in;
 }
 
 .v-enter-from {

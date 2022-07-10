@@ -1,32 +1,31 @@
 <template>
-  <div class="col-12 md:col-6">
-    <router-link class="no-underline" :to="'/tables/' + table.id">
-      <div class="p-card shadow-1 p-2 px-3 relative">
-        <Badge v-if="table.order_count" class="topRight">{{ table.order_count }}</Badge>
-        <div class="flex justify-content-between align-items-end">
-          <div>
-            <div class="font-bold mb-2">Tisch {{ table.id }}</div>
-            <div>{{ since }}</div>
-          </div>
-          <div>
-            <div v-if="table.total" class="font-bold">{{ convertToEur(table.total) }}</div>
-          </div>
+  <router-link class="no-underline" :to="'/tables/' + table.id">
+    <BaseItem>
+      <Badge v-if="table.order_count" class="topRight">{{ table.order_count }}</Badge>
+      <div class="flex justify-content-between align-items-end">
+        <div>
+          <div class="font-bold mb-2">Tisch {{ table.id }}</div>
+          <div>{{ since }}</div>
+        </div>
+        <div>
+          <div v-if="table.total" class="font-bold">{{ convertToEur(table.total) }}</div>
         </div>
       </div>
-    </router-link>
-  </div>
+    </BaseItem>
+  </router-link>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
 import { service_Table } from "@/services/openapi";
+import BaseItem from "@/components/BaseItem.vue";
 import moment from "moment";
 import { convertToEur } from "@/utils";
 import Badge from "primevue/badge";
 
 export default defineComponent({
   name: "TableCard",
-  components: { Badge },
+  components: { Badge, BaseItem },
   props: { table: { type: Object as PropType<service_Table>, required: true } },
   setup(props) {
     moment.locale("de");

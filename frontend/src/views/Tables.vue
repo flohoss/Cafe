@@ -1,6 +1,8 @@
 <template>
-  <BaseCard v-if="tables" style="min-height: 3rem">
-    <TableCard v-for="table in tables" v-bind:key="table.id" :table="table" />
+  <BaseCard v-if="tables">
+    <div class="grid">
+      <TableCard v-for="table in tables" v-bind:key="table.id" :table="table" class="col-12 md:col-6" />
+    </div>
   </BaseCard>
 </template>
 
@@ -8,7 +10,6 @@
 import { computed, defineComponent, ref } from "vue";
 import BaseCard from "@/components/BaseCard.vue";
 import { useStore } from "vuex";
-import WaveSpinner from "@/components/WaveSpinner.vue";
 import TableCard from "@/components/TableCard.vue";
 
 export default defineComponent({
