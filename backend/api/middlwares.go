@@ -37,14 +37,14 @@ func (a *Api) setMiddlewares() {
 	a.Router.Use(myLogger())
 	a.Router.Use(gin.Recovery())
 	a.Router.Use(cors.New(cors.Config{
-		AllowOrigins:     config.Config.AllowedHosts,
+		AllowOrigins:     config.C.AllowedHosts,
 		AllowCredentials: true,
 		AllowHeaders:     allowedHeaders,
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "PATCH"},
 	}))
-	_ = a.Router.SetTrustedProxies(config.Config.AllowedHosts)
+	_ = a.Router.SetTrustedProxies(config.C.AllowedHosts)
 	a.Router.MaxMultipartMemory = 8 << 20 // 8 MiB
 	logrus.WithFields(logrus.Fields{
-		"allowedOrigins": config.Config.AllowedHosts,
+		"allowedOrigins": config.C.AllowedHosts,
 	}).Debug("Middlewares set")
 }

@@ -7,7 +7,8 @@ import (
 
 func main() {
 	a := api.Api{
-		Auth: &config.Config.Auth,
+		Auth: &config.C.Auth,
 	}
+	config.C.Database.Initialize(config.StorageDir)
 	a.Run()
 }

@@ -23,8 +23,8 @@ func (a *Api) Run() {
 	a.handleStaticFiles()
 	a.setupSwagger()
 	a.setupRouter()
-	logrus.WithField("port", config.Config.Port).Info("Server running")
-	err := a.Router.Run(fmt.Sprintf(":%d", config.Config.Port))
+	logrus.WithField("port", config.C.Port).Info("Server running")
+	err := a.Router.Run(fmt.Sprintf(":%d", config.C.Port))
 	if err != nil {
 		logrus.WithField("error", err).Fatal("Cannot start server")
 	}
