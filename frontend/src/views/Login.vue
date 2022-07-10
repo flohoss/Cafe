@@ -1,34 +1,30 @@
 <template>
   <div class="flex justify-content-center align-items-center h-screen">
-    <BaseCard class="col-12 md:w-30rem shadow-5">
-      <div class="w-full m-5 md:m-3">
-        <div class="flex justify-content-center w-full mb-3">
-          <img class="w-10rem" src="../assets/logo.png" alt="" />
-        </div>
-        <div class="mb-3">
-          <InputText
-            :disabled="isLoading"
-            @keydown.enter="login(!v$.$invalid)"
-            id="password"
-            type="password"
-            v-model="v$.password.$model"
-            class="w-full mb-1"
-            placeholder="Password"
-            :class="{ 'p-invalid': v$.password.$invalid && submitted }"
-          />
-          <small v-if="(v$.password.$invalid && submitted) || v$.password.$pending.$response" class="p-error">
-            {{ v$.password.required.$message.replace("Value", "Password") }}
-          </small>
-        </div>
-        <Button
-          :loading="isLoading"
-          @click="login(!v$.$invalid)"
-          :label="submitLabel"
-          icon="pi pi-user"
-          :class="{ 'p-button-danger': (v$.$invalid && submitted) || submitLabel === 'Please try again' }"
-          class="p-button-primary w-full my-1"
-        />
+    <BaseCard class="col-12 md:col-6">
+      <div class="flex justify-content-center w-full mb-3">
+        <img class="w-10rem" src="../assets/logo.png" alt="" />
       </div>
+      <InputText
+        :disabled="isLoading"
+        @keydown.enter="login(!v$.$invalid)"
+        id="password"
+        type="password"
+        v-model="v$.password.$model"
+        class="w-full mb-1"
+        placeholder="Password"
+        :class="{ 'p-invalid': v$.password.$invalid && submitted }"
+      />
+      <small v-if="(v$.password.$invalid && submitted) || v$.password.$pending.$response" class="p-error">
+        {{ v$.password.required.$message.replace("Value", "Password") }}
+      </small>
+      <Button
+        :loading="isLoading"
+        @click="login(!v$.$invalid)"
+        :label="submitLabel"
+        icon="pi pi-user"
+        :class="{ 'p-button-danger': (v$.$invalid && submitted) || submitLabel === 'Please try again' }"
+        class="p-button-primary w-full my-1"
+      />
     </BaseCard>
   </div>
 </template>
@@ -66,7 +62,7 @@ export default defineComponent({
         .then(() => {
           store.dispatch("getTables").then(() => {
             store.commit("login");
-            router.replace({ name: "Home" });
+            router.replace({ name: "Tables" });
           });
         })
         .catch(() => {

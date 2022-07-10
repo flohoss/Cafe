@@ -33,7 +33,7 @@ export default createStore({
     // eslint-disable-next-line
     async getTables(context: any) {
       const tables: service_Table[] | null = await TablesService.getTables();
-      context.commit("setBookmarks", tables);
+      context.commit("setTables", tables);
     },
   },
   modules: {},

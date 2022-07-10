@@ -1,5 +1,5 @@
 <template>
-  <div class="grid m-1 mx-2 md:m-3 lg:m-4 p-card border-round-lg relative p-0 md:p-2">
+  <div class="grid mx-3">
     <slot></slot>
   </div>
 </template>
