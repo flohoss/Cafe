@@ -1,0 +1,14 @@
+PORT = 5000
+ALLOWED_HOSTS = "http://localhost:5000,http://localhost:8080"
+LOG_LEVEL = "info"
+SWAGGER = true
+
+[MYSQL]
+    URL = ""
+    USER = ""
+    PASSWORD = ""
+    DATABASE = ""
+
+[AUTH]
+    PASSWORD = ""
+    SECRET = ""
