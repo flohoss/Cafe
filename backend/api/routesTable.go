@@ -1,7 +1,6 @@
 package api
 
 import (
-	"cafe/config"
 	"cafe/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -17,9 +16,7 @@ import (
 // @Router /tables [get]
 // @Security Cookie
 func (a *Api) getTables(c *gin.Context) {
-	var tables []service.Table
-	config.C.Database.ORM.Find(&tables)
-	c.JSON(http.StatusOK, tables)
+	c.JSON(http.StatusOK, service.GetAllTables())
 }
 
 // @Schemes
@@ -35,8 +32,8 @@ func (a *Api) getTables(c *gin.Context) {
 // @Security Cookie
 func (a *Api) getTable(c *gin.Context) {
 	id := c.Param("id")
-	exists, table := service.DoesTableExist(id)
-	if !exists {
+	table, err := service.DoesTableExist(id)
+	if err != nil {
 		c.Status(http.StatusNotFound)
 	} else {
 		c.JSON(http.StatusOK, table)
@@ -55,18 +52,11 @@ func (a *Api) getTable(c *gin.Context) {
 // @Router /tables [post]
 // @Security Cookie
 func (a *Api) createTable(c *gin.Context) {
-	var obj service.Table
-	result := config.C.Database.ORM.Unscoped().Where("is_deleted = ?", 1).Limit(1).Find(&obj)
-	if result.RowsAffected == 0 {
-		result = config.C.Database.ORM.Create(&obj)
-	} else {
-		obj.IsDeleted = 0
-		config.C.Database.ORM.Save(&obj)
-	}
-	if result.Error != nil {
+	table, err := service.CreateNewTable()
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot create table"})
 	} else {
-		c.JSON(http.StatusCreated, obj)
+		c.JSON(http.StatusCreated, table)
 	}
 }
 
@@ -88,15 +78,13 @@ func (a *Api) createTable(c *gin.Context) {
 // @Security Cookie
 func (a *Api) updateTable(c *gin.Context) {
 	id := c.Param("id")
-	exists, table := service.DoesTableExist(id)
-	if !exists {
+	table, err := service.DoesTableExist(id)
+	if err != nil {
 		c.Status(http.StatusNotFound)
 		return
 	}
-	table.Total = getQueryAsFloat64(c, "total")
-	table.OrderCount = getQueryAsUint64(c, "count")
-	result := config.C.Database.ORM.Save(&table)
-	if result.Error != nil {
+	err = service.UpdateTable(table, getQueryAsFloat64(c, "total"), getQueryAsUint64(c, "count"))
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot update table"})
 	} else {
 		c.JSON(http.StatusOK, table)
@@ -104,31 +92,28 @@ func (a *Api) updateTable(c *gin.Context) {
 }
 
 // @Schemes
-// @Summary set a table inactive
-// @Description sets a table inactive in the database
+// @Summary delete a table
+// @Description deletes a table from the database
 // @Tags tables
 // @Produce json
 // @Param id path int true "Table ID"
 // @Success 200 "OK"
 // @Failure 401 "Unauthorized"
 // @Failure 404 "Not Found"
-// @Failure 500 {object} errorResponse "Cannot set table inactive"
+// @Failure 500 {object} errorResponse "Cannot delete table"
 // @Router /tables/{id} [delete]
 // @Security Cookie
 func (a *Api) deleteTable(c *gin.Context) {
 	id := c.Param("id")
-	exists, old := service.DoesTableExist(id)
-	if !exists {
+	table, err := service.DoesTableExist(id)
+	if err != nil {
 		c.Status(http.StatusNotFound)
 		return
 	}
-	old.Total = 0
-	old.OrderCount = 0
-	result := config.C.Database.ORM.Save(&old)
-	config.C.Database.ORM.Delete(&old)
-	if result.Error != nil {
-		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot set table inactive"})
-		return
+	err = service.DeleteTable(table)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot delete table"})
+	} else {
+		c.Status(http.StatusOK)
 	}
-	c.Status(http.StatusOK)
 }
