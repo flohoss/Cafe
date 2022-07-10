@@ -1,6 +1,6 @@
 <template>
   <div class="col-12 md:col-6">
-    <div class="p-card p-2 relative">
+    <div class="p-card shadow-1 p-2 relative">
       <Badge class="topRight">{{ table.order_count }}</Badge>
       <div class="flex justify-content-between align-items-end">
         <div>

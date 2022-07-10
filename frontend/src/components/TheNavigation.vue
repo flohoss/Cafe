@@ -1,10 +1,14 @@
 <template>
-  <Menubar v-if="isLoggedIn" :model="items" class="p-1 px-3 mb-5 shadow-2 bg-white">
+  <Menubar v-if="isLoggedIn" :model="items" class="p-1 px-3 mb-4 shadow-1 border-0">
     <template #start>
-      <img alt="logo" src="../assets/logo.png" class="h-3rem mr-2" />
+      <img alt="logo" class="h-2-5rem mr-2" />
     </template>
     <template #end>
-      <Button label="Tables" icon="pi pi-table" @click="routeToTable" />
+      <ul class="p-menubar-root-list">
+        <li class="p-menuitem">
+          <router-link to="/tables" class="p-menuitem-link"><i class="pi pi-table mr-2"></i>Tische</router-link>
+        </li>
+      </ul>
     </template>
   </Menubar>
 </template>
@@ -12,22 +16,16 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import Menubar from "primevue/menubar";
-import Button from "primevue/button";
 import { useStore } from "vuex";
-import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "TheNavigation",
-  components: { Menubar, Button },
+  components: { Menubar },
   emits: ["logout"],
   setup(_, { emit }) {
     const store = useStore();
-    const router = useRouter();
     const isLoggedIn = computed(() => store.getters.getLoginApiStatus);
 
-    function routeToTable() {
-      router.push("/");
-    }
     const items = ref([
       {
         label: "Bestellungen",
@@ -59,7 +57,23 @@ export default defineComponent({
       },
     ]);
 
-    return { items, isLoggedIn, routeToTable };
+    return { items, isLoggedIn };
   },
 });
 </script>
+
+<style scoped>
+.h-2-5rem {
+  height: 2.5rem !important;
+}
+@media (prefers-color-scheme: light) {
+  img {
+    content: url("../assets/logo.png");
+  }
+}
+@media (prefers-color-scheme: dark) {
+  img {
+    content: url("../assets/logo_white.png");
+  }
+}
+</style>

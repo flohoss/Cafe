@@ -1,5 +1,5 @@
 <template>
-  <div class="grid mx-3">
+  <div class="grid">
     <slot></slot>
   </div>
 </template>

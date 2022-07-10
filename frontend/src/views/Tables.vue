@@ -2,9 +2,7 @@
   <WaveSpinner v-show="isLoading" />
   <Transition>
     <BaseCard v-if="tables" style="min-height: 3rem">
-      <div class="grid">
-        <TableCard v-for="table in tables" v-bind:key="table.id" :table="table" />
-      </div>
+      <TableCard v-for="table in tables" v-bind:key="table.id" :table="table" />
     </BaseCard>
   </Transition>
 </template>
