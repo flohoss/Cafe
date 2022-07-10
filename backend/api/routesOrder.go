@@ -1,7 +1,6 @@
 package api
 
 import (
-	"cafe/config"
 	"cafe/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -35,17 +34,17 @@ func (a *Api) getOrders(c *gin.Context) {
 // @Router /orders [post]
 // @Security Cookie
 func (a *Api) createOrder(c *gin.Context) {
-	var o service.Order
-	err := c.ShouldBindJSON(&o)
+	var order service.Order
+	err := c.ShouldBindJSON(&order)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, errorResponse{"Missing order body"})
 		return
 	}
-	result := config.C.Database.ORM.Create(&o)
-	if result.Error != nil {
+	err = service.CreateOrder(&order)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot create order"})
 	} else {
-		c.JSON(http.StatusCreated, o)
+		c.JSON(http.StatusCreated, order)
 	}
 }
 
@@ -63,17 +62,17 @@ func (a *Api) createOrder(c *gin.Context) {
 // @Security Cookie
 func (a *Api) deleteOrder(c *gin.Context) {
 	id := c.Param("id")
-	exists, o := service.DoesOrderExist(id)
-	if !exists {
+	order, err := service.DoesOrderExist(id)
+	if err != nil {
 		c.Status(http.StatusNotFound)
 		return
 	}
-	result := config.C.Database.ORM.Delete(&o)
-	if result.Error != nil {
+	err = service.DeleteOrder(&order)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot delete order"})
-		return
+	} else {
+		c.Status(http.StatusOK)
 	}
-	c.Status(http.StatusOK)
 }
 
 // @Schemes
@@ -86,9 +85,7 @@ func (a *Api) deleteOrder(c *gin.Context) {
 // @Router /orders/items [get]
 // @Security Cookie
 func (a *Api) getOrderItems(c *gin.Context) {
-	var o []service.OrderItem
-	config.C.Database.ORM.Find(&o)
-	c.JSON(http.StatusOK, o)
+	c.JSON(http.StatusOK, service.GetAllOrderItems())
 }
 
 // @Schemes
@@ -104,11 +101,11 @@ func (a *Api) getOrderItems(c *gin.Context) {
 // @Security Cookie
 func (a *Api) getOrderItem(c *gin.Context) {
 	id := c.Param("id")
-	exists, table := service.DoesOrderItemExist(id)
-	if !exists {
+	orderItem, err := service.DoesOrderItemExist(id)
+	if err != nil {
 		c.Status(http.StatusNotFound)
 	} else {
-		c.JSON(http.StatusOK, table)
+		c.JSON(http.StatusOK, orderItem)
 	}
 }
 
@@ -126,17 +123,17 @@ func (a *Api) getOrderItem(c *gin.Context) {
 // @Router /orders/items [post]
 // @Security Cookie
 func (a *Api) createOrderItem(c *gin.Context) {
-	var o service.OrderItem
-	err := c.ShouldBindJSON(&o)
+	var orderItem service.OrderItem
+	err := c.ShouldBindJSON(&orderItem)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, errorResponse{"Missing orderItem body"})
 		return
 	}
-	result := config.C.Database.ORM.Create(&o)
-	if result.Error != nil {
+	err = service.CreateOrderItem(&orderItem)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot create orderItem"})
 	} else {
-		c.JSON(http.StatusCreated, o)
+		c.JSON(http.StatusCreated, orderItem)
 	}
 }
 
@@ -161,14 +158,13 @@ func (a *Api) updateOrderItem(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errorResponse{"Missing bookmark body"})
 		return
 	}
-	id := newOrderItem.ID
-	exists, old := service.DoesOrderItemExist(strconv.Itoa(int(id)))
-	if !exists {
+	oldOrderItem, err := service.DoesOrderItemExist(strconv.Itoa(int(newOrderItem.ID)))
+	if err != nil {
 		c.Status(http.StatusNotFound)
 		return
 	}
-	result := config.C.Database.ORM.First(&old).Updates(&newOrderItem)
-	if result.Error != nil {
+	err = service.UpdateOrderItem(oldOrderItem, newOrderItem)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot update bookmark"})
 	} else {
 		c.JSON(http.StatusOK, newOrderItem)

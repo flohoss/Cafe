@@ -1,6 +1,9 @@
 package service
 
-import "cafe/config"
+import (
+	"cafe/config"
+	"fmt"
+)
 
 type (
 	Order struct {
@@ -18,26 +21,52 @@ type (
 	}
 )
 
-func DoesOrderExist(id string) (bool, Order) {
-	var o Order
-	result := config.C.Database.ORM.Limit(1).Find(&o, id)
+func DoesOrderExist(id string) (Order, error) {
+	var order Order
+	result := config.C.Database.ORM.Limit(1).Find(&order, id)
 	if result.RowsAffected == 0 {
-		return false, o
+		return order, fmt.Errorf("table not found")
 	}
-	return true, o
+	return order, nil
 }
 
-func DoesOrderItemExist(id string) (bool, OrderItem) {
-	var o OrderItem
-	result := config.C.Database.ORM.Limit(1).Find(&o, id)
+func DoesOrderItemExist(id string) (OrderItem, error) {
+	var orderItem OrderItem
+	result := config.C.Database.ORM.Limit(1).Find(&orderItem, id)
 	if result.RowsAffected == 0 {
-		return false, o
+		return orderItem, fmt.Errorf("table not found")
 	}
-	return true, o
+	return orderItem, nil
 }
 
 func GetAllOrders() []Order {
 	var orders []Order
 	config.C.Database.ORM.Find(&orders)
 	return orders
+}
+
+func CreateOrder(order *Order) error {
+	result := config.C.Database.ORM.Create(order)
+	return result.Error
+}
+
+func DeleteOrder(order *Order) error {
+	result := config.C.Database.ORM.Delete(order)
+	return result.Error
+}
+
+func GetAllOrderItems() []OrderItem {
+	var orderItems []OrderItem
+	config.C.Database.ORM.Find(&orderItems)
+	return orderItems
+}
+
+func CreateOrderItem(oderItem *OrderItem) error {
+	result := config.C.Database.ORM.Create(oderItem)
+	return result.Error
+}
+
+func UpdateOrderItem(old OrderItem, new OrderItem) error {
+	result := config.C.Database.ORM.First(&old).Updates(&new)
+	return result.Error
 }

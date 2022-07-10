@@ -15,12 +15,12 @@ type Table struct {
 }
 
 func DoesTableExist(id string) (Table, error) {
-	var t Table
-	result := config.C.Database.ORM.Limit(1).Find(&t, id)
+	var table Table
+	result := config.C.Database.ORM.Limit(1).Find(&table, id)
 	if result.RowsAffected == 0 {
-		return t, fmt.Errorf("table not found")
+		return table, fmt.Errorf("table not found")
 	}
-	return t, nil
+	return table, nil
 }
 
 func GetAllTables() []Table {
