@@ -20,7 +20,7 @@ func (a *Api) setupRouter() {
 			tableGroup.GET("", a.getTables)
 			tableGroup.GET("/:id", a.getTable)
 			tableGroup.POST("", a.createTable)
-			tableGroup.PUT("", a.updateTable)
+			tableGroup.PUT("/:id", a.updateTable)
 			tableGroup.DELETE("/:id", a.deleteTable)
 		}
 		orderGroup := api.Group("/orders")

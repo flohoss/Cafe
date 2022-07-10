@@ -36,7 +36,7 @@ func (a *Api) getOrders(c *gin.Context) {
 // @Security Cookie
 func (a *Api) getOrder(c *gin.Context) {
 	id := c.Param("id")
-	exists, o := service.DoesExist(id, service.Order{})
+	exists, o := service.DoesOrderExist(id)
 	if !exists {
 		c.Status(http.StatusNotFound)
 	} else {
@@ -94,7 +94,7 @@ func (a *Api) updateOrder(c *gin.Context) {
 		return
 	}
 	id := updated.ID
-	exists, old := service.DoesExist(strconv.Itoa(int(id)), service.Order{})
+	exists, old := service.DoesOrderExist(strconv.Itoa(int(id)))
 	if !exists {
 		c.Status(http.StatusNotFound)
 		return
@@ -121,7 +121,7 @@ func (a *Api) updateOrder(c *gin.Context) {
 // @Security Cookie
 func (a *Api) deleteOrder(c *gin.Context) {
 	id := c.Param("id")
-	exists, o := service.DoesExist(id, service.Order{})
+	exists, o := service.DoesOrderExist(id)
 	if !exists {
 		c.Status(http.StatusNotFound)
 		return

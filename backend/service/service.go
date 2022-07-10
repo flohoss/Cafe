@@ -3,7 +3,7 @@ package service
 import (
 	"cafe/config"
 	"github.com/sirupsen/logrus"
-	"time"
+	"gorm.io/plugin/soft_delete"
 )
 
 type ItemType uint
@@ -15,11 +15,11 @@ const (
 
 type (
 	Table struct {
-		ID         uint      `gorm:"primaryKey" json:"id"`
-		OrderCount uint      `json:"order_count"`
-		Total      uint      `json:"total"`
-		IsActive   bool      `json:"is_active"`
-		UpdatedAt  time.Time `json:"updated_at"`
+		ID         uint                  `gorm:"primaryKey" json:"id" validate:"optional"`
+		OrderCount uint64                `json:"order_count" validate:"required"`
+		Total      float64               `json:"total" validate:"required"`
+		UpdatedAt  int64                 `json:"updated_at" validate:"optional"`
+		IsDeleted  soft_delete.DeletedAt `gorm:"softDelete:flag" json:"is_deleted" swaggerignore:"true"`
 	}
 
 	Order struct {
@@ -35,20 +35,20 @@ type (
 		ID          uint     `gorm:"primaryKey" json:"id"`
 		ItemType    ItemType `json:"item_type"`
 		Description string   `json:"description"`
-		Price       float32  `json:"price"`
+		Price       float64  `json:"price"`
 	}
 
 	Bill struct {
-		ID        uint      `gorm:"primaryKey" json:"id"`
-		Total     float32   `json:"total"`
-		CreatedAt time.Time `json:"created_at"`
+		ID        uint    `gorm:"primaryKey" json:"id"`
+		Total     float64 `json:"total"`
+		CreatedAt int64   `json:"created_at"`
 	}
 
 	BillItem struct {
 		ID          uint     `gorm:"primaryKey" json:"id"`
 		ItemType    ItemType `json:"item_type"`
 		Description string   `json:"description"`
-		Price       float32  `json:"price"`
+		Price       float64  `json:"price"`
 		BillID      uint
 		Bill        Bill `json:"bill"`
 	}
@@ -69,10 +69,20 @@ func MigrateToDb() {
 	migrateHelper(BillItem{}, "billItem")
 }
 
-func DoesExist(id string, i interface{}) (bool, interface{}) {
-	result := config.C.Database.ORM.Limit(1).Find(&i, id)
+func DoesOrderExist(id string) (bool, Order) {
+	var o Order
+	result := config.C.Database.ORM.Limit(1).Find(&o, id)
 	if result.RowsAffected == 0 {
-		return false, i
+		return false, o
 	}
-	return true, i
+	return true, o
+}
+
+func DoesTableExist(id string) (bool, Table) {
+	var t Table
+	result := config.C.Database.ORM.Limit(1).Find(&t, id)
+	if result.RowsAffected == 0 {
+		return false, t
+	}
+	return true, t
 }

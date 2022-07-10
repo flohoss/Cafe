@@ -15,6 +15,7 @@ require (
 	github.com/unjx-de/go-api-auth v1.0.3
 	github.com/unjx-de/go-database v1.0.0
 	github.com/unjx-de/go-folder v1.0.5
+	gorm.io/plugin/soft_delete v1.1.0
 )
 
 require (
