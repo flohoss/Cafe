@@ -16,7 +16,7 @@ FROM alpine AS logo
 RUN apk add figlet
 WORKDIR /logo
 
-RUN figlet Café > logo.txt
+RUN figlet Cafe > logo.txt
 
 FROM node:latest AS vue
 WORKDIR /frontend
