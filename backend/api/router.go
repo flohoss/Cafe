@@ -37,6 +37,12 @@ func (a *Api) setupRouter() {
 				orderItemGroup.PUT("", a.updateOrderItem)
 			}
 		}
+		billGroup := api.Group("/bills")
+		{
+			billGroup.Use(a.Auth.CookieAuthRequired())
+			billGroup.GET("", a.getBills)
+			billGroup.POST("/:id", a.createBill)
+		}
 	}
 
 	a.Router.NoRoute(func(c *gin.Context) {

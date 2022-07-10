@@ -15,6 +15,7 @@ const (
 type (
 	Bill struct {
 		ID        uint    `gorm:"primaryKey" json:"id"`
+		TableID   uint    `json:"table_id"`
 		Total     float64 `json:"total"`
 		CreatedAt int64   `json:"created_at"`
 	}
