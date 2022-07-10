@@ -21,7 +21,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - ALLOWED_HOSTS=http://localhost:4000,https://home.example.com
+      - ALLOWED_HOSTS=http://localhost:5000,https://home.example.com
       - SWAGGER=true
       - LOG_LEVEL=info # trace,debug,info,warn,error,fatal,panic
       - AUTH_PASSWORD=SuperSafe # leve empty for no authentication
@@ -29,7 +29,7 @@ services:
     volumes:
       - ./storage:/app/storage
     ports:
-      - "127.0.0.1:4000:4000"
+      - "127.0.0.1:5000:5000"
 ```
 
 ## docker-compose example with MariaDB as database:
@@ -71,7 +71,7 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - ALLOWED_HOSTS=http://localhost:4000,https://home.example.com
+      - ALLOWED_HOSTS=http://localhost:5000,https://home.example.com
       - SWAGGER=true
       - LOG_LEVEL=info # trace,debug,info,warn,error,fatal,panic
       - MYSQL_URL=dashboard-db:3306
@@ -83,7 +83,7 @@ services:
     volumes:
       - ./storage:/app/storage
     ports:
-      - "127.0.0.1:4000:4000"
+      - "127.0.0.1:5000:5000"
     networks:
       - net
 ```
