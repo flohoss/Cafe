@@ -2,7 +2,9 @@
   <WaveSpinner v-show="isLoading" />
   <Transition>
     <BaseCard v-if="tables" style="min-height: 3rem">
-      <div v-for="table in tables" v-bind:key="table.id">{{ table }}</div>
+      <div class="grid">
+        <TableCard v-for="table in tables" v-bind:key="table.id" :table="table" />
+      </div>
     </BaseCard>
   </Transition>
 </template>
@@ -12,10 +14,11 @@ import { computed, defineComponent, ref } from "vue";
 import BaseCard from "@/components/BaseCard.vue";
 import { useStore } from "vuex";
 import WaveSpinner from "@/components/WaveSpinner.vue";
+import TableCard from "@/components/TableCard.vue";
 
 export default defineComponent({
   name: "TablesView",
-  components: { BaseCard, WaveSpinner },
+  components: { TableCard, BaseCard, WaveSpinner },
   setup() {
     const isLoading = ref(false);
     const store = useStore();

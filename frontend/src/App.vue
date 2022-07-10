@@ -46,7 +46,7 @@ export default defineComponent({
 body {
   margin: 0;
   padding: 0;
-  background-color: var(--surface-a);
+  background-color: var(--surface-b);
 }
 html,
 body {

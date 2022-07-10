@@ -1,5 +1,5 @@
 <template>
-  <Menubar v-if="isLoggedIn" :model="items" class="p-1 px-3 mb-4">
+  <Menubar v-if="isLoggedIn" :model="items" class="p-1 px-3 mb-5 shadow-2 bg-white">
     <template #start>
       <img alt="logo" src="../assets/logo.png" class="h-3rem mr-2" />
     </template>
