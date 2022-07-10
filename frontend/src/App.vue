@@ -1,7 +1,5 @@
 <template>
-  <div class="container p-card text-center mt-5">
-    <router-view></router-view>
-  </div>
+  <router-view></router-view>
 </template>
 
 <script lang="ts">
@@ -12,13 +10,14 @@ export default defineComponent({
 });
 </script>
 
-<style>
+<style lang="less">
 @import "primevue/resources/themes/bootstrap4-light-blue/theme.css";
 
 @font-face {
   font-family: "roboto";
   src: url(@/assets/fonts/Roboto-Light.ttf);
 }
+
 .overflow-ellipsis {
   white-space: nowrap;
   overflow: hidden;
@@ -42,16 +41,6 @@ body {
   padding-left: calc(var(--bs-gutter-x) * 0.5);
   margin-right: auto;
   margin-left: auto;
-}
-.p-card {
-  background: transparent !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-}
-.mobileShadow {
-  padding-bottom: 0.3rem;
-  margin-bottom: 1.3rem;
-  box-shadow: 0 0.7rem 1rem 0 var(--surface-b);
 }
 @media (min-width: 768px) {
   body {
@@ -82,5 +71,9 @@ body {
   .container {
     max-width: 1320px;
   }
+}
+.bgHover:hover {
+  background-color: var(--surface-c);
+  border-radius: 0.5rem;
 }
 </style>

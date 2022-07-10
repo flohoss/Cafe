@@ -1,9 +1,9 @@
 <template>
-  <img src="../assets/logo.png" />
+  <div>Home</div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "HomeView",
