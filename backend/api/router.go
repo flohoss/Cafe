@@ -14,6 +14,24 @@ func (a *Api) setupRouter() {
 			authGroup.POST("/login", a.login)
 			authGroup.POST("/logout", a.logout)
 		}
+		tableGroup := api.Group("/tables")
+		{
+			tableGroup.Use(a.Auth.CookieAuthRequired())
+			tableGroup.GET("", a.getTables)
+			tableGroup.GET("/:id", a.getTable)
+			tableGroup.POST("", a.createTable)
+			tableGroup.PUT("", a.updateTable)
+			tableGroup.DELETE("/:id", a.deleteTable)
+		}
+		orderGroup := api.Group("/orders")
+		{
+			orderGroup.Use(a.Auth.CookieAuthRequired())
+			orderGroup.GET("", a.getOrders)
+			orderGroup.GET("/:id", a.getOrder)
+			orderGroup.POST("", a.createOrder)
+			orderGroup.PUT("", a.updateOrder)
+			orderGroup.DELETE("/:id", a.deleteOrder)
+		}
 	}
 
 	a.Router.NoRoute(func(c *gin.Context) {

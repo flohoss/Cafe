@@ -68,3 +68,11 @@ func MigrateToDb() {
 	migrateHelper(Bill{}, "bill")
 	migrateHelper(BillItem{}, "billItem")
 }
+
+func DoesExist(id string, i interface{}) (bool, interface{}) {
+	result := config.C.Database.ORM.Limit(1).Find(&i, id)
+	if result.RowsAffected == 0 {
+		return false, i
+	}
+	return true, i
+}
