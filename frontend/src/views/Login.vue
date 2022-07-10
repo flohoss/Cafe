@@ -1,31 +1,29 @@
 <template>
-  <div class="flex justify-content-center align-items-center h-screen">
-    <BaseCard class="col-12 md:col-6">
-      <div class="flex justify-content-center w-full mb-3">
-        <img alt="logo" class="h-10rem" />
-      </div>
-      <InputText
-        :disabled="isLoading"
-        @keydown.enter="login(!v$.$invalid)"
-        id="password"
-        type="password"
-        v-model="v$.password.$model"
-        class="w-full mb-1"
-        placeholder="Password"
-        :class="{ 'p-invalid': v$.password.$invalid && submitted }"
-      />
-      <small v-if="(v$.password.$invalid && submitted) || v$.password.$pending.$response" class="p-error">
-        {{ v$.password.required.$message.replace("Value", "Password") }}
-      </small>
-      <Button
-        :loading="isLoading"
-        @click="login(!v$.$invalid)"
-        :label="submitLabel"
-        icon="pi pi-user"
-        :class="{ 'p-button-danger': (v$.$invalid && submitted) || submitLabel === 'Please try again' }"
-        class="p-button-primary w-full my-1"
-      />
-    </BaseCard>
+  <div class="col-12 sm:w-30rem center">
+    <div class="flex justify-content-center w-full mb-3">
+      <img alt="logo" class="h-10rem" />
+    </div>
+    <InputText
+      :disabled="isLoading"
+      @keydown.enter="login(!v$.$invalid)"
+      id="password"
+      type="password"
+      v-model="v$.password.$model"
+      class="w-full mb-1"
+      placeholder="Password"
+      :class="{ 'p-invalid': v$.password.$invalid && submitted }"
+    />
+    <small v-if="(v$.password.$invalid && submitted) || v$.password.$pending.$response" class="p-error">
+      {{ v$.password.required.$message.replace("Value", "Password") }}
+    </small>
+    <Button
+      :loading="isLoading"
+      @click="login(!v$.$invalid)"
+      :label="submitLabel"
+      icon="pi pi-user"
+      :class="{ 'p-button-danger': (v$.$invalid && submitted) || submitLabel === 'Please try again' }"
+      class="p-button-primary w-full my-1"
+    />
   </div>
 </template>
 
@@ -42,7 +40,7 @@ import BaseCard from "@/components/BaseCard.vue";
 
 export default defineComponent({
   name: "LoginView",
-  components: { BaseCard, Button, InputText },
+  components: { Button, InputText },
   setup() {
     const store = useStore();
     const router = useRouter();
@@ -79,6 +77,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+}
 @media (prefers-color-scheme: light) {
   img {
     content: url("../assets/logo.png");
