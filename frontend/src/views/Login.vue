@@ -2,7 +2,7 @@
   <div class="flex justify-content-center align-items-center h-screen">
     <BaseCard class="col-12 md:col-6">
       <div class="flex justify-content-center w-full mb-3">
-        <img class="w-10rem" src="../assets/logo.png" alt="" />
+        <img alt="logo" class="h-10rem" />
       </div>
       <InputText
         :disabled="isLoading"
@@ -77,3 +77,16 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+@media (prefers-color-scheme: light) {
+  img {
+    content: url("../assets/logo.png");
+  }
+}
+@media (prefers-color-scheme: dark) {
+  img {
+    content: url("../assets/logo_white.png");
+  }
+}
+</style>

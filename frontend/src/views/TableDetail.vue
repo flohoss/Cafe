@@ -1,6 +1,6 @@
 <template>
-  <BaseCard v-if="tables" style="min-height: 3rem">
-    <TableCard v-for="table in tables" v-bind:key="table.id" :table="table" />
+  <BaseCard class="p-card p-2">
+    {{ table }}
   </BaseCard>
 </template>
 
@@ -9,17 +9,19 @@ import { computed, defineComponent, ref } from "vue";
 import BaseCard from "@/components/BaseCard.vue";
 import { useStore } from "vuex";
 import WaveSpinner from "@/components/WaveSpinner.vue";
-import TableCard from "@/components/TableCard.vue";
+import { service_Table } from "@/services/openapi";
 
 export default defineComponent({
-  name: "TablesView",
-  components: { TableCard, BaseCard },
-  setup() {
+  name: "TableDetail",
+  components: { BaseCard },
+  props: { id: { type: String, default: "0" } },
+  setup(props) {
     const isLoading = ref(false);
     const store = useStore();
     const tables = computed(() => store.getters.getTables);
+    const table = tables.value.find((table: service_Table) => table.id === parseInt(props.id));
 
-    return { tables, isLoading };
+    return { table, isLoading };
   },
 });
 </script>

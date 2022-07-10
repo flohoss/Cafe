@@ -1,7 +1,11 @@
 <template>
   <TheNavigation @logout="logout" />
   <div class="container">
-    <router-view></router-view>
+    <router-view v-slot="{ Component }" mode="out-in">
+      <transition>
+        <component :is="Component" />
+      </transition>
+    </router-view>
   </div>
 </template>
 
@@ -37,6 +41,10 @@ export default defineComponent({
 @font-face {
   font-family: "roboto";
   src: url(@/assets/fonts/Roboto-Light.ttf);
+}
+
+.router-link-active {
+  background-color: var(--surface-b);
 }
 
 .overflow-ellipsis {
@@ -90,5 +98,15 @@ body {
   .container {
     max-width: 1320px;
   }
+}
+</style>
+
+<style scoped>
+.v-enter-active {
+  transition: all 0.3s ease;
+}
+
+.v-enter-from {
+  opacity: 0;
 }
 </style>

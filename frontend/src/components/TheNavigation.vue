@@ -1,10 +1,10 @@
 <template>
-  <Menubar v-if="isLoggedIn" :model="items" class="p-1 px-3 mb-4 shadow-1 border-0">
+  <Menubar v-if="isLoggedIn" :model="items" class="p-1 mb-4 shadow-1 border-0">
     <template #start>
-      <img alt="logo" class="h-2-5rem mr-2" />
+      <img alt="logo" class="h-2-5rem mx-2" />
     </template>
     <template #end>
-      <ul class="p-menubar-root-list">
+      <ul class="">
         <li class="p-menuitem">
           <router-link to="/tables" class="p-menuitem-link"><i class="pi pi-table mr-2"></i>Tische</router-link>
         </li>

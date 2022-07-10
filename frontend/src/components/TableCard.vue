@@ -1,6 +1,6 @@
 <template>
   <div class="col-12 md:col-6">
-    <router-link class="no-underline" to="/">
+    <router-link class="no-underline" :to="'/tables/' + table.id">
       <div class="p-card shadow-1 p-2 px-3 relative">
         <Badge v-if="table.order_count" class="topRight">{{ table.order_count }}</Badge>
         <div class="flex justify-content-between align-items-end">
