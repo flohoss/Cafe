@@ -27,10 +27,15 @@ func (a *Api) setupRouter() {
 		{
 			orderGroup.Use(a.Auth.CookieAuthRequired())
 			orderGroup.GET("", a.getOrders)
-			orderGroup.GET("/:id", a.getOrder)
 			orderGroup.POST("", a.createOrder)
-			orderGroup.PUT("", a.updateOrder)
 			orderGroup.DELETE("/:id", a.deleteOrder)
+			orderItemGroup := orderGroup.Group("/items")
+			{
+				orderItemGroup.GET("", a.getOrderItems)
+				orderItemGroup.GET("/:id", a.getOrderItem)
+				orderItemGroup.POST("", a.createOrderItem)
+				orderItemGroup.PUT("", a.updateOrderItem)
+			}
 		}
 	}
 
