@@ -12,7 +12,6 @@ import (
 )
 
 const StorageDir = "storage/"
-const IconsDir = StorageDir + "icons/"
 const TemplatesDir = "templates/"
 
 type Config struct {
@@ -84,7 +83,7 @@ func setLogLevel() {
 }
 
 func createFolderStructure() {
-	folders := []string{StorageDir, IconsDir, TemplatesDir}
+	folders := []string{StorageDir, TemplatesDir}
 	err := folder.CreateFolders(folders, 0755)
 	if err != nil {
 		logrus.WithField("error", err).Fatal("Failed creating folders")
