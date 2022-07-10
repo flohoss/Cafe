@@ -41,10 +41,10 @@ func CreateNewTable() (Table, error) {
 	return table, result.Error
 }
 
-func UpdateTable(table Table, total float64, count uint64) error {
+func UpdateTable(table *Table, total float64, count uint64) error {
 	table.Total = total
 	table.OrderCount = count
-	result := config.C.Database.ORM.Save(&table)
+	result := config.C.Database.ORM.Save(table)
 	return result.Error
 }
 

@@ -36,8 +36,8 @@ func (a *Api) getBills(c *gin.Context) {
 // @Security Cookie
 func (a *Api) createBill(c *gin.Context) {
 	id := c.Param("id")
-	exists, table := service.DoesTableExist(id)
-	if !exists {
+	table, err := service.DoesTableExist(id)
+	if err != nil {
 		c.Status(http.StatusNotFound)
 		return
 	}

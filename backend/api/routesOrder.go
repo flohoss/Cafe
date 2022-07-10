@@ -18,9 +18,7 @@ import (
 // @Router /orders [get]
 // @Security Cookie
 func (a *Api) getOrders(c *gin.Context) {
-	var orders []service.Order
-	config.C.Database.ORM.Find(&orders)
-	c.JSON(http.StatusOK, orders)
+	c.JSON(http.StatusOK, service.GetAllOrders())
 }
 
 // @Schemes

@@ -35,3 +35,9 @@ func DoesOrderItemExist(id string) (bool, OrderItem) {
 	}
 	return true, o
 }
+
+func GetAllOrders() []Order {
+	var orders []Order
+	config.C.Database.ORM.Find(&orders)
+	return orders
+}

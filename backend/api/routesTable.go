@@ -83,7 +83,7 @@ func (a *Api) updateTable(c *gin.Context) {
 		c.Status(http.StatusNotFound)
 		return
 	}
-	err = service.UpdateTable(table, getQueryAsFloat64(c, "total"), getQueryAsUint64(c, "count"))
+	err = service.UpdateTable(&table, getQueryAsFloat64(c, "total"), getQueryAsUint64(c, "count"))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot update table"})
 	} else {
