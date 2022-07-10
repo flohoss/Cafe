@@ -1,14 +1,15 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import TableView from "@/views/Tables.vue";
 import LoginView from "@/views/Login.vue";
+import EmptyView from "@/views/Empty.vue";
 import store from "@/store";
 
 const routes: Array<RouteRecordRaw> = [
   { path: "/", name: "Tables", component: TableView, meta: { needsAuth: true } },
-  { path: "/orders", name: "Orders", component: TableView, meta: { needsAuth: true } },
-  { path: "/foods", name: "Foods", component: TableView, meta: { needsAuth: true } },
-  { path: "/drinks", name: "Drinks", component: TableView, meta: { needsAuth: true } },
-  { path: "/bills", name: "Bills", component: TableView, meta: { needsAuth: true } },
+  { path: "/orders", name: "Orders", component: EmptyView, meta: { needsAuth: true } },
+  { path: "/foods", name: "Foods", component: EmptyView, meta: { needsAuth: true } },
+  { path: "/drinks", name: "Drinks", component: EmptyView, meta: { needsAuth: true } },
+  { path: "/bills", name: "Bills", component: EmptyView, meta: { needsAuth: true } },
   { path: "/login", name: "Login", component: LoginView },
   { path: "/:pathMatch(.*)*", redirect: "/" },
 ];
