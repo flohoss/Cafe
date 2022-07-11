@@ -3,6 +3,7 @@ package service
 import (
 	"cafe/config"
 	"fmt"
+	"gorm.io/gorm"
 )
 
 type (
@@ -21,6 +22,28 @@ type (
 		Price       float64  `json:"price" validate:"required"`
 	}
 )
+
+func (u *Order) AfterCreate(tx *gorm.DB) (err error) {
+	var table Table
+	var orderItem OrderItem
+	tx.Where("id = ?", u.TableID).First(&table)
+	tx.Where("id = ?", u.OrderItemID).First(&orderItem)
+	table.OrderCount += 1
+	table.Total += orderItem.Price
+	tx.Save(&table)
+	return
+}
+
+func (u *Order) AfterDelete(tx *gorm.DB) (err error) {
+	var table Table
+	var orderItem OrderItem
+	tx.Where("id = ?", u.TableID).First(&table)
+	tx.Where("id = ?", u.OrderItemID).First(&orderItem)
+	table.OrderCount -= 1
+	table.Total -= orderItem.Price
+	tx.Save(&table)
+	return
+}
 
 func DoesOrderExist(id string) (Order, error) {
 	var order Order
