@@ -170,3 +170,30 @@ func (a *Api) updateOrderItem(c *gin.Context) {
 		c.JSON(http.StatusOK, newOrderItem)
 	}
 }
+
+// @Schemes
+// @Summary delete an orderItem
+// @Description deletes an orderItem from the database
+// @Tags orderItems
+// @Produce json
+// @Param id path int true "OrderItem ID"
+// @Success 200 "OK"
+// @Failure 401 "Unauthorized"
+// @Failure 404 "Not Found"
+// @Failure 500 {object} errorResponse "Cannot delete orderItem"
+// @Router /orders/items/{id} [delete]
+// @Security Cookie
+func (a *Api) deleteOrderItem(c *gin.Context) {
+	id := c.Param("id")
+	orderItem, err := service.DoesOrderItemExist(id)
+	if err != nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
+	err = service.DeleteOrderItem(&orderItem)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot delete orderItem"})
+	} else {
+		c.Status(http.StatusOK)
+	}
+}

@@ -60,7 +60,7 @@ body {
 html,
 body,
 .p-component {
-  font-size: 1.3rem !important;
+  font-size: 1.2rem !important;
   font-family: "roboto", sans-serif !important;
 }
 .p-button {

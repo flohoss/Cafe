@@ -4,6 +4,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import PrimeVue from "primevue/config";
+import ConfirmationService from "primevue/confirmationservice";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCheese } from "@fortawesome/free-solid-svg-icons";
 import { faChampagneGlasses } from "@fortawesome/free-solid-svg-icons";
@@ -31,6 +32,7 @@ TablesService.getTables()
     app.use(router);
     app.use(PrimeVue);
     app.use(store);
+    app.use(ConfirmationService);
     app.component("font-awesome-icon", FontAwesomeIcon);
 
     router.isReady().then(() => {

@@ -35,6 +35,7 @@ func (a *Api) setupRouter() {
 				orderItemGroup.GET("/:id", a.getOrderItem)
 				orderItemGroup.POST("", a.createOrderItem)
 				orderItemGroup.PUT("", a.updateOrderItem)
+				orderItemGroup.DELETE("/:id", a.deleteOrderItem)
 			}
 		}
 		billGroup := api.Group("/bills")

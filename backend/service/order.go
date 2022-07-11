@@ -70,3 +70,8 @@ func UpdateOrderItem(old OrderItem, new OrderItem) error {
 	result := config.C.Database.ORM.First(&old).Updates(&new)
 	return result.Error
 }
+
+func DeleteOrderItem(oderItem *OrderItem) error {
+	result := config.C.Database.ORM.Delete(oderItem)
+	return result.Error
+}

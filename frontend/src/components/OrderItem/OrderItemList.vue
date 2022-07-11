@@ -1,5 +1,6 @@
 <template>
   <BaseCard>
+    <ConfirmDialog></ConfirmDialog>
     <DataTable :value="orderItems" dataKey="id" :filters="filters" responsiveLayout="scroll" :showAddButton="true" stripedRows class="p-datatable-sm">
       <template #header>
         <div class="grid p-fluid">
@@ -19,38 +20,91 @@
       <Column field="price" style="text-align: right">
         <template #body="slotProps">{{ convertToEur(slotProps.data.price) }}</template>
       </Column>
-      <Column style="text-align: right">
+      <Column class="flex justify-content-end flex-nowrap">
         <template #body="slotProps">
-          <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-2" @click="editProduct(slotProps.data)" />
+          <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-1" @click="editOrderItem(slotProps.data)" />
           <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="confirmDeleteProduct(slotProps.data)" />
         </template>
       </Column>
 
       <template #empty>Keine Einträge</template>
     </DataTable>
+
+    <Dialog v-model:visible="modal" :modal="true" :dismissableMask="true" :showHeader="false">
+      <div class="p-fluid">
+        <div class="field mt-5">
+          <InputText id="name" v-model.trim="orderItem.description" required="true" autofocus />
+        </div>
+        <div class="field">
+          <InputNumber id="currency-germany" v-model="orderItem.price" mode="currency" currency="EUR" locale="de-DE" />
+        </div>
+      </div>
+      <div class="flex justify-content-end">
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary mr-2" @click="modal = false" />
+        <Button icon="pi pi-check" class="p-button-rounded p-button-success" @click="saveOrderItem" />
+      </div>
+    </Dialog>
   </BaseCard>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
-import { service_OrderItem } from "@/services/openapi";
+import { OrderItemsService, service_OrderItem } from "@/services/openapi";
 import InputText from "primevue/inputtext";
 import { FilterMatchMode } from "primevue/api";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
 import { convertToEur } from "@/utils";
+import Dialog from "primevue/dialog";
+import InputNumber from "primevue/inputnumber";
+import { useConfirm } from "primevue/useconfirm";
+import ConfirmDialog from "primevue/confirmdialog";
 
 export default defineComponent({
   name: "OrderItemList",
-  components: { BaseCard, InputText, DataTable, Column, Button },
+  components: { BaseCard, InputText, DataTable, Column, Button, Dialog, InputNumber, ConfirmDialog },
   props: { orderItems: { type: Array as PropType<service_OrderItem[]>, default: () => [] } },
-  setup() {
+  emits: ["orderItemChanged", "orderItemDeleted"],
+  setup(_, { emit }) {
+    const confirm = useConfirm();
+    const modal = ref(false);
     const filters = ref({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
-    return { filters, convertToEur };
+    const orderItem = ref<service_OrderItem>();
+    function editOrderItem(item: service_OrderItem) {
+      orderItem.value = { ...item };
+      modal.value = true;
+    }
+    function saveOrderItem() {
+      orderItem.value &&
+        OrderItemsService.putOrdersItems(orderItem.value)
+          .then((res) => emit("orderItemChanged", res))
+          .finally(() => {
+            modal.value = false;
+            orderItem.value = undefined;
+          });
+    }
+
+    function confirmDeleteProduct(item: service_OrderItem) {
+      confirm.require({
+        message: item.description + " löschen?",
+        header: "Achtung",
+        icon: "pi pi-exclamation-triangle",
+        accept: () => {
+          item.id &&
+            OrderItemsService.deleteOrdersItems(item.id)
+              .then(() => emit("orderItemDeleted", item))
+              .finally(() => {
+                modal.value = false;
+                orderItem.value = undefined;
+              });
+        },
+      });
+    }
+    return { filters, convertToEur, editOrderItem, saveOrderItem, confirmDeleteProduct, modal, orderItem };
   },
 });
 </script>
@@ -59,7 +113,7 @@ export default defineComponent({
 .p-datatable,
 .p-datatable-header {
   background-color: transparent !important;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   padding: 0 !important;
   border: 0 !important;
 }
