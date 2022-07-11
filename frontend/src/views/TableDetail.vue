@@ -40,7 +40,7 @@
 
     <BottomNavigation>
       <template #left>
-        <router-link to="/tables">
+        <router-link to="/tables" class="no-underline">
           <Button :disabled="isLoading" icon="pi pi-arrow-left" class="p-button-rounded" />
         </router-link>
       </template>
@@ -51,7 +51,7 @@
         </div>
       </template>
       <template #right>
-        <router-link to="/bills">
+        <router-link to="/bills" class="no-underline">
           <Button :disabled="isLoading" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" />
         </router-link>
       </template>
