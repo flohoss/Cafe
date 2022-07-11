@@ -18,9 +18,7 @@ func (a *Api) setupRouter() {
 		{
 			tableGroup.Use(a.Auth.CookieAuthRequired())
 			tableGroup.GET("", a.getTables)
-			tableGroup.GET("/:id", a.getTable)
 			tableGroup.POST("", a.createTable)
-			tableGroup.PUT("/:id", a.updateTable)
 			tableGroup.DELETE("", a.deleteTable)
 		}
 		orderGroup := api.Group("/orders")
@@ -32,7 +30,6 @@ func (a *Api) setupRouter() {
 			orderItemGroup := orderGroup.Group("/items")
 			{
 				orderItemGroup.GET("", a.getOrderItems)
-				orderItemGroup.GET("/:id", a.getOrderItem)
 				orderItemGroup.POST("", a.createOrderItem)
 				orderItemGroup.PUT("", a.updateOrderItem)
 				orderItemGroup.DELETE("/:id", a.deleteOrderItem)

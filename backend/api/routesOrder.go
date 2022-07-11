@@ -91,27 +91,6 @@ func (a *Api) getOrderItems(c *gin.Context) {
 }
 
 // @Schemes
-// @Summary get an orderItem
-// @Description gets a single orderItem by id
-// @Tags orderItems
-// @Produce json
-// @Param id path int true "OrderItem ID"
-// @Success 200 {object} service.OrderItem
-// @Failure 401 "Unauthorized"
-// @Failure 404 "Not Found"
-// @Router /orders/items/{id} [get]
-// @Security Cookie
-func (a *Api) getOrderItem(c *gin.Context) {
-	id := c.Param("id")
-	orderItem, err := service.DoesOrderItemExist(id)
-	if err != nil {
-		c.Status(http.StatusNotFound)
-	} else {
-		c.JSON(http.StatusOK, orderItem)
-	}
-}
-
-// @Schemes
 // @Summary create new orderItem
 // @Description creates a new orderItem and returns it
 // @Tags orderItems
