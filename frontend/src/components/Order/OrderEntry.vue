@@ -7,6 +7,7 @@
       </div>
       <div class="flex align-items-center">
         <div><Button icon="pi pi-minus" class="p-button-rounded p-button-text p-button-danger" @click="$emit('decrementOrder', order)" /></div>
+        <div>{{ order.total }}</div>
         <div><Button icon="pi pi-plus" class="p-button-rounded p-button-text p-button-success" @click="$emit('incrementOrder', order)" /></div>
       </div>
     </div>

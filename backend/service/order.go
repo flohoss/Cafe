@@ -4,6 +4,7 @@ import (
 	"cafe/config"
 	"fmt"
 	"gorm.io/gorm"
+	"math"
 )
 
 type (
@@ -14,6 +15,7 @@ type (
 		OrderItemID uint64    `json:"order_item_id" validate:"required"`
 		OrderItem   OrderItem `json:"order_item" validate:"required"`
 		IsServed    bool      `json:"is_served" default:"false" validate:"required"`
+		Total       uint64    `json:"total" validate:"optional"`
 	}
 
 	OrderItem struct {
@@ -24,25 +26,30 @@ type (
 	}
 )
 
-func (u *Order) AfterCreate(tx *gorm.DB) (err error) {
+func processOrderChange(tx *gorm.DB, u *Order, increment bool) {
 	var table Table
 	var orderItem OrderItem
 	tx.Where("id = ?", u.TableID).First(&table)
 	tx.Where("id = ?", u.OrderItemID).First(&orderItem)
-	table.OrderCount += 1
-	table.Total += orderItem.Price
+	if increment {
+		table.OrderCount += 1
+		table.Total += orderItem.Price
+	} else {
+		table.OrderCount -= 1
+		table.Total -= orderItem.Price
+	}
+	// floating point round to 2 decimal places
+	table.Total = math.Round(table.Total*100) / 100
 	tx.Save(&table)
+}
+
+func (u *Order) AfterCreate(tx *gorm.DB) (err error) {
+	processOrderChange(tx, u, true)
 	return
 }
 
 func (u *Order) BeforeDelete(tx *gorm.DB) (err error) {
-	var table Table
-	var orderItem OrderItem
-	tx.Where("id = ?", u.TableID).First(&table)
-	tx.Where("id = ?", u.OrderItemID).First(&orderItem)
-	table.OrderCount -= 1
-	table.Total -= orderItem.Price
-	tx.Save(&table)
+	processOrderChange(tx, u, false)
 	return
 }
 
@@ -57,7 +64,7 @@ func DoesOrderItemExist(id string) (OrderItem, error) {
 
 func GetAllOrders(table string, itemType string) ([]Order, error) {
 	var orders []Order
-	err := config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Where("table_id = ? AND item_type = ?", table, itemType).Order("description").Find(&orders).Error
+	err := config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Joins("Table").Select("table_id", "order_item_id", "count(order_item_id) as total").Group("order_item_id").Where("table_id = ? AND item_type = ?", table, itemType).Order("description").Find(&orders).Error
 	return orders, err
 }
 
@@ -66,7 +73,7 @@ func CreateOrder(order *Order) error {
 	if err != nil {
 		return fmt.Errorf("cannot create order")
 	}
-	err = config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Joins("Table").First(order).Error
+	err = config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").First(order).Error
 	return err
 }
 

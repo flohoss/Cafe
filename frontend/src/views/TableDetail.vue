@@ -32,7 +32,7 @@
       </div>
       <div class="flex justify-content-end mt-4">
         <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-secondary mr-2" @click="modal = false" />
-        <Button icon="pi pi-check" class="p-button-rounded p-button-success" @click="addOrder" />
+        <Button icon="pi pi-check" class="p-button-rounded p-button-success" @click="postOrder" />
       </div>
     </Dialog>
 
@@ -44,8 +44,8 @@
       </template>
       <template #middle>
         <div class="flex flex-column align-items-center">
-          <div class="text-sm">Tisch {{ table.id }}</div>
-          <div class="font-bold">{{ convertToEur(table.total) }}</div>
+          <div class="text-sm">Tisch {{ table }}</div>
+          <div class="font-bold">{{ convertToEur(total) }}</div>
         </div>
       </template>
       <template #right>
@@ -68,8 +68,9 @@ import { convertToEur, ItemType } from "@/utils";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import Listbox from "primevue/listbox";
 import Dialog from "primevue/dialog";
-import BaseItem from "@/components/UI/BaseItem.vue";
 import OrderEntry from "@/components/Order/OrderEntry.vue";
+import { ZIndexUtils } from "primevue/utils";
+import get = ZIndexUtils.get;
 
 export default defineComponent({
   name: "TableDetail",
@@ -80,34 +81,39 @@ export default defineComponent({
     const modal = ref(false);
     const store = useStore();
     const selected = ref();
-    const tables = computed(() => store.getters.getTables);
-    const table = ref(tables.value.find((table: service_Table) => table.id === parseInt(props.id)));
+    const table = computed(() => parseInt(props.id));
+    const total = ref(0);
     const orderItems = computed(() => store.getters.getOrderItems);
     const options = ref();
     const drinkOrders = ref<service_Order[]>([]);
     const foodOrders = ref<service_Order[]>([]);
     const currentItemType = ref(0);
 
-    function sortOrders(orders: service_Order[]) {
-      orders.sort((a, b) => {
-        let fa = a.order_item.description.toLowerCase(),
-          fb = b.order_item.description.toLowerCase();
-
-        if (fa < fb) {
-          return -1;
+    getData();
+    async function getData(itemType?: ItemType) {
+      if (itemType) {
+        await store.dispatch("getOrderItems", itemType);
+        if (itemType === ItemType.Drink) {
+          drinkOrders.value = await OrdersService.getOrders(table.value, ItemType.Drink);
+        } else {
+          foodOrders.value = await OrdersService.getOrders(table.value, ItemType.Food);
         }
-        if (fa > fb) {
-          return 1;
-        }
-        return 0;
-      });
+      } else {
+        await store.dispatch("getAllOrderItems");
+        drinkOrders.value = await OrdersService.getOrders(table.value, ItemType.Drink);
+        foodOrders.value = await OrdersService.getOrders(table.value, ItemType.Food);
+      }
+      updateTotal();
     }
 
-    getData();
-    async function getData() {
-      await store.dispatch("getAllOrderItems");
-      drinkOrders.value = await OrdersService.getOrders(table.value.id, ItemType.Drink);
-      foodOrders.value = await OrdersService.getOrders(table.value.id, ItemType.Food);
+    function updateTotal() {
+      if (drinkOrders.value.length > 0) {
+        total.value = drinkOrders.value[0].table.total;
+      } else if (foodOrders.value.length > 0) {
+        total.value = foodOrders.value[0].table.total;
+      } else {
+        total.value = 0;
+      }
     }
 
     async function addBeverage(type: ItemType) {
@@ -116,17 +122,10 @@ export default defineComponent({
       options.value = orderItems.value.get(type);
     }
 
-    function addOrder() {
-      OrdersService.postOrders(selected.value, table.value.id)
+    function postOrder() {
+      OrdersService.postOrders(selected.value, table.value)
         .then((res) => {
-          table.value = res.table;
-          if (res.order_item.item_type === ItemType.Drink) {
-            drinkOrders.value.push(res);
-            sortOrders(drinkOrders.value);
-          } else {
-            foodOrders.value.push(res);
-            sortOrders(foodOrders.value);
-          }
+          getData(res.order_item.item_type);
         })
         .finally(() => {
           modal.value = false;
@@ -135,13 +134,14 @@ export default defineComponent({
     }
 
     function incrementOrder(order: service_Order) {
-      selected.value = order.order_item.id;
-      addOrder();
+      OrdersService.postOrders(order.order_item_id, order.table_id).then(() => {
+        getData(order.order_item.item_type);
+      });
     }
 
     function decrementOrder(order: service_Order) {
       OrdersService.deleteOrders(order.order_item_id, order.table_id).finally(() => {
-        console.log(order);
+        getData(order.order_item.item_type);
       });
     }
 
@@ -150,11 +150,12 @@ export default defineComponent({
       selected,
       options,
       table,
+      total,
       isLoading,
       convertToEur,
       addBeverage,
       ItemType,
-      addOrder,
+      postOrder,
       foodOrders,
       drinkOrders,
       incrementOrder,
