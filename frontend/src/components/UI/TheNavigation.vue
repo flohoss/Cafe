@@ -25,6 +25,7 @@ import Button from "primevue/button";
 import { useRoute, useRouter } from "vue-router";
 import { TablesService } from "@/services/openapi";
 import tables from "@/views/Tables.vue";
+import { ItemType } from "@/utils";
 
 export default defineComponent({
   name: "TheNavigation",
@@ -60,8 +61,8 @@ export default defineComponent({
 
     const items = ref([
       { label: "Bestellungen", icon: "pi pi-fw pi-history", to: "/orders" },
-      { label: "Speisen", icon: "pi pi-fw pi-shopping-cart", to: "/food" },
-      { label: "Getränke", icon: "pi pi-fw pi-shopping-cart", to: "/drinks" },
+      { label: "Speisen", icon: "pi pi-fw pi-shopping-cart", to: "/items/" + ItemType.Food },
+      { label: "Getränke", icon: "pi pi-fw pi-shopping-cart", to: "/items/" + ItemType.Drink },
       { label: "Rechnungen", icon: "pi pi-fw pi-euro", to: "/bills" },
       { separator: true },
       {

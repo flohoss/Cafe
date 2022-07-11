@@ -2,6 +2,7 @@ package api
 
 import (
 	"cafe/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -80,11 +81,14 @@ func (a *Api) deleteOrder(c *gin.Context) {
 // @Description gets all orderItems as array
 // @Tags orderItems
 // @Produce json
+// @Param type query int true "ItemType"
 // @Success 200 {array} service.OrderItem
 // @Failure 401 "Unauthorized"
 // @Router /orders/items [get]
 // @Security Cookie
 func (a *Api) getOrderItems(c *gin.Context) {
+	orderType := c.Query("type")
+	fmt.Println(orderType)
 	c.JSON(http.StatusOK, service.GetAllOrderItems())
 }
 

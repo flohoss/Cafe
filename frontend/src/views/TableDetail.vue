@@ -25,11 +25,11 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import BaseItem from "@/components/UI/BaseItem.vue";
 import { useStore } from "vuex";
-import { OrderItemsService, service_OrderItem, service_Table } from "@/services/openapi";
+import { service_OrderItem, service_Table } from "@/services/openapi";
 import BottomNavigation from "@/components/UI/BottomNavigation.vue";
 import Button from "primevue/button";
 import { convertToEur, ItemType } from "@/utils";
@@ -45,10 +45,6 @@ export default defineComponent({
     const tables = computed(() => store.getters.getTables);
     const table = tables.value.find((table: service_Table) => table.id === parseInt(props.id));
     const drinks = ref<service_OrderItem[]>([]);
-
-    onMounted(async () => {
-      drinks.value = await OrderItemsService.getOrdersItems();
-    });
 
     function addBeverage(type: ItemType) {
       console.log("add", type);
