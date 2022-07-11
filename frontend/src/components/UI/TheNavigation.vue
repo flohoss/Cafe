@@ -8,11 +8,9 @@
         <Button :disabled="isLoading" icon="pi pi-minus" class="p-button-danger p-button-rounded mr-2" @click="removeTable" />
         <Button :disabled="isLoading" icon="pi pi-plus" class="p-button-success p-button-rounded" @click="addTable" />
       </div>
-      <ul v-else>
-        <li class="p-menuitem">
-          <router-link to="/tables" class="p-menuitem-link py-1"><i class="pi pi-table mr-2"></i>Tische</router-link>
-        </li>
-      </ul>
+      <router-link v-else to="/tables" class="mr-1">
+        <Button label="Tische" class="p-button-secondary" icon="pi pi-table" />
+      </router-link>
     </template>
   </Menubar>
 </template>

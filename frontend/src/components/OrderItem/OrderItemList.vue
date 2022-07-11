@@ -1,37 +1,39 @@
 <template>
   <BaseCard>
     <ConfirmDialog></ConfirmDialog>
-    <DataTable :value="orderItems" dataKey="id" :filters="filters" responsiveLayout="scroll" :showAddButton="true" stripedRows class="p-datatable-sm">
-      <template #header>
-        <div class="grid p-fluid align-items-center">
-          <div class="col-10">
-            <span class="p-input-icon-left">
-              <i class="pi pi-search" />
-              <InputText v-model="filters['global'].value" placeholder="Suchen..." @keydown.esc="filters['global'].value = null" />
-              <span v-if="filters['global'].value !== null" class="leftMiddle styling" @click="filters['global'].value = null">
-                <i class="pi pi-times"></i>
+    <div class="p-card shadow-1">
+      <DataTable :value="orderItems" dataKey="id" :filters="filters" responsiveLayout="scroll" :showAddButton="true" stripedRows class="p-datatable-sm">
+        <template #header>
+          <div class="grid p-fluid align-items-center">
+            <div class="col-10">
+              <span class="p-input-icon-left">
+                <i class="pi pi-search" />
+                <InputText v-model="filters['global'].value" placeholder="Suchen..." @keydown.esc="filters['global'].value = null" />
+                <span v-if="filters['global'].value !== null" class="leftMiddle styling" @click="filters['global'].value = null">
+                  <i class="pi pi-times"></i>
+                </span>
               </span>
-            </span>
+            </div>
+            <div class="col-2 text-right">
+              <Button icon="pi pi-plus" class="p-button-rounded" @click="modal = true" />
+            </div>
           </div>
-          <div class="col-2 text-right">
-            <Button icon="pi pi-plus" class="p-button-rounded" @click="modal = true" />
-          </div>
-        </div>
-      </template>
-
-      <Column field="description"></Column>
-      <Column field="price" style="text-align: right">
-        <template #body="slotProps">{{ convertToEur(slotProps.data.price) }}</template>
-      </Column>
-      <Column class="flex justify-content-end flex-nowrap">
-        <template #body="slotProps">
-          <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-1" @click="editOrderItem(slotProps.data)" />
-          <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="confirmDeleteProduct(slotProps.data)" />
         </template>
-      </Column>
 
-      <template #empty>Keine Einträge</template>
-    </DataTable>
+        <Column field="description"></Column>
+        <Column field="price" style="text-align: right">
+          <template #body="slotProps">{{ convertToEur(slotProps.data.price) }}</template>
+        </Column>
+        <Column class="flex justify-content-end flex-nowrap">
+          <template #body="slotProps">
+            <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-1" @click="editOrderItem(slotProps.data)" />
+            <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="confirmDeleteProduct(slotProps.data)" />
+          </template>
+        </Column>
+
+        <template #empty>Keine Einträge</template>
+      </DataTable>
+    </div>
 
     <Dialog v-model:visible="modal" :modal="true" :showHeader="false" @hide="resetModal">
       <div class="p-fluid">
@@ -64,6 +66,7 @@ import Dialog from "primevue/dialog";
 import InputNumber from "primevue/inputnumber";
 import { useConfirm } from "primevue/useconfirm";
 import ConfirmDialog from "primevue/confirmdialog";
+import BaseItem from "@/components/UI/BaseItem.vue";
 
 export default defineComponent({
   name: "OrderItemList",
@@ -123,12 +126,15 @@ export default defineComponent({
 </script>
 
 <style>
-.p-datatable,
-.p-datatable-header {
-  background-color: transparent !important;
-  margin-top: 0.5rem;
-  padding: 0 !important;
-  border: 0 !important;
+.p-datatable .p-datatable-header,
+.p-datatable .p-datatable-footer {
+  background: transparent !important;
+}
+.p-datatable .p-datatable-header,
+.p-datatable .p-datatable-footer,
+.p-datatable .p-datatable-tbody > tr,
+.p-datatable .p-datatable-tbody > tr > td {
+  border-width: 0 !important;
 }
 .p-datatable-thead {
   display: none;
