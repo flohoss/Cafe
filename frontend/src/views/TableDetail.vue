@@ -1,18 +1,20 @@
 <template>
   <BaseCard>
-    <BaseToolbar title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" />
+    <BaseToolbar :isDisabled="isLoading" title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" />
     <OrderEntry
       v-for="entry in foodOrders"
       v-bind:key="entry.id"
       :order="entry"
+      :isDisabled="isLoading"
       @incrementOrder="(order) => incrementOrder(order)"
       @decrementOrder="(order) => decrementOrder(order)"
     />
-    <BaseToolbar title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" />
+    <BaseToolbar :isDisabled="isLoading" title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" />
     <OrderEntry
       v-for="entry in drinkOrders"
       v-bind:key="entry.id"
       :order="entry"
+      :isDisabled="isLoading"
       @incrementOrder="(order) => incrementOrder(order)"
       @decrementOrder="(order) => decrementOrder(order)"
     />
@@ -39,7 +41,7 @@
     <BottomNavigation>
       <template #left>
         <router-link to="/tables">
-          <Button icon="pi pi-arrow-left" class="p-button-rounded" />
+          <Button :disabled="isLoading" icon="pi pi-arrow-left" class="p-button-rounded" />
         </router-link>
       </template>
       <template #middle>
@@ -50,7 +52,7 @@
       </template>
       <template #right>
         <router-link to="/bills">
-          <Button icon="pi pi-money-bill" class="p-button-danger p-button-rounded" />
+          <Button :disabled="isLoading" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" />
         </router-link>
       </template>
     </BottomNavigation>
@@ -132,14 +134,18 @@ export default defineComponent({
     }
 
     function incrementOrder(order: service_Order) {
-      OrdersService.postOrders(order.order_item_id, order.table_id).then(() => {
-        getData(order.order_item.item_type);
+      isLoading.value = true;
+      OrdersService.postOrders(order.order_item_id, order.table_id).then(async () => {
+        await getData(order.order_item.item_type);
+        isLoading.value = false;
       });
     }
 
     function decrementOrder(order: service_Order) {
-      OrdersService.deleteOrders(order.order_item_id, order.table_id).finally(() => {
-        getData(order.order_item.item_type);
+      isLoading.value = true;
+      OrdersService.deleteOrders(order.order_item_id, order.table_id).finally(async () => {
+        await getData(order.order_item.item_type);
+        isLoading.value = false;
       });
     }
 

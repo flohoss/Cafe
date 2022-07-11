@@ -6,9 +6,13 @@
         <div class="text-sm">Einzelpreis: {{ convertToEur(order.order_item.price) }}</div>
       </div>
       <div class="flex align-items-center">
-        <div><Button icon="pi pi-minus" class="p-button-rounded p-button-text p-button-danger" @click="$emit('decrementOrder', order)" /></div>
+        <div>
+          <Button :disabled="isDisabled" icon="pi pi-minus" class="p-button-rounded p-button-text p-button-danger" @click="$emit('decrementOrder', order)" />
+        </div>
         <div>{{ order.total }}</div>
-        <div><Button icon="pi pi-plus" class="p-button-rounded p-button-text p-button-success" @click="$emit('incrementOrder', order)" /></div>
+        <div>
+          <Button :disabled="isDisabled" icon="pi pi-plus" class="p-button-rounded p-button-text p-button-success" @click="$emit('incrementOrder', order)" />
+        </div>
       </div>
     </div>
   </BaseItem>
@@ -24,7 +28,7 @@ import Button from "primevue/button";
 export default defineComponent({
   name: "OrderEntry",
   components: { BaseItem, Button },
-  props: { order: { type: Object as PropType<service_Order>, required: true } },
+  props: { order: { type: Object as PropType<service_Order>, required: true }, isDisabled: { type: Boolean, default: false } },
   emits: ["decrementOrder", "incrementOrder"],
   setup() {
     return { convertToEur };
