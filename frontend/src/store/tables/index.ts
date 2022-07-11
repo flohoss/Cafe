@@ -25,13 +25,16 @@ const tableStore = {
     },
   },
   actions: {
+    // eslint-disable-next-line
     async getTables(context: any) {
       const tables: service_Table[] | null = await TablesService.getTables();
       context.commit("setTables", tables);
     },
+    // eslint-disable-next-line
     removeLastTable(context: any) {
       context.commit("popTables");
     },
+    // eslint-disable-next-line
     addTable(context: any, table: service_Table) {
       context.commit("pushTable", table);
     },

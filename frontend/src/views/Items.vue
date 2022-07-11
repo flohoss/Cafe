@@ -13,9 +13,8 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, reactive, ref, watch } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
-import { OrderItemsService, service_OrderItem } from "@/services/openapi";
+import { service_OrderItem } from "@/services/openapi";
 import OrderItemList from "@/components/OrderItem/OrderItemList.vue";
-import { stringify } from "ts-jest";
 import { useStore } from "vuex";
 import { ItemType } from "@/utils";
 

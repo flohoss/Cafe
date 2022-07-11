@@ -45,10 +45,12 @@ const orderItemStore = {
     },
   },
   actions: {
+    // eslint-disable-next-line
     async getAllOrderItems(context: any) {
       await context.dispatch("getOrderItems", ItemType.Drink);
       await context.dispatch("getOrderItems", ItemType.Food);
     },
+    // eslint-disable-next-line
     async getOrderItems(context: any, orderType: ItemType) {
       const orderTypeArray = context.getters.getOrderItems;
       if (!orderTypeArray.get(orderType)) {
@@ -56,12 +58,15 @@ const orderItemStore = {
         context.commit("setOrderItems", { orderItems, orderType });
       }
     },
+    // eslint-disable-next-line
     addOrderItem(context: any, orderItem: service_OrderItem) {
       context.commit("pushOrderItem", orderItem);
     },
+    // eslint-disable-next-line
     deleteOrderItem(context: any, orderItem: service_OrderItem) {
       context.commit("filterOrderItem", orderItem);
     },
+    // eslint-disable-next-line
     updateOrderItem(context: any, orderItem: service_OrderItem) {
       context.commit("putOrderItem", orderItem);
     },

@@ -1,7 +1,7 @@
 <template>
   <BaseCard>
     <ConfirmDialog></ConfirmDialog>
-    <div class="p-card shadow-1">
+    <div class="p-card shadow-1 md:p-3">
       <DataTable :value="orderItems" dataKey="id" :filters="filters" responsiveLayout="scroll" :showAddButton="true" stripedRows class="p-datatable-sm">
         <template #header>
           <div class="grid p-fluid align-items-center">
@@ -66,7 +66,6 @@ import Dialog from "primevue/dialog";
 import InputNumber from "primevue/inputnumber";
 import { useConfirm } from "primevue/useconfirm";
 import ConfirmDialog from "primevue/confirmdialog";
-import BaseItem from "@/components/UI/BaseItem.vue";
 import { useToast } from "primevue/usetoast";
 
 export default defineComponent({
@@ -148,7 +147,6 @@ export default defineComponent({
 .styling {
   cursor: pointer;
   color: gray;
-  background-color: var(--surface-a);
   border-radius: 50%;
   padding: 0.2rem;
 }

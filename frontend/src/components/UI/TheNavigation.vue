@@ -8,7 +8,7 @@
         <Button :disabled="isLoading" icon="pi pi-minus" class="p-button-danger p-button-rounded mr-2" @click="removeTable" />
         <Button :disabled="isLoading" icon="pi pi-plus" class="p-button-success p-button-rounded" @click="addTable" />
       </div>
-      <router-link v-else to="/tables" class="mr-1">
+      <router-link v-else to="/tables" class="mr-1 no-underline">
         <Button label="Tische" class="p-button-secondary" icon="pi pi-table" />
       </router-link>
     </template>
@@ -20,9 +20,8 @@ import { computed, defineComponent, ref } from "vue";
 import Menubar from "primevue/menubar";
 import { useStore } from "vuex";
 import Button from "primevue/button";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { TablesService } from "@/services/openapi";
-import tables from "@/views/Tables.vue";
 import { ItemType } from "@/utils";
 
 export default defineComponent({
@@ -79,7 +78,7 @@ export default defineComponent({
 
 <style scoped>
 .bg-color {
-  background-color: var(--surface-b);
+  background-color: var(--surface-a);
   color: var(--text-color);
 }
 .h-2-5rem {

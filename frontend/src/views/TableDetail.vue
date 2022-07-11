@@ -61,7 +61,7 @@
 import { computed, defineComponent, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
-import { OrdersService, service_Order, service_Table } from "@/services/openapi";
+import { OrdersService, service_Order } from "@/services/openapi";
 import BottomNavigation from "@/components/UI/BottomNavigation.vue";
 import Button from "primevue/button";
 import { convertToEur, ItemType } from "@/utils";
@@ -69,8 +69,6 @@ import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import Listbox from "primevue/listbox";
 import Dialog from "primevue/dialog";
 import OrderEntry from "@/components/Order/OrderEntry.vue";
-import { ZIndexUtils } from "primevue/utils";
-import get = ZIndexUtils.get;
 
 export default defineComponent({
   name: "TableDetail",

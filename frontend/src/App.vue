@@ -62,7 +62,7 @@ body {
 html,
 body,
 .p-component {
-  font-size: 1.2rem !important;
+  font-size: 1rem !important;
   font-family: "roboto", sans-serif !important;
 }
 .p-button {
@@ -86,6 +86,10 @@ body,
 @media (min-width: 768px) {
   .container {
     max-width: 720px;
+  }
+  .p-component {
+    font-size: 1.2rem !important;
+    font-family: "roboto", sans-serif !important;
   }
   html,
   body {
