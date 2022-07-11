@@ -1,13 +1,13 @@
 <template>
-  <BaseItem>
+  <BaseItem paddingRight="1">
     <div class="flex justify-content-between">
       <div class="flex flex-column justify-content-between">
         <div>{{ order.order_item.description }}</div>
         <div class="text-sm">Einzelpreis: {{ convertToEur(order.order_item.price) }}</div>
       </div>
       <div class="flex align-items-center">
-        <div><Button icon="pi pi-minus" class="p-button-rounded p-button-text p-button-danger" /></div>
-        <div><Button icon="pi pi-plus" class="p-button-rounded p-button-text p-button-success" /></div>
+        <div><Button icon="pi pi-minus" class="p-button-rounded p-button-text p-button-danger" @click="$emit('decrementOrder', order)" /></div>
+        <div><Button icon="pi pi-plus" class="p-button-rounded p-button-text p-button-success" @click="$emit('incrementOrder', order)" /></div>
       </div>
     </div>
   </BaseItem>
@@ -24,6 +24,7 @@ export default defineComponent({
   name: "OrderEntry",
   components: { BaseItem, Button },
   props: { order: { type: Object as PropType<service_Order>, required: true } },
+  emits: ["decrementOrder", "incrementOrder"],
   setup() {
     return { convertToEur };
   },

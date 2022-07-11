@@ -11,7 +11,7 @@
 import { computed, defineComponent, onMounted, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
-import TableCard from "@/components/Table/TableCard.vue";
+import TableCard from "@/components/Table/TableEntry.vue";
 
 export default defineComponent({
   name: "TablesView",

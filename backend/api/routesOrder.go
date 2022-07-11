@@ -63,21 +63,22 @@ func (a *Api) createOrder(c *gin.Context) {
 // @Description deletes an order from the database
 // @Tags orders
 // @Produce json
-// @Param id path int true "Order ID"
+// @Param item query int true "OrderItem ID"
+// @Param table query int true "Table ID"
 // @Success 200 "OK"
+// @Failure 400 {object} errorResponse "Missing query parameter"
 // @Failure 401 "Unauthorized"
-// @Failure 404 "Not Found"
 // @Failure 500 {object} errorResponse "Cannot delete order"
-// @Router /orders/{id} [delete]
+// @Router /orders [delete]
 // @Security Cookie
 func (a *Api) deleteOrder(c *gin.Context) {
-	id := c.Param("id")
-	order, err := service.DoesOrderExist(id)
-	if err != nil {
-		c.Status(http.StatusNotFound)
+	item := c.Query("item")
+	table := c.Query("table")
+	if table == "" || item == "" {
+		c.JSON(http.StatusBadRequest, errorResponse{"Missing query parameter"})
 		return
 	}
-	err = service.DeleteOrder(&order)
+	err := service.DeleteOrder(table, item)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot delete order"})
 	} else {

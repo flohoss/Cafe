@@ -35,7 +35,7 @@ func (u *Order) AfterCreate(tx *gorm.DB) (err error) {
 	return
 }
 
-func (u *Order) AfterDelete(tx *gorm.DB) (err error) {
+func (u *Order) BeforeDelete(tx *gorm.DB) (err error) {
 	var table Table
 	var orderItem OrderItem
 	tx.Where("id = ?", u.TableID).First(&table)
@@ -44,15 +44,6 @@ func (u *Order) AfterDelete(tx *gorm.DB) (err error) {
 	table.Total -= orderItem.Price
 	tx.Save(&table)
 	return
-}
-
-func DoesOrderExist(id string) (Order, error) {
-	var order Order
-	result := config.C.Database.ORM.Limit(1).Find(&order, id)
-	if result.RowsAffected == 0 {
-		return order, fmt.Errorf("table not found")
-	}
-	return order, nil
 }
 
 func DoesOrderItemExist(id string) (OrderItem, error) {
@@ -79,9 +70,14 @@ func CreateOrder(order *Order) error {
 	return err
 }
 
-func DeleteOrder(order *Order) error {
-	result := config.C.Database.ORM.Delete(order)
-	return result.Error
+func DeleteOrder(tableId string, orderItemId string) error {
+	var order Order
+	err := config.C.Database.ORM.Where("table_id = ? AND order_item_id = ?", tableId, orderItemId).First(&order).Error
+	if err != nil {
+		return fmt.Errorf("cannot delete order")
+	}
+	err = config.C.Database.ORM.Delete(&order).Error
+	return err
 }
 
 func GetOrderItemsForType(itemType string) []OrderItem {

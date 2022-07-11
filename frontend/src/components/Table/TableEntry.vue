@@ -24,7 +24,7 @@ import { convertToEur } from "@/utils";
 import Badge from "primevue/badge";
 
 export default defineComponent({
-  name: "TableCard",
+  name: "TableEntry",
   components: { Badge, BaseItem },
   props: { table: { type: Object as PropType<service_Table>, required: true } },
   setup(props) {

@@ -1,9 +1,21 @@
 <template>
   <BaseCard>
     <BaseToolbar title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" />
-    <OrderEntry v-for="entry in foodOrders" v-bind:key="entry.id" :order="entry" />
+    <OrderEntry
+      v-for="entry in foodOrders"
+      v-bind:key="entry.id"
+      :order="entry"
+      @incrementOrder="(order) => incrementOrder(order)"
+      @decrementOrder="(order) => decrementOrder(order)"
+    />
     <BaseToolbar title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" />
-    <OrderEntry v-for="entry in drinkOrders" v-bind:key="entry.id" :order="entry" />
+    <OrderEntry
+      v-for="entry in drinkOrders"
+      v-bind:key="entry.id"
+      :order="entry"
+      @incrementOrder="(order) => incrementOrder(order)"
+      @decrementOrder="(order) => decrementOrder(order)"
+    />
     <Dialog v-model:visible="modal" :modal="true" :showHeader="false">
       <div class="p-fluid">
         <Listbox
@@ -122,7 +134,32 @@ export default defineComponent({
         });
     }
 
-    return { modal, selected, options, table, isLoading, convertToEur, addBeverage, ItemType, addOrder, foodOrders, drinkOrders };
+    function incrementOrder(order: service_Order) {
+      selected.value = order.order_item.id;
+      addOrder();
+    }
+
+    function decrementOrder(order: service_Order) {
+      OrdersService.deleteOrders(order.order_item_id, order.table_id).finally(() => {
+        console.log(order);
+      });
+    }
+
+    return {
+      modal,
+      selected,
+      options,
+      table,
+      isLoading,
+      convertToEur,
+      addBeverage,
+      ItemType,
+      addOrder,
+      foodOrders,
+      drinkOrders,
+      incrementOrder,
+      decrementOrder,
+    };
   },
 });
 </script>

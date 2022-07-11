@@ -26,7 +26,7 @@ func (a *Api) setupRouter() {
 			orderGroup.Use(a.Auth.CookieAuthRequired())
 			orderGroup.GET("", a.getOrders)
 			orderGroup.POST("", a.createOrder)
-			orderGroup.DELETE("/:id", a.deleteOrder)
+			orderGroup.DELETE("", a.deleteOrder)
 			orderItemGroup := orderGroup.Group("/items")
 			{
 				orderItemGroup.GET("", a.getOrderItems)
