@@ -58,9 +58,13 @@ body {
 }
 
 html,
-body {
-  font-size: 1.2em;
+body,
+.p-component {
+  font-size: 1.3rem !important;
   font-family: "roboto", sans-serif !important;
+}
+.p-button {
+  font-size: 1rem !important;
 }
 .container {
   --bs-gutter-x: 0;

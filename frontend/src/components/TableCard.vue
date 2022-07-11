@@ -5,7 +5,7 @@
       <div class="flex justify-content-between align-items-end">
         <div>
           <div class="font-bold mb-2">Tisch {{ table.id }}</div>
-          <div>{{ since }}</div>
+          <div class="text-sm">{{ since }}</div>
         </div>
         <div>
           <div v-if="table.total" class="font-bold">{{ convertToEur(table.total) }}</div>

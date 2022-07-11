@@ -1,5 +1,7 @@
 <template>
   <BaseCard>
+    <BaseToolbar title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" />
+    <BaseToolbar title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" />
     <BaseItem>{{ table }}</BaseItem>
     <BottomNavigation>
       <template #left>
@@ -30,11 +32,12 @@ import { useStore } from "vuex";
 import { service_Table } from "@/services/openapi";
 import BottomNavigation from "@/components/BottomNavigation.vue";
 import Button from "primevue/button";
-import { convertToEur } from "@/utils";
+import { convertToEur, ItemType } from "@/utils";
+import BaseToolbar from "@/components/BaseToolbar.vue";
 
 export default defineComponent({
   name: "TableDetail",
-  components: { BottomNavigation, BaseCard, BaseItem, Button },
+  components: { BaseToolbar, BottomNavigation, BaseCard, BaseItem, Button },
   props: { id: { type: String, default: "0" } },
   setup(props) {
     const isLoading = ref(false);
@@ -42,7 +45,11 @@ export default defineComponent({
     const tables = computed(() => store.getters.getTables);
     const table = tables.value.find((table: service_Table) => table.id === parseInt(props.id));
 
-    return { table, isLoading, convertToEur };
+    function addBeverage(type: ItemType) {
+      console.log("add", type);
+    }
+
+    return { table, isLoading, convertToEur, addBeverage, ItemType };
   },
 });
 </script>

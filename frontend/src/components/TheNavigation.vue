@@ -10,7 +10,7 @@
       </div>
       <ul v-else>
         <li class="p-menuitem">
-          <router-link to="/tables" class="p-menuitem-link"><i class="pi pi-table mr-2"></i>Tische</router-link>
+          <router-link to="/tables" class="p-menuitem-link py-1"><i class="pi pi-table mr-2"></i>Tische</router-link>
         </li>
       </ul>
     </template>
