@@ -42,7 +42,7 @@ func DoesOrderItemExist(id string) (OrderItem, error) {
 
 func GetAllOrders(table string, itemType string) ([]Order, error) {
 	var orders []Order
-	err := config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Where("table_id = ? AND item_type = ?", table, itemType).Find(&orders).Error
+	err := config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Where("table_id = ? AND item_type = ?", table, itemType).Order("description").Find(&orders).Error
 	return orders, err
 }
 

@@ -1,9 +1,9 @@
 <template>
   <BaseCard>
     <BaseToolbar title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" />
-    <BaseItem>{{ foodOrders }}</BaseItem>
+    <OrderEntry v-for="entry in foodOrders" v-bind:key="entry.id" :order="entry" />
     <BaseToolbar title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" />
-    <BaseItem>{{ drinkOrders }}</BaseItem>
+    <OrderEntry v-for="entry in drinkOrders" v-bind:key="entry.id" :order="entry" />
     <Dialog v-model:visible="modal" :modal="true" :showHeader="false">
       <div class="p-fluid">
         <Listbox
@@ -57,10 +57,11 @@ import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import Listbox from "primevue/listbox";
 import Dialog from "primevue/dialog";
 import BaseItem from "@/components/UI/BaseItem.vue";
+import OrderEntry from "@/components/Order/OrderEntry.vue";
 
 export default defineComponent({
   name: "TableDetail",
-  components: { BaseItem, BaseToolbar, BottomNavigation, BaseCard, Button, Dialog, Listbox },
+  components: { OrderEntry, BaseToolbar, BottomNavigation, BaseCard, Button, Dialog, Listbox },
   props: { id: { type: String, default: "0" } },
   setup(props) {
     const isLoading = ref(false);
