@@ -2,6 +2,7 @@ package api
 
 import (
 	"cafe/service"
+	"cafe/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -23,7 +24,7 @@ func (a *Api) getOrders(c *gin.Context) {
 	table := c.Query("table")
 	orderType := c.Query("type")
 	if table == "" || orderType == "" {
-		c.JSON(http.StatusBadRequest, errorResponse{MissingInformation.String()})
+		c.JSON(http.StatusBadRequest, errorResponse{utils.MissingInformation.String()})
 	} else {
 		orders := service.GetAllOrders(table, orderType)
 		c.JSON(http.StatusOK, orders)
@@ -48,7 +49,7 @@ func (a *Api) createOrder(c *gin.Context) {
 	table, err1 := strconv.ParseUint(c.Query("table"), 10, 64)
 	item, err2 := strconv.ParseUint(c.Query("item"), 10, 64)
 	if err1 != nil || err2 != nil {
-		c.JSON(http.StatusBadRequest, errorResponse{MissingInformation.String()})
+		c.JSON(http.StatusBadRequest, errorResponse{utils.MissingInformation.String()})
 		return
 	}
 	order := service.Order{TableID: table, OrderItemID: item, IsServed: false}
@@ -77,7 +78,7 @@ func (a *Api) deleteOrder(c *gin.Context) {
 	item := c.Query("item")
 	table := c.Query("table")
 	if table == "" || item == "" {
-		c.JSON(http.StatusBadRequest, errorResponse{MissingInformation.String()})
+		c.JSON(http.StatusBadRequest, errorResponse{utils.MissingInformation.String()})
 		return
 	}
 	err := service.DeleteOrder(table, item)
@@ -101,7 +102,7 @@ func (a *Api) deleteOrder(c *gin.Context) {
 func (a *Api) getOrderItems(c *gin.Context) {
 	orderType := c.Query("type")
 	if orderType == "" {
-		c.JSON(http.StatusBadRequest, errorResponse{MissingInformation.String()})
+		c.JSON(http.StatusBadRequest, errorResponse{utils.MissingInformation.String()})
 	} else {
 		c.JSON(http.StatusOK, service.GetOrderItemsForType(orderType))
 	}
@@ -124,7 +125,7 @@ func (a *Api) createOrderItem(c *gin.Context) {
 	var orderItem service.OrderItem
 	err := c.ShouldBindJSON(&orderItem)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, errorResponse{MissingInformation.String()})
+		c.JSON(http.StatusBadRequest, errorResponse{utils.MissingInformation.String()})
 		return
 	}
 	err = service.CreateOrderItem(&orderItem)
@@ -153,7 +154,7 @@ func (a *Api) updateOrderItem(c *gin.Context) {
 	var newOrderItem service.OrderItem
 	err := c.ShouldBindJSON(&newOrderItem)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, errorResponse{MissingInformation.String()})
+		c.JSON(http.StatusBadRequest, errorResponse{utils.MissingInformation.String()})
 		return
 	}
 	oldOrderItem, err := service.DoesOrderItemExist(strconv.Itoa(int(newOrderItem.ID)))

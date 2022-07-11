@@ -1,8 +1,8 @@
 package service
 
 import (
-	"cafe/api"
 	"cafe/config"
+	"cafe/utils"
 	"fmt"
 	"gorm.io/gorm"
 	"math"
@@ -58,7 +58,7 @@ func DoesOrderItemExist(id string) (OrderItem, error) {
 	var orderItem OrderItem
 	result := config.C.Database.ORM.Limit(1).Find(&orderItem, id)
 	if result.RowsAffected == 0 {
-		return orderItem, fmt.Errorf(api.CannotFind.String())
+		return orderItem, fmt.Errorf(utils.CannotFind.String())
 	}
 	return orderItem, nil
 }
@@ -72,7 +72,7 @@ func GetAllOrders(table string, itemType string) []Order {
 func CreateOrder(order *Order) error {
 	err := config.C.Database.ORM.Create(order).Error
 	if err != nil {
-		return fmt.Errorf(api.CannotCreate.String())
+		return fmt.Errorf(utils.CannotCreate.String())
 	}
 	config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").First(order)
 	return nil
@@ -82,11 +82,11 @@ func DeleteOrder(tableId string, orderItemId string) error {
 	var order Order
 	err := config.C.Database.ORM.Where("table_id = ? AND order_item_id = ?", tableId, orderItemId).First(&order).Error
 	if err != nil {
-		return fmt.Errorf(api.CannotFind.String())
+		return fmt.Errorf(utils.CannotFind.String())
 	}
 	err = config.C.Database.ORM.Delete(&order).Error
 	if err != nil {
-		return fmt.Errorf(api.CannotDelete.String())
+		return fmt.Errorf(utils.CannotDelete.String())
 	}
 	return nil
 }
@@ -100,7 +100,7 @@ func GetOrderItemsForType(itemType string) []OrderItem {
 func CreateOrderItem(oderItem *OrderItem) error {
 	err := config.C.Database.ORM.Create(oderItem).Error
 	if err != nil {
-		return fmt.Errorf(api.CannotCreate.String())
+		return fmt.Errorf(utils.CannotCreate.String())
 	}
 	return nil
 }
@@ -109,7 +109,7 @@ func UpdateOrderItem(old OrderItem, new OrderItem) error {
 	var order Order
 	result := config.C.Database.ORM.Where("order_item_id = ?", old.ID).Limit(1).Find(&order)
 	if result.RowsAffected != 0 {
-		return fmt.Errorf(api.StillInUse.String())
+		return fmt.Errorf(utils.StillInUse.String())
 	}
 	config.C.Database.ORM.First(&old).Updates(&new)
 	return nil
@@ -118,7 +118,7 @@ func UpdateOrderItem(old OrderItem, new OrderItem) error {
 func DeleteOrderItem(oderItem *OrderItem) error {
 	err := config.C.Database.ORM.Delete(oderItem).Error
 	if err != nil {
-		return fmt.Errorf(api.CannotDelete.String())
+		return fmt.Errorf(utils.CannotDelete.String())
 	}
 	return nil
 }
