@@ -1,7 +1,7 @@
 <template>
   <BaseCard class="text-center">
     <OrderItemList
-      :orderItems="food"
+      :orderItems="currentOrderItems"
       :emptyOrderItem="emptyOrderItem"
       @orderItemChanged="(item) => orderItemChanged(item)"
       @orderItemDeleted="(item) => orderItemDeleted(item)"
@@ -11,40 +11,53 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, ref, watch } from "vue";
+import { computed, defineComponent, onMounted, reactive, ref, watch } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { OrderItemsService, service_OrderItem } from "@/services/openapi";
 import OrderItemList from "@/components/OrderItem/OrderItemList.vue";
 import { stringify } from "ts-jest";
+import { useStore } from "vuex";
+import { ItemType } from "@/utils";
 
 export default defineComponent({
   name: "ItemView",
   components: { OrderItemList, BaseCard },
   props: { id: { type: String, default: "0" } },
   setup(props) {
-    const food = ref();
+    const store = useStore();
+    const orderItems = computed(() => store.getters.getOrderItems);
+    const currentOrderItems = ref();
     const emptyOrderItem = reactive<service_OrderItem>({ description: "", item_type: 0, price: 0 });
+    const intId = ref<ItemType>(parseInt(props.id));
 
-    function getData() {
-      const intId = parseInt(props.id);
-      OrderItemsService.getOrdersItems(intId).then((res) => (food.value = res));
-      emptyOrderItem.item_type = intId;
+    async function getData() {
+      intId.value = parseInt(props.id);
+      await store.dispatch("getOrderItems", intId.value);
+      emptyOrderItem.item_type = intId.value;
+      refreshMap();
+    }
+
+    function refreshMap() {
+      currentOrderItems.value = orderItems.value.get(intId.value);
     }
 
     onMounted(() => getData());
     watch(props, () => getData());
 
     function orderItemChanged(item: service_OrderItem) {
-      food.value = food.value.map((origItem: service_OrderItem) => (origItem.id === item.id ? item : origItem));
+      store.dispatch("updateOrderItem", item);
+      refreshMap();
     }
     function orderItemDeleted(item: service_OrderItem) {
-      food.value = food.value.filter((origItem: service_OrderItem) => origItem.id !== item.id);
+      store.dispatch("deleteOrderItem", item);
+      refreshMap();
     }
     function orderItemCreated(item: service_OrderItem) {
-      food.value.push(item);
+      store.dispatch("addOrderItem", item);
+      refreshMap();
     }
 
-    return { food, orderItemChanged, orderItemDeleted, orderItemCreated, emptyOrderItem };
+    return { currentOrderItems, orderItemChanged, orderItemDeleted, orderItemCreated, emptyOrderItem };
   },
 });
 </script>
