@@ -18,7 +18,7 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
 import { service_Table } from "@/services/openapi";
-import BaseItem from "@/components/BaseItem.vue";
+import BaseItem from "@/components/UI/BaseItem.vue";
 import moment from "moment";
 import { convertToEur } from "@/utils";
 import Badge from "primevue/badge";

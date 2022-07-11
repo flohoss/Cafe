@@ -12,7 +12,7 @@ import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { AuthorizationService } from "@/services/openapi";
-import TheNavigation from "@/components/TheNavigation.vue";
+import TheNavigation from "@/components/UI/TheNavigation.vue";
 
 export default defineComponent({
   name: "App",

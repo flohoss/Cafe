@@ -9,9 +9,9 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-import BaseCard from "@/components/BaseCard.vue";
+import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
-import TableCard from "@/components/TableCard.vue";
+import TableCard from "@/components/Table/TableCard.vue";
 
 export default defineComponent({
   name: "TablesView",

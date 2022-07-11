@@ -36,7 +36,7 @@ import { required } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
-import BaseCard from "@/components/BaseCard.vue";
+import BaseCard from "@/components/UI/BaseCard.vue";
 
 export default defineComponent({
   name: "LoginView",

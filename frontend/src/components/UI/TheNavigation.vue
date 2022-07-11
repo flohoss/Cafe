@@ -59,27 +59,11 @@ export default defineComponent({
     }
 
     const items = ref([
-      {
-        label: "Bestellungen",
-        icon: "pi pi-fw pi-history",
-        to: "/orders",
-      },
-      {
-        label: "Artikel",
-        icon: "pi pi-fw pi-shopping-cart",
-        items: [
-          { label: "Speisen", to: "/foods" },
-          { label: "Getränke", to: "/drinks" },
-        ],
-      },
-      {
-        label: "Rechnungen",
-        icon: "pi pi-fw pi-euro",
-        to: "/bills",
-      },
-      {
-        separator: true,
-      },
+      { label: "Bestellungen", icon: "pi pi-fw pi-history", to: "/orders" },
+      { label: "Speisen", icon: "pi pi-fw pi-shopping-cart", to: "/food" },
+      { label: "Getränke", icon: "pi pi-fw pi-shopping-cart", to: "/drinks" },
+      { label: "Rechnungen", icon: "pi pi-fw pi-euro", to: "/bills" },
+      { separator: true },
       {
         label: "Logout",
         icon: "pi pi-fw pi-power-off",
@@ -104,12 +88,12 @@ export default defineComponent({
 }
 @media (prefers-color-scheme: light) {
   img {
-    content: url("../assets/logo.png");
+    content: url("../../assets/logo.png");
   }
 }
 @media (prefers-color-scheme: dark) {
   img {
-    content: url("../assets/logo_white.png");
+    content: url("../../assets/logo_white.png");
   }
 }
 </style>
