@@ -114,7 +114,7 @@ func (a *Api) getOrderItems(c *gin.Context) {
 // @Tags orderItems
 // @Accept json
 // @Produce json
-// @Param order body service.OrderItem true
+// @Param order body service.OrderItem true "OrderItem ID"
 // @Success 201 {object} service.OrderItem
 // @Failure 400 {object} errorResponse
 // @Failure 401 "Unauthorized"
@@ -142,7 +142,7 @@ func (a *Api) createOrderItem(c *gin.Context) {
 // @Tags orderItems
 // @Accept json
 // @Produce json
-// @Param bookmark body service.OrderItem true
+// @Param orderItem body service.OrderItem true "updated OrderItem"
 // @Success 200	{object} service.OrderItem
 // @Failure 400 {object} errorResponse
 // @Failure 401 "Unauthorized"
