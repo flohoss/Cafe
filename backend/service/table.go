@@ -7,7 +7,7 @@ import (
 )
 
 type Table struct {
-	ID         uint                  `gorm:"primaryKey" json:"id" validate:"optional"`
+	ID         uint64                `gorm:"primaryKey" json:"id" validate:"optional"`
 	OrderCount uint64                `json:"order_count" validate:"required"`
 	Total      float64               `json:"total" validate:"required"`
 	UpdatedAt  int64                 `json:"updated_at" validate:"optional"`

@@ -38,10 +38,10 @@
     <Dialog v-model:visible="modal" :modal="true" :showHeader="false" @hide="resetModal">
       <div class="p-fluid">
         <div class="field mt-5">
-          <InputText id="name" v-model.trim="orderItem.description" required="true" autofocus />
+          <InputText id="name" v-model.trim="orderItem.description" required="true" autofocus @keydown.enter="saveOrderItem" />
         </div>
         <div class="field">
-          <InputNumber id="currency-germany" v-model="orderItem.price" mode="currency" currency="EUR" locale="de-DE" />
+          <InputNumber id="currency-germany" v-model="orderItem.price" mode="currency" currency="EUR" locale="de-DE" @keydown.enter="saveOrderItem" />
         </div>
       </div>
       <div class="flex justify-content-end">

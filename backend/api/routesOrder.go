@@ -12,12 +12,14 @@ import (
 // @Description gets all orders as array
 // @Tags orders
 // @Produce json
+// @Param table query int true "Table ID"
 // @Success 200 {array} service.Order
 // @Failure 401 "Unauthorized"
 // @Router /orders [get]
 // @Security Cookie
 func (a *Api) getOrders(c *gin.Context) {
-	c.JSON(http.StatusOK, service.GetAllOrders())
+	table := c.Query("table")
+	c.JSON(http.StatusOK, service.GetAllOrders(table))
 }
 
 // @Schemes
@@ -26,21 +28,23 @@ func (a *Api) getOrders(c *gin.Context) {
 // @Tags orders
 // @Accept json
 // @Produce json
-// @Param order body service.Order true "the order as an object"
+// @Param item query int true "OrderItem ID"
+// @Param table query int true "Table ID"
 // @Success 201 {object} service.Order "Order has been created"
-// @Failure 400 {object} errorResponse "Missing order body"
+// @Failure 400 {object} errorResponse "Missing query parameter"
 // @Failure 401 "Unauthorized"
 // @Failure 500 {object} errorResponse "Cannot create order"
 // @Router /orders [post]
 // @Security Cookie
 func (a *Api) createOrder(c *gin.Context) {
-	var order service.Order
-	err := c.ShouldBindJSON(&order)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, errorResponse{"Missing order body"})
+	table, err1 := strconv.ParseUint(c.Query("table"), 10, 64)
+	item, err2 := strconv.ParseUint(c.Query("item"), 10, 64)
+	if err1 != nil || err2 != nil {
+		c.JSON(http.StatusBadRequest, errorResponse{"Missing query parameter"})
 		return
 	}
-	err = service.CreateOrder(&order)
+	order := service.Order{TableID: table, ItemID: item, IsServed: false}
+	err := service.CreateOrder(&order)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot create order"})
 	} else {

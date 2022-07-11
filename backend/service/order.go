@@ -7,14 +7,14 @@ import (
 
 type (
 	Order struct {
-		ID       uint `gorm:"primaryKey" json:"id" validate:"optional"`
-		TableID  uint `json:"table_id" validate:"required"`
-		ItemID   uint `json:"item_id" validate:"required"`
-		IsServed bool `json:"is_served" default:"false" validate:"required"`
+		ID       uint64 `gorm:"primaryKey" json:"id" validate:"optional"`
+		TableID  uint64 `json:"table_id" validate:"required"`
+		ItemID   uint64 `json:"item_id" validate:"required"`
+		IsServed bool   `json:"is_served" default:"false" validate:"required"`
 	}
 
 	OrderItem struct {
-		ID          uint     `gorm:"primaryKey" json:"id" validate:"optional"`
+		ID          uint64   `gorm:"primaryKey" json:"id" validate:"optional"`
 		ItemType    ItemType `json:"item_type" validate:"required"`
 		Description string   `json:"description" validate:"required"`
 		Price       float64  `json:"price" validate:"required"`
@@ -39,9 +39,9 @@ func DoesOrderItemExist(id string) (OrderItem, error) {
 	return orderItem, nil
 }
 
-func GetAllOrders() []Order {
+func GetAllOrders(table string) []Order {
 	var orders []Order
-	config.C.Database.ORM.Find(&orders)
+	config.C.Database.ORM.Where("table_id = ?", table).Find(&orders)
 	return orders
 }
 

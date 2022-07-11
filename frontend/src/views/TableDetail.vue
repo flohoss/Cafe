@@ -1,7 +1,9 @@
 <template>
   <BaseCard>
     <BaseToolbar title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" />
+    <BaseItem>{{ orders }}</BaseItem>
     <BaseToolbar title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" />
+    <BaseItem>{{ orders }}</BaseItem>
     <Dialog v-model:visible="modal" :modal="true" :showHeader="false">
       <div class="p-fluid">
         <Listbox
@@ -47,17 +49,18 @@
 import { computed, defineComponent, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
-import { service_Table } from "@/services/openapi";
+import { OrdersService, service_Table } from "@/services/openapi";
 import BottomNavigation from "@/components/UI/BottomNavigation.vue";
 import Button from "primevue/button";
 import { convertToEur, ItemType } from "@/utils";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import Listbox from "primevue/listbox";
 import Dialog from "primevue/dialog";
+import BaseItem from "@/components/UI/BaseItem.vue";
 
 export default defineComponent({
   name: "TableDetail",
-  components: { BaseToolbar, BottomNavigation, BaseCard, Button, Dialog, Listbox },
+  components: { BaseItem, BaseToolbar, BottomNavigation, BaseCard, Button, Dialog, Listbox },
   props: { id: { type: String, default: "0" } },
   setup(props) {
     const isLoading = ref(false);
@@ -68,6 +71,9 @@ export default defineComponent({
     const table = tables.value.find((table: service_Table) => table.id === parseInt(props.id));
     const orderItems = computed(() => store.getters.getOrderItems);
     const options = ref();
+    const orders = ref();
+
+    OrdersService.getOrders(table.id).then((res) => (orders.value = res));
 
     async function addBeverage(type: ItemType) {
       modal.value = true;
@@ -76,11 +82,13 @@ export default defineComponent({
     }
 
     function addOrder() {
-      modal.value = false;
-      selected.value = undefined;
+      OrdersService.postOrders(selected.value, table.id).finally(() => {
+        modal.value = false;
+        selected.value = undefined;
+      });
     }
 
-    return { modal, selected, options, table, isLoading, convertToEur, addBeverage, ItemType, addOrder };
+    return { modal, selected, options, table, isLoading, convertToEur, addBeverage, ItemType, addOrder, orders };
   },
 });
 </script>
