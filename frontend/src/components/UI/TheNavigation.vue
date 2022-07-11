@@ -40,7 +40,7 @@ export default defineComponent({
       isLoading.value = true;
       TablesService.deleteTables()
         .then(() => {
-          store.commit("popTables");
+          store.dispatch("removeLastTable");
         })
         .finally(() => {
           isLoading.value = false;
@@ -50,7 +50,7 @@ export default defineComponent({
       isLoading.value = true;
       TablesService.postTables()
         .then((res) => {
-          store.commit("pushTable", res);
+          store.dispatch("addTable", res);
         })
         .finally(() => {
           isLoading.value = false;

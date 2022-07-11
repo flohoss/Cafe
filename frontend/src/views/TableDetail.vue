@@ -15,7 +15,7 @@
           dataKey="id"
           optionValue="id"
           listStyle="max-height:70vh"
-          filterPlaceholder="Auswählen"
+          filterPlaceholder="Suchen"
         />
       </div>
       <div class="flex justify-content-end mt-4">
@@ -69,29 +69,57 @@ export default defineComponent({
     const store = useStore();
     const selected = ref();
     const tables = computed(() => store.getters.getTables);
-    const table = tables.value.find((table: service_Table) => table.id === parseInt(props.id));
+    const table = ref(tables.value.find((table: service_Table) => table.id === parseInt(props.id)));
     const orderItems = computed(() => store.getters.getOrderItems);
     const options = ref();
-    const drinkOrders = ref();
-    const foodOrders = ref();
+    const drinkOrders = ref<service_Order[]>([]);
+    const foodOrders = ref<service_Order[]>([]);
+    const currentItemType = ref(0);
+
+    function sortOrders(orders: service_Order[]) {
+      orders.sort((a, b) => {
+        let fa = a.order_item.description.toLowerCase(),
+          fb = b.order_item.description.toLowerCase();
+
+        if (fa < fb) {
+          return -1;
+        }
+        if (fa > fb) {
+          return 1;
+        }
+        return 0;
+      });
+    }
 
     getData();
     async function getData() {
       await store.dispatch("getAllOrderItems");
-      drinkOrders.value = await OrdersService.getOrders(table.id, ItemType.Drink);
-      foodOrders.value = await OrdersService.getOrders(table.id, ItemType.Food);
+      drinkOrders.value = await OrdersService.getOrders(table.value.id, ItemType.Drink);
+      foodOrders.value = await OrdersService.getOrders(table.value.id, ItemType.Food);
     }
 
     async function addBeverage(type: ItemType) {
       modal.value = true;
+      currentItemType.value = type;
       options.value = orderItems.value.get(type);
     }
 
     function addOrder() {
-      OrdersService.postOrders(selected.value, table.id).finally(() => {
-        modal.value = false;
-        selected.value = undefined;
-      });
+      OrdersService.postOrders(selected.value, table.value.id)
+        .then((res) => {
+          table.value = res.table;
+          if (res.order_item.item_type === ItemType.Drink) {
+            drinkOrders.value.push(res);
+            sortOrders(drinkOrders.value);
+          } else {
+            foodOrders.value.push(res);
+            sortOrders(foodOrders.value);
+          }
+        })
+        .finally(() => {
+          modal.value = false;
+          selected.value = undefined;
+        });
     }
 
     return { modal, selected, options, table, isLoading, convertToEur, addBeverage, ItemType, addOrder, foodOrders, drinkOrders };

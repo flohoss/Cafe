@@ -1,7 +1,7 @@
 <template>
   <router-link class="no-underline" :to="'/tables/' + table.id">
     <BaseItem>
-      <Badge v-if="table.order_count" class="topRight">{{ table.order_count }}</Badge>
+      <Badge v-if="table.order_count" class="topRight text-sm">{{ table.order_count }}</Badge>
       <div class="flex justify-content-between align-items-end">
         <div>
           <div class="font-bold mb-2">Tisch {{ table.id }}</div>

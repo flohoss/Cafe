@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
 import TableCard from "@/components/Table/TableCard.vue";
@@ -20,6 +20,11 @@ export default defineComponent({
     const isLoading = ref(false);
     const store = useStore();
     const tables = computed(() => store.getters.getTables);
+
+    function getData() {
+      store.dispatch("getTables");
+    }
+    onMounted(() => getData());
 
     return { tables, isLoading };
   },

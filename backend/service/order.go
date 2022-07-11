@@ -10,6 +10,7 @@ type (
 	Order struct {
 		ID          uint64    `gorm:"primaryKey" json:"id" validate:"optional"`
 		TableID     uint64    `json:"table_id" validate:"required"`
+		Table       Table     `json:"table" validate:"required"`
 		OrderItemID uint64    `json:"order_item_id" validate:"required"`
 		OrderItem   OrderItem `json:"order_item" validate:"required"`
 		IsServed    bool      `json:"is_served" default:"false" validate:"required"`
@@ -70,8 +71,12 @@ func GetAllOrders(table string, itemType string) ([]Order, error) {
 }
 
 func CreateOrder(order *Order) error {
-	result := config.C.Database.ORM.Create(order)
-	return result.Error
+	err := config.C.Database.ORM.Create(order).Error
+	if err != nil {
+		return fmt.Errorf("cannot create order")
+	}
+	err = config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Joins("Table").First(order).Error
+	return err
 }
 
 func DeleteOrder(order *Order) error {
