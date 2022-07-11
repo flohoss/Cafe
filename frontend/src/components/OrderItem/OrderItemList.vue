@@ -3,8 +3,8 @@
     <ConfirmDialog></ConfirmDialog>
     <DataTable :value="orderItems" dataKey="id" :filters="filters" responsiveLayout="scroll" :showAddButton="true" stripedRows class="p-datatable-sm">
       <template #header>
-        <div class="grid p-fluid">
-          <div class="col-12">
+        <div class="grid p-fluid align-items-center">
+          <div class="col-10">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
               <InputText v-model="filters['global'].value" placeholder="Suchen..." @keydown.esc="filters['global'].value = null" />
@@ -12,6 +12,9 @@
                 <i class="pi pi-times"></i>
               </span>
             </span>
+          </div>
+          <div class="col-2 text-right">
+            <Button icon="pi pi-plus" class="p-button-rounded" @click="modal = true" />
           </div>
         </div>
       </template>
@@ -30,7 +33,7 @@
       <template #empty>Keine Einträge</template>
     </DataTable>
 
-    <Dialog v-model:visible="modal" :modal="true" :dismissableMask="true" :showHeader="false">
+    <Dialog v-model:visible="modal" :modal="true" :dismissableMask="true" :showHeader="false" @hide="resetModal">
       <div class="p-fluid">
         <div class="field mt-5">
           <InputText id="name" v-model.trim="orderItem.description" required="true" autofocus />
@@ -40,7 +43,7 @@
         </div>
       </div>
       <div class="flex justify-content-end">
-        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary mr-2" @click="modal = false" />
+        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary mr-2" @click="resetModal" />
         <Button icon="pi pi-check" class="p-button-rounded p-button-success" @click="saveOrderItem" />
       </div>
     </Dialog>
@@ -48,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from "vue";
+import { defineComponent, PropType, ref, watch } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { OrderItemsService, service_OrderItem } from "@/services/openapi";
 import InputText from "primevue/inputtext";
@@ -65,27 +68,34 @@ import ConfirmDialog from "primevue/confirmdialog";
 export default defineComponent({
   name: "OrderItemList",
   components: { BaseCard, InputText, DataTable, Column, Button, Dialog, InputNumber, ConfirmDialog },
-  props: { orderItems: { type: Array as PropType<service_OrderItem[]>, default: () => [] } },
-  emits: ["orderItemChanged", "orderItemDeleted"],
-  setup(_, { emit }) {
+  props: {
+    orderItems: { type: Array as PropType<service_OrderItem[]>, default: () => [] },
+    emptyOrderItem: { type: Object as PropType<service_OrderItem>, default: () => ({}) },
+  },
+  emits: ["orderItemChanged", "orderItemDeleted", "orderItemCreated"],
+  setup(props, { emit }) {
     const confirm = useConfirm();
     const modal = ref(false);
     const filters = ref({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
-    const orderItem = ref<service_OrderItem>();
+    const orderItem = ref<service_OrderItem>({ ...props.emptyOrderItem });
     function editOrderItem(item: service_OrderItem) {
       orderItem.value = { ...item };
       modal.value = true;
     }
+    watch(props.emptyOrderItem, () => resetModal());
+
     function saveOrderItem() {
-      orderItem.value &&
+      if (orderItem.value.id) {
         OrderItemsService.putOrdersItems(orderItem.value)
           .then((res) => emit("orderItemChanged", res))
-          .finally(() => {
-            modal.value = false;
-            orderItem.value = undefined;
-          });
+          .finally(() => resetModal());
+      } else {
+        OrderItemsService.postOrdersItems(orderItem.value)
+          .then((res) => emit("orderItemCreated", res))
+          .finally(() => resetModal());
+      }
     }
 
     function confirmDeleteProduct(item: service_OrderItem) {
@@ -97,14 +107,17 @@ export default defineComponent({
           item.id &&
             OrderItemsService.deleteOrdersItems(item.id)
               .then(() => emit("orderItemDeleted", item))
-              .finally(() => {
-                modal.value = false;
-                orderItem.value = undefined;
-              });
+              .finally(() => resetModal());
         },
       });
     }
-    return { filters, convertToEur, editOrderItem, saveOrderItem, confirmDeleteProduct, modal, orderItem };
+
+    function resetModal() {
+      modal.value = false;
+      orderItem.value = { ...props.emptyOrderItem };
+    }
+
+    return { filters, convertToEur, editOrderItem, saveOrderItem, confirmDeleteProduct, modal, orderItem, resetModal };
   },
 });
 </script>
