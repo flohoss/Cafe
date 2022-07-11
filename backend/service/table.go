@@ -48,7 +48,9 @@ func UpdateTable(table *Table, total float64, count uint64) error {
 	return result.Error
 }
 
-func DeleteTable(table Table) error {
+func DeleteLatestTable() error {
+	var table Table
+	config.C.Database.ORM.Last(&table)
 	table.Total = 0
 	table.OrderCount = 0
 	config.C.Database.ORM.Save(&table)

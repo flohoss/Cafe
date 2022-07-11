@@ -92,25 +92,17 @@ func (a *Api) updateTable(c *gin.Context) {
 }
 
 // @Schemes
-// @Summary delete a table
-// @Description deletes a table from the database
+// @Summary delete the latest table
+// @Description deletes the latest table from the database
 // @Tags tables
 // @Produce json
-// @Param id path int true "Table ID"
 // @Success 200 "OK"
 // @Failure 401 "Unauthorized"
-// @Failure 404 "Not Found"
 // @Failure 500 {object} errorResponse "Cannot delete table"
-// @Router /tables/{id} [delete]
+// @Router /tables [delete]
 // @Security Cookie
 func (a *Api) deleteTable(c *gin.Context) {
-	id := c.Param("id")
-	table, err := service.DoesTableExist(id)
-	if err != nil {
-		c.Status(http.StatusNotFound)
-		return
-	}
-	err = service.DeleteTable(table)
+	err := service.DeleteLatestTable()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot delete table"})
 	} else {
