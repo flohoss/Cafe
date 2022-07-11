@@ -4,7 +4,7 @@
     <BottomNavigation>
       <template #left>
         <router-link to="/tables">
-          <Button label="Zurück" icon="pi pi-arrow-left" class="p-button-sm p-2" />
+          <Button icon="pi pi-arrow-left" />
         </router-link>
       </template>
       <template #middle>
@@ -15,7 +15,7 @@
       </template>
       <template #right>
         <router-link to="/bills">
-          <Button label="Abrechnen" icon="pi pi-money-bill" class="p-button-danger p-button-sm p-2" iconPos="right" />
+          <Button icon="pi pi-money-bill" class="p-button-danger" />
         </router-link>
       </template>
     </BottomNavigation>

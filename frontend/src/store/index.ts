@@ -28,12 +28,23 @@ export default createStore({
     setTables(state: AppStateModel, tables: service_Table[]) {
       state.tables = tables;
     },
+    popTables(state: AppStateModel) {
+      state.tables?.pop();
+    },
+    pushTable(state: AppStateModel, table: service_Table) {
+      state.tables?.push(table);
+    },
   },
   actions: {
-    // eslint-disable-next-line
     async getTables(context: any) {
       const tables: service_Table[] | null = await TablesService.getTables();
       context.commit("setTables", tables);
+    },
+    removeLastTable(context: any) {
+      context.commit("popTables");
+    },
+    addTable(context: any, table: service_Table) {
+      context.commit("pushTable", table);
     },
   },
   modules: {},

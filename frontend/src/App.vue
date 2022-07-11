@@ -59,7 +59,7 @@ body {
 
 html,
 body {
-  font-size: 1em;
+  font-size: 1.2em;
   font-family: "roboto", sans-serif !important;
 }
 .container {
@@ -80,6 +80,10 @@ body {
 @media (min-width: 768px) {
   .container {
     max-width: 720px;
+  }
+  html,
+  body {
+    font-size: 1em;
   }
 }
 @media (min-width: 992px) {

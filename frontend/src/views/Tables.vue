@@ -1,8 +1,9 @@
 <template>
-  <BaseCard v-if="tables">
-    <div class="grid">
-      <TableCard v-for="table in tables" v-bind:key="table.id" :table="table" class="col-12 md:col-6" />
-    </div>
+  <BaseCard v-if="tables.length !== 0">
+    <TableCard v-for="table in tables" v-bind:key="table.id" :table="table" />
+  </BaseCard>
+  <BaseCard v-else class="text-center">
+    <div class="p-card w-full p-3">Keine Tische angelegt</div>
   </BaseCard>
 </template>
 
@@ -24,5 +25,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style></style>
