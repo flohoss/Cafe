@@ -5,8 +5,8 @@
     </template>
     <template #end>
       <div v-if="tablePath">
-        <Button :disabled="isLoading" icon="pi pi-minus" class="p-button-danger mr-2" @click="removeTable" />
-        <Button :disabled="isLoading" icon="pi pi-plus" class="p-button-success" @click="addTable" />
+        <Button :disabled="isLoading" icon="pi pi-minus" class="p-button-danger p-button-rounded mr-2" @click="removeTable" />
+        <Button :disabled="isLoading" icon="pi pi-plus" class="p-button-success p-button-rounded" @click="addTable" />
       </div>
       <ul v-else>
         <li class="p-menuitem">

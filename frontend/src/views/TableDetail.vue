@@ -6,18 +6,18 @@
     <BottomNavigation>
       <template #left>
         <router-link to="/tables">
-          <Button icon="pi pi-arrow-left" />
+          <Button icon="pi pi-arrow-left" class="p-button-rounded" />
         </router-link>
       </template>
       <template #middle>
         <div class="flex flex-column align-items-center">
-          <div class="font-bold">Tisch {{ table.id }}</div>
-          <div>{{ convertToEur(table.total) }}</div>
+          <div class="text-sm">Tisch {{ table.id }}</div>
+          <div class="font-bold">{{ convertToEur(table.total) }}</div>
         </div>
       </template>
       <template #right>
         <router-link to="/bills">
-          <Button icon="pi pi-money-bill" class="p-button-danger" />
+          <Button icon="pi pi-money-bill" class="p-button-danger p-button-rounded" />
         </router-link>
       </template>
     </BottomNavigation>

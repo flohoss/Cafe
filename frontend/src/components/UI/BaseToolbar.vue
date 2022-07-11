@@ -5,7 +5,7 @@
       <div class="font-bold">{{ title }}</div>
     </template>
     <template #end>
-      <Button :disabled="isLoading" icon="pi pi-plus" class="p-button-success" @click="$emit('click')" />
+      <Button :disabled="isLoading" icon="pi pi-plus" class="p-button-success p-button-rounded" @click="$emit('click')" />
     </template>
   </Toolbar>
 </template>
