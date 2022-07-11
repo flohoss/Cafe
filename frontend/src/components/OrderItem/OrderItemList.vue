@@ -33,7 +33,7 @@
       <template #empty>Keine Einträge</template>
     </DataTable>
 
-    <Dialog v-model:visible="modal" :modal="true" :dismissableMask="true" :showHeader="false" @hide="resetModal">
+    <Dialog v-model:visible="modal" :modal="true" :showHeader="false" @hide="resetModal">
       <div class="p-fluid">
         <div class="field mt-5">
           <InputText id="name" v-model.trim="orderItem.description" required="true" autofocus />
@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="flex justify-content-end">
-        <Button icon="pi pi-times" class="p-button-rounded p-button-secondary mr-2" @click="resetModal" />
+        <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-secondary mr-2" @click="resetModal" />
         <Button icon="pi pi-check" class="p-button-rounded p-button-success" @click="saveOrderItem" />
       </div>
     </Dialog>

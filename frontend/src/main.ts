@@ -30,7 +30,51 @@ TablesService.getTables()
     const app = createApp(App);
 
     app.use(router);
-    app.use(PrimeVue);
+    app.use(PrimeVue, {
+      locale: {
+        startsWith: "Beginnt mit",
+        contains: "enthält",
+        notContains: "enthält nicht",
+        endsWith: "endet mit",
+        equals: "entspricht",
+        notEquals: "entspricht nicht",
+        noFilter: "Kein Filter",
+        lt: "Weniger als",
+        lte: "Weniger als oder gleich viel",
+        gt: "Mehr als",
+        gte: "Mehr als oder gleich viel",
+        dateIs: "Datum ist",
+        dateIsNot: "Datum ist nicht",
+        dateBefore: "Datum liegt vor",
+        dateAfter: "Datum liegt nach",
+        clear: "Löschen",
+        apply: "Anwenden",
+        matchAll: "Alle abgleichen",
+        matchAny: "Mit jedem abgleichen",
+        addRule: "Regel hinzufügen",
+        removeRule: "Regel entfernen",
+        accept: "Ja",
+        reject: "Nein",
+        choose: "Auswählen",
+        upload: "Hochladen",
+        cancel: "Abbrechen",
+        dayNames: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"],
+        dayNamesShort: ["Son", "Mon", "Die", "Mit", "Don", "Fre", "Sam"],
+        dayNamesMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+        monthNames: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+        monthNamesShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+        today: "Heute",
+        weekHeader: "Wk",
+        firstDayOfWeek: 1,
+        dateFormat: "dd.mm.yy",
+        weak: "Schwach",
+        medium: "Medium",
+        strong: "Stark",
+        passwordPrompt: "Passwort eingeben",
+        emptyFilterMessage: "Keine Ergebnisse gefunden",
+        emptyMessage: "Keine verfügbaren Optionen",
+      },
+    });
     app.use(store);
     app.use(ConfirmationService);
     app.component("font-awesome-icon", FontAwesomeIcon);
