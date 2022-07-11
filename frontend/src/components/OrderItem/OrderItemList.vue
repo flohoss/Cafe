@@ -61,12 +61,13 @@ import { FilterMatchMode } from "primevue/api";
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import Button from "primevue/button";
-import { convertToEur } from "@/utils";
+import { convertToEur, errorToast } from "@/utils";
 import Dialog from "primevue/dialog";
 import InputNumber from "primevue/inputnumber";
 import { useConfirm } from "primevue/useconfirm";
 import ConfirmDialog from "primevue/confirmdialog";
 import BaseItem from "@/components/UI/BaseItem.vue";
+import { useToast } from "primevue/usetoast";
 
 export default defineComponent({
   name: "OrderItemList",
@@ -77,6 +78,7 @@ export default defineComponent({
   },
   emits: ["orderItemChanged", "orderItemDeleted", "orderItemCreated"],
   setup(props, { emit }) {
+    const toast = useToast();
     const confirm = useConfirm();
     const modal = ref(false);
     const filters = ref({
@@ -93,6 +95,7 @@ export default defineComponent({
       if (orderItem.value.id) {
         OrderItemsService.putOrdersItems(orderItem.value)
           .then((res) => emit("orderItemChanged", res))
+          .catch((err) => errorToast(toast, err.body.error))
           .finally(() => resetModal());
       } else {
         OrderItemsService.postOrdersItems(orderItem.value)

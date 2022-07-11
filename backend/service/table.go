@@ -1,6 +1,7 @@
 package service
 
 import (
+	"cafe/api"
 	"cafe/config"
 	"fmt"
 	"gorm.io/plugin/soft_delete"
@@ -18,7 +19,7 @@ func DoesTableExist(id string) (Table, error) {
 	var table Table
 	result := config.C.Database.ORM.Limit(1).Find(&table, id)
 	if result.RowsAffected == 0 {
-		return table, fmt.Errorf("table not found")
+		return table, fmt.Errorf(api.CannotFind.String())
 	}
 	return table, nil
 }

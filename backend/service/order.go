@@ -1,6 +1,7 @@
 package service
 
 import (
+	"cafe/api"
 	"cafe/config"
 	"fmt"
 	"gorm.io/gorm"
@@ -57,34 +58,37 @@ func DoesOrderItemExist(id string) (OrderItem, error) {
 	var orderItem OrderItem
 	result := config.C.Database.ORM.Limit(1).Find(&orderItem, id)
 	if result.RowsAffected == 0 {
-		return orderItem, fmt.Errorf("table not found")
+		return orderItem, fmt.Errorf(api.CannotFind.String())
 	}
 	return orderItem, nil
 }
 
-func GetAllOrders(table string, itemType string) ([]Order, error) {
+func GetAllOrders(table string, itemType string) []Order {
 	var orders []Order
-	err := config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Joins("Table").Select("table_id", "order_item_id", "count(order_item_id) as total").Group("order_item_id").Where("table_id = ? AND item_type = ?", table, itemType).Order("description").Find(&orders).Error
-	return orders, err
+	config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Joins("Table").Select("table_id", "order_item_id", "count(order_item_id) as total").Group("order_item_id").Where("table_id = ? AND item_type = ?", table, itemType).Order("description").Find(&orders)
+	return orders
 }
 
 func CreateOrder(order *Order) error {
 	err := config.C.Database.ORM.Create(order).Error
 	if err != nil {
-		return fmt.Errorf("cannot create order")
+		return fmt.Errorf(api.CannotCreate.String())
 	}
-	err = config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").First(order).Error
-	return err
+	config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").First(order)
+	return nil
 }
 
 func DeleteOrder(tableId string, orderItemId string) error {
 	var order Order
 	err := config.C.Database.ORM.Where("table_id = ? AND order_item_id = ?", tableId, orderItemId).First(&order).Error
 	if err != nil {
-		return fmt.Errorf("cannot delete order")
+		return fmt.Errorf(api.CannotFind.String())
 	}
 	err = config.C.Database.ORM.Delete(&order).Error
-	return err
+	if err != nil {
+		return fmt.Errorf(api.CannotDelete.String())
+	}
+	return nil
 }
 
 func GetOrderItemsForType(itemType string) []OrderItem {
@@ -94,16 +98,27 @@ func GetOrderItemsForType(itemType string) []OrderItem {
 }
 
 func CreateOrderItem(oderItem *OrderItem) error {
-	result := config.C.Database.ORM.Create(oderItem)
-	return result.Error
+	err := config.C.Database.ORM.Create(oderItem).Error
+	if err != nil {
+		return fmt.Errorf(api.CannotCreate.String())
+	}
+	return nil
 }
 
 func UpdateOrderItem(old OrderItem, new OrderItem) error {
-	result := config.C.Database.ORM.First(&old).Updates(&new)
-	return result.Error
+	var order Order
+	result := config.C.Database.ORM.Where("order_item_id = ?", old.ID).Limit(1).Find(&order)
+	if result.RowsAffected != 0 {
+		return fmt.Errorf(api.StillInUse.String())
+	}
+	config.C.Database.ORM.First(&old).Updates(&new)
+	return nil
 }
 
 func DeleteOrderItem(oderItem *OrderItem) error {
-	result := config.C.Database.ORM.Delete(oderItem)
-	return result.Error
+	err := config.C.Database.ORM.Delete(oderItem).Error
+	if err != nil {
+		return fmt.Errorf(api.CannotDelete.String())
+	}
+	return nil
 }

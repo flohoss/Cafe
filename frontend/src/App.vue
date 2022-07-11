@@ -1,4 +1,5 @@
 <template>
+  <Toast style="width: 90vw" position="bottom-right" group="br" />
   <TheNavigation @logout="logout" />
   <router-view v-slot="{ Component }" mode="out-in">
     <transition>
@@ -13,10 +14,11 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { AuthorizationService } from "@/services/openapi";
 import TheNavigation from "@/components/UI/TheNavigation.vue";
+import Toast from "primevue/toast";
 
 export default defineComponent({
   name: "App",
-  components: { TheNavigation },
+  components: { TheNavigation, Toast },
   setup() {
     const router = useRouter();
     const store = useStore();

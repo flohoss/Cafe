@@ -5,6 +5,7 @@ import router from "./router";
 import store from "./store";
 import PrimeVue from "primevue/config";
 import ConfirmationService from "primevue/confirmationservice";
+import ToastService from "primevue/toastservice";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCheese } from "@fortawesome/free-solid-svg-icons";
 import { faChampagneGlasses } from "@fortawesome/free-solid-svg-icons";
@@ -77,6 +78,7 @@ TablesService.getTables()
     });
     app.use(store);
     app.use(ConfirmationService);
+    app.use(ToastService);
     app.component("font-awesome-icon", FontAwesomeIcon);
 
     router.isReady().then(() => {
