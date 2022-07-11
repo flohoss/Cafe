@@ -5,7 +5,7 @@
       <DataTable :value="orderItems" dataKey="id" :filters="filters" responsiveLayout="scroll" :showAddButton="true" stripedRows class="p-datatable-sm">
         <template #header>
           <div class="grid p-fluid align-items-center">
-            <div class="col-10">
+            <div class="col-9">
               <span class="p-input-icon-left">
                 <i class="pi pi-search" />
                 <InputText v-model="filters['global'].value" placeholder="Suchen..." @keydown.esc="filters['global'].value = null" />
@@ -14,7 +14,7 @@
                 </span>
               </span>
             </div>
-            <div class="col-2 text-right">
+            <div class="col-3 text-right">
               <Button icon="pi pi-plus" class="p-button-rounded" @click="modal = true" />
             </div>
           </div>
@@ -35,7 +35,7 @@
       </DataTable>
     </div>
 
-    <Dialog v-model:visible="modal" :modal="true" :showHeader="false" @hide="resetModal">
+    <Dialog position="top" v-model:visible="modal" :modal="true" :showHeader="false" @hide="resetModal" style="min-width: 50vw">
       <div class="p-fluid">
         <div class="field mt-5">
           <InputText id="name" v-model.trim="orderItem.description" required="true" autofocus @keydown.enter="saveOrderItem" />
@@ -74,6 +74,7 @@ export default defineComponent({
   props: {
     orderItems: { type: Array as PropType<service_OrderItem[]>, default: () => [] },
     emptyOrderItem: { type: Object as PropType<service_OrderItem>, default: () => ({}) },
+    title: { type: String, default: "" },
   },
   emits: ["orderItemChanged", "orderItemDeleted", "orderItemCreated"],
   setup(props, { emit }) {

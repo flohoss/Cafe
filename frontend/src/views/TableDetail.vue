@@ -18,7 +18,7 @@
       @incrementOrder="(order) => incrementOrder(order)"
       @decrementOrder="(order) => decrementOrder(order)"
     />
-    <Dialog v-model:visible="modal" :modal="true" :showHeader="false">
+    <Dialog position="top" v-model:visible="modal" :modal="true" :showHeader="false" style="min-width: 50vw">
       <div class="p-fluid">
         <Listbox
           class="mt-1"

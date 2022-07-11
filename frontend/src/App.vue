@@ -46,23 +46,20 @@ export default defineComponent({
 .router-link-active {
   background-color: var(--surface-b);
 }
-
 .overflow-ellipsis {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 body {
   margin: 0.2rem;
   padding: 0.2rem;
   background-color: var(--surface-b);
 }
-
 html,
 body,
 .p-component {
-  font-size: 1rem !important;
+  font-size: 1.2rem !important;
   font-family: "roboto", sans-serif !important;
 }
 .p-button {
@@ -77,7 +74,6 @@ body,
   margin-right: auto;
   margin-left: auto;
 }
-
 @media (min-width: 576px) {
   .container {
     max-width: 540px;
@@ -87,13 +83,11 @@ body,
   .container {
     max-width: 720px;
   }
-  .p-component {
-    font-size: 1.2rem !important;
-    font-family: "roboto", sans-serif !important;
-  }
   html,
-  body {
-    font-size: 1em;
+  body,
+  .p-component {
+    font-size: 1.1rem !important;
+    font-family: "roboto", sans-serif !important;
   }
 }
 @media (min-width: 992px) {
