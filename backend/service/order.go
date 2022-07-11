@@ -55,9 +55,9 @@ func DeleteOrder(order *Order) error {
 	return result.Error
 }
 
-func GetAllOrderItems() []OrderItem {
+func GetOrderItemsForType(itemType string) []OrderItem {
 	var orderItems []OrderItem
-	config.C.Database.ORM.Find(&orderItems)
+	config.C.Database.ORM.Order("description").Where("item_type = ?", ParseItemType(itemType)).Find(&orderItems)
 	return orderItems
 }
 

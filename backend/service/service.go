@@ -12,6 +12,17 @@ const (
 	Drink
 )
 
+func ParseItemType(itemType string) ItemType {
+	switch itemType {
+	case "0":
+		return Food
+	case "1":
+		return Drink
+	default:
+		return Food
+	}
+}
+
 func migrateHelper(i interface{}, name string) {
 	err := config.C.Database.ORM.AutoMigrate(i)
 	if err != nil {

@@ -2,7 +2,6 @@ package api
 
 import (
 	"cafe/service"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -88,8 +87,7 @@ func (a *Api) deleteOrder(c *gin.Context) {
 // @Security Cookie
 func (a *Api) getOrderItems(c *gin.Context) {
 	orderType := c.Query("type")
-	fmt.Println(orderType)
-	c.JSON(http.StatusOK, service.GetAllOrderItems())
+	c.JSON(http.StatusOK, service.GetOrderItemsForType(orderType))
 }
 
 // @Schemes
