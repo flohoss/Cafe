@@ -7,10 +7,11 @@ import (
 
 type (
 	Order struct {
-		ID       uint64 `gorm:"primaryKey" json:"id" validate:"optional"`
-		TableID  uint64 `json:"table_id" validate:"required"`
-		ItemID   uint64 `json:"item_id" validate:"required"`
-		IsServed bool   `json:"is_served" default:"false" validate:"required"`
+		ID          uint64    `gorm:"primaryKey" json:"id" validate:"optional"`
+		TableID     uint64    `json:"table_id" validate:"required"`
+		OrderItemID uint64    `json:"order_item_id" validate:"required"`
+		OrderItem   OrderItem `json:"order_item" validate:"required"`
+		IsServed    bool      `json:"is_served" default:"false" validate:"required"`
 	}
 
 	OrderItem struct {
@@ -39,10 +40,10 @@ func DoesOrderItemExist(id string) (OrderItem, error) {
 	return orderItem, nil
 }
 
-func GetAllOrders(table string) []Order {
+func GetAllOrders(table string, itemType string) ([]Order, error) {
 	var orders []Order
-	config.C.Database.ORM.Where("table_id = ?", table).Find(&orders)
-	return orders
+	err := config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Where("table_id = ? AND item_type = ?", table, itemType).Find(&orders).Error
+	return orders, err
 }
 
 func CreateOrder(order *Order) error {

@@ -45,6 +45,10 @@ const orderItemStore = {
     },
   },
   actions: {
+    async getAllOrderItems(context: any) {
+      await context.dispatch("getOrderItems", ItemType.Drink);
+      await context.dispatch("getOrderItems", ItemType.Food);
+    },
     async getOrderItems(context: any, orderType: ItemType) {
       const orderTypeArray = context.getters.getOrderItems;
       if (!orderTypeArray.get(orderType)) {

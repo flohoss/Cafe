@@ -13,13 +13,19 @@ import (
 // @Tags orders
 // @Produce json
 // @Param table query int true "Table ID"
+// @Param type query int true "ItemType"
 // @Success 200 {array} service.Order
 // @Failure 401 "Unauthorized"
 // @Router /orders [get]
 // @Security Cookie
 func (a *Api) getOrders(c *gin.Context) {
 	table := c.Query("table")
-	c.JSON(http.StatusOK, service.GetAllOrders(table))
+	orderType := c.Query("type")
+	orders, err := service.GetAllOrders(table, orderType)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot get orders"})
+	}
+	c.JSON(http.StatusOK, orders)
 }
 
 // @Schemes
@@ -43,7 +49,7 @@ func (a *Api) createOrder(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errorResponse{"Missing query parameter"})
 		return
 	}
-	order := service.Order{TableID: table, ItemID: item, IsServed: false}
+	order := service.Order{TableID: table, OrderItemID: item, IsServed: false}
 	err := service.CreateOrder(&order)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot create order"})

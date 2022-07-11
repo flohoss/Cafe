@@ -1,9 +1,9 @@
 <template>
   <BaseCard>
     <BaseToolbar title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" />
-    <BaseItem>{{ orders }}</BaseItem>
+    <BaseItem>{{ foodOrders }}</BaseItem>
     <BaseToolbar title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" />
-    <BaseItem>{{ orders }}</BaseItem>
+    <BaseItem>{{ drinkOrders }}</BaseItem>
     <Dialog v-model:visible="modal" :modal="true" :showHeader="false">
       <div class="p-fluid">
         <Listbox
@@ -49,7 +49,7 @@
 import { computed, defineComponent, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
-import { OrdersService, service_Table } from "@/services/openapi";
+import { OrdersService, service_Order, service_Table } from "@/services/openapi";
 import BottomNavigation from "@/components/UI/BottomNavigation.vue";
 import Button from "primevue/button";
 import { convertToEur, ItemType } from "@/utils";
@@ -71,13 +71,18 @@ export default defineComponent({
     const table = tables.value.find((table: service_Table) => table.id === parseInt(props.id));
     const orderItems = computed(() => store.getters.getOrderItems);
     const options = ref();
-    const orders = ref();
+    const drinkOrders = ref();
+    const foodOrders = ref();
 
-    OrdersService.getOrders(table.id).then((res) => (orders.value = res));
+    getData();
+    async function getData() {
+      await store.dispatch("getAllOrderItems");
+      drinkOrders.value = await OrdersService.getOrders(table.id, ItemType.Drink);
+      foodOrders.value = await OrdersService.getOrders(table.id, ItemType.Food);
+    }
 
     async function addBeverage(type: ItemType) {
       modal.value = true;
-      await store.dispatch("getOrderItems", type);
       options.value = orderItems.value.get(type);
     }
 
@@ -88,7 +93,7 @@ export default defineComponent({
       });
     }
 
-    return { modal, selected, options, table, isLoading, convertToEur, addBeverage, ItemType, addOrder, orders };
+    return { modal, selected, options, table, isLoading, convertToEur, addBeverage, ItemType, addOrder, foodOrders, drinkOrders };
   },
 });
 </script>
