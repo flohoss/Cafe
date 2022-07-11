@@ -79,7 +79,7 @@ export default defineComponent({
 
 <style scoped>
 .bg-color {
-  background-color: var(--surface-a);
+  background-color: var(--surface-b);
   color: var(--text-color);
 }
 .h-2-5rem {

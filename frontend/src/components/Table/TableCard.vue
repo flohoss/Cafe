@@ -1,7 +1,7 @@
 <template>
   <router-link class="no-underline" :to="'/tables/' + table.id">
     <BaseItem>
-      <Badge v-if="table.order_count" class="topRight text-sm">{{ table.order_count }}</Badge>
+      <Badge v-if="table.order_count" :value="table.order_count" class="topRight text-sm" />
       <div class="flex justify-content-between align-items-end">
         <div>
           <div class="font-bold mb-2">Tisch {{ table.id }}</div>
@@ -39,9 +39,6 @@ export default defineComponent({
 .topRight {
   position: absolute;
   top: -0.2rem;
-  right: -0.3rem;
-  color: var(--primary-color-text);
-  background-color: var(--primary-color);
-  border-radius: 50%;
+  right: 0.3rem;
 }
 </style>

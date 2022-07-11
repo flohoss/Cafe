@@ -29,7 +29,7 @@ export default defineComponent({
 
 <style scoped>
 .bg-color {
-  background-color: var(--surface-c);
+  background-color: var(--surface-b);
   color: var(--text-color);
 }
 </style>
