@@ -27,6 +27,7 @@ func (a *Api) setupRouter() {
 			orderGroup.GET("", a.getOrders)
 			orderGroup.POST("", a.createOrder)
 			orderGroup.DELETE("", a.deleteOrder)
+			orderGroup.GET("/ws", a.serveWs)
 			orderItemGroup := orderGroup.Group("/items")
 			{
 				orderItemGroup.GET("", a.getOrderItems)

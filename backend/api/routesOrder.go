@@ -2,8 +2,11 @@ package api
 
 import (
 	"cafe/config"
+	"cafe/hub"
 	"cafe/service"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
 )
@@ -13,20 +16,20 @@ import (
 // @Description gets all orders as array
 // @Tags orders
 // @Produce json
-// @Param table query int true "Table ID"
+// @Param table query int false "Table ID"
 // @Success 200 {array} service.Order
-// @Failure 400 {object} errorResponse
 // @Failure 401 "Unauthorized"
 // @Router /orders [get]
 // @Security Cookie
 func (a *Api) getOrders(c *gin.Context) {
-	table := c.Query("table")
-	if table == "" {
-		c.JSON(http.StatusBadRequest, errorResponse{config.MissingInformation.String()})
+	table, present := c.GetQuery("table")
+	var orders []service.Order
+	if !present {
+		orders = service.GetAllOrders()
 	} else {
-		orders := service.GetAllOrdersForTable(table)
-		c.JSON(http.StatusOK, orders)
+		orders = service.GetAllOrdersForTable(table)
 	}
+	c.JSON(http.StatusOK, orders)
 }
 
 // @Schemes
@@ -55,6 +58,7 @@ func (a *Api) createOrder(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{err.Error()})
 	} else {
+		service.LiveCh <- order
 		c.JSON(http.StatusCreated, order)
 	}
 }
@@ -84,6 +88,37 @@ func (a *Api) deleteOrder(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, errorResponse{err.Error()})
 	} else {
 		c.Status(http.StatusOK)
+	}
+}
+
+func (a *Api) serveWs(c *gin.Context) {
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		logrus.WithField("error", err).Warning("Cannot upgrade websocket")
+		return
+	}
+	messageChan := make(hub.NotifierChan)
+	a.Hub.NewClients <- messageChan
+	defer func() {
+		a.Hub.ClosingClients <- messageChan
+		conn.Close()
+	}()
+	go readPump(conn)
+	for {
+		select {
+		case msg, ok := <-messageChan:
+			if !ok {
+				err := conn.WriteMessage(websocket.CloseMessage, []byte{})
+				if err != nil {
+					return
+				}
+				return
+			}
+			err := conn.WriteJSON(msg)
+			if err != nil {
+				return
+			}
+		}
 	}
 }
 

@@ -1,40 +1,40 @@
 <template>
-  <BaseItem v-if="order.order_item.item_type === itemType" paddingRight="1">
-    <div class="flex flex-column overflow-hidden">
-      <div class="white-space-nowrap overflow-hidden text-overflow-ellipsis">{{ order.order_item.description }}</div>
-      <div class="flex align-items-baseline justify-content-between">
-        <div class="text-sm">
-          {{ convertToEur(order.order_item.price) }}
-          <span class="text-sm" v-if="order.order_item.price !== order.total">({{ convertToEur(order.total) }})</span>
+  <BaseItem paddingRight="1">
+    <div class="flex justify-content-between overflow-hidden">
+      <div class="flex flex-column align-items-start">
+        <div class="white-space-nowrap overflow-hidden text-overflow-ellipsis font-bold">{{ order.order_item.description }}</div>
+        <div class="flex align-items-center mt-1">
+          <Badge severity="danger" class="text-sm">Tisch {{ order.table_id }}</Badge>
+          <Badge severity="info" class="text-sm ml-2">{{ time }} Uhr</Badge>
         </div>
-        <div class="flex align-items-center">
-          <Button :disabled="isDisabled" icon="pi pi-minus" class="p-button-rounded p-button-text p-button-danger" @click="$emit('decrementOrder', order)" />
-          <div class="mx-1 font-bold">{{ order.order_count }}</div>
-          <Button :disabled="isDisabled" icon="pi pi-plus" class="p-button-rounded p-button-text p-button-success" @click="$emit('incrementOrder', order)" />
-        </div>
+      </div>
+      <div class="flex align-items-center">
+        <Button :disabled="isDisabled" icon="pi pi-check" class="p-button-rounded p-button-success" @click="$emit('orderDone', order)" />
       </div>
     </div>
   </BaseItem>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { service_Order } from "@/services/openapi";
 import BaseItem from "@/components/UI/BaseItem.vue";
 import { convertToEur, ItemType } from "@/utils";
 import Button from "primevue/button";
+import moment from "moment";
+import Badge from "primevue/badge";
 
 export default defineComponent({
   name: "OrderEntry",
-  components: { BaseItem, Button },
+  components: { BaseItem, Button, Badge },
   props: {
     order: { type: Object as PropType<service_Order>, required: true },
     isDisabled: { type: Boolean, default: false },
-    itemType: { type: Number, required: true },
   },
-  emits: ["decrementOrder", "incrementOrder"],
-  setup() {
-    return { convertToEur, ItemType };
+  emits: ["orderDone"],
+  setup(props) {
+    const time = computed(() => props.order.updated_at && moment.unix(props.order.updated_at).format("DD.MM HH:mm"));
+    return { convertToEur, ItemType, time };
   },
 });
 </script>

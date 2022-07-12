@@ -11,6 +11,7 @@ type (
 		TableID     uint64    `json:"table_id" validate:"required"`
 		OrderItemID uint64    `json:"order_item_id" validate:"required"`
 		OrderItem   OrderItem `json:"order_item" validate:"required"`
+		UpdatedAt   int64     `json:"updated_at" validate:"optional"`
 		IsServed    bool      `json:"is_served" default:"false" validate:"required"`
 		Total       uint64    `json:"total" validate:"required"`
 		OrderCount  uint64    `json:"order_count" validate:"required"`
@@ -31,6 +32,12 @@ func DoesOrderItemExist(id string) (OrderItem, error) {
 		return orderItem, fmt.Errorf(config.CannotFind.String())
 	}
 	return orderItem, nil
+}
+
+func GetAllOrders() []Order {
+	var orders []Order
+	config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Where("is_served = ?", 0).Order("updated_at, table_id").Find(&orders)
+	return orders
 }
 
 func GetAllOrdersForTable(table string) []Order {

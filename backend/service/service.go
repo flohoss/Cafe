@@ -12,6 +12,8 @@ const (
 	Drink
 )
 
+var LiveCh chan Order
+
 func ParseItemType(itemType string) ItemType {
 	switch itemType {
 	case "0":
@@ -30,10 +32,11 @@ func migrateHelper(i interface{}, name string) {
 	}
 }
 
-func MigrateToDb() {
+func Initialize() {
 	migrateHelper(Table{}, "table")
 	migrateHelper(Order{}, "order")
 	migrateHelper(OrderItem{}, "orderItem")
 	migrateHelper(Bill{}, "bill")
 	migrateHelper(BillItem{}, "billItem")
+	LiveCh = make(chan Order)
 }

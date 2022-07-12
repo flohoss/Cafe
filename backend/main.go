@@ -11,6 +11,7 @@ func main() {
 		Auth: &config.C.Auth,
 	}
 	config.C.Database.Initialize(config.StorageDir)
-	service.MigrateToDb()
+	service.Initialize()
+	a.Hub.Initialize()
 	a.Run()
 }

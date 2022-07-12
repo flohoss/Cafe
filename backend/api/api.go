@@ -2,6 +2,7 @@ package api
 
 import (
 	"cafe/config"
+	"cafe/hub"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -10,6 +11,7 @@ import (
 
 type Api struct {
 	Router *gin.Engine
+	Hub    hub.Hub
 	Auth   *auth.Auth
 }
 

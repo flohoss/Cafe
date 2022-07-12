@@ -17,7 +17,7 @@ import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 
 export const API_ENDPOINT_URL = process.env.NODE_ENV === "production" ? window.origin + "/api" : "http://localhost:5000/api";
-export const WEBSOCKET_ENDPOINT_URL = API_ENDPOINT_URL.replace("http", "ws") + "/system/ws";
+export const WEBSOCKET_ENDPOINT_URL = API_ENDPOINT_URL.replace("http", "ws") + "/orders/ws";
 OpenAPI.BASE = API_ENDPOINT_URL;
 OpenAPI.WITH_CREDENTIALS = true;
 

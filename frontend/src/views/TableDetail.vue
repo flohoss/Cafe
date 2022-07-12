@@ -72,7 +72,7 @@ import { convertToEur, ItemType } from "@/utils";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import Listbox from "primevue/listbox";
 import Dialog from "primevue/dialog";
-import OrderEntry from "@/components/Order/OrderEntry.vue";
+import OrderEntry from "@/components/Table/OrderEntry.vue";
 
 export default defineComponent({
   name: "TableDetail",
