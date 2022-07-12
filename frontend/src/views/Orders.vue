@@ -1,6 +1,7 @@
 <template>
-  <BaseCard class="text-center">
-    <OrderEntry v-for="entry in orders" v-bind:key="entry.id" :order="entry" :isDisabled="isLoading" @oderDone="(order) => oderDone(order)" />
+  <BaseCard>
+    <div v-if="orders.length === 0" class="p-card w-full p-4 text-center">Keine offenen Bestellungen</div>
+    <OrderEntry v-else v-for="entry in orders" v-bind:key="entry.id" :order="entry" :isDisabled="isLoading" @orderDone="(order) => orderDone(order)" />
   </BaseCard>
 </template>
 
@@ -58,13 +59,15 @@ export default defineComponent({
 
     function sortOrders() {
       orders.value.sort((a, b) => (a.updated_at && b.updated_at ? a.updated_at - b.updated_at : 0));
-      orders.value.sort((a, b) => a.table_id - b.table_id);
     }
 
-    function oderDone(order: service_Order) {
-      console.log(order);
+    function orderDone(order: service_Order) {
+      order.is_served = true;
+      OrdersService.putOrders(order).then(() => {
+        orders.value = orders.value.filter((oldOrder) => oldOrder.id !== order.id);
+      });
     }
-    return { orders, ItemType, isLoading, oderDone };
+    return { orders, ItemType, isLoading, orderDone };
   },
 });
 </script>

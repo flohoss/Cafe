@@ -1,9 +1,7 @@
 <template>
-  <BaseCard v-if="tables.length !== 0">
-    <TableCard v-for="table in tables" v-bind:key="table.id" :table="table" />
-  </BaseCard>
-  <BaseCard v-else class="text-center">
-    <div class="p-card w-full p-3">Keine Tische angelegt</div>
+  <BaseCard>
+    <div v-if="tables.length === 0" class="p-card w-full p-4 text-center">Keine Tische</div>
+    <TableCard v-else v-for="table in tables" v-bind:key="table.id" :table="table" />
   </BaseCard>
 </template>
 

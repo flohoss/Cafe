@@ -34,9 +34,19 @@ func DoesOrderItemExist(id string) (OrderItem, error) {
 	return orderItem, nil
 }
 
-func GetAllOrders() []Order {
+func DoesOrderExist(id string) (Order, error) {
+	var order Order
+	result := config.C.Database.ORM.Limit(1).Find(&order, id)
+	if result.RowsAffected == 0 {
+		return order, fmt.Errorf(config.CannotFind.String())
+	}
+	return order, nil
+}
+
+func GetAllActiveOrders() []Order {
 	var orders []Order
-	config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Where("is_served = ?", 0).Order("updated_at, table_id").Find(&orders)
+	config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Where("is_served = ?", 0).Order("updated_at").Find(&orders)
+	fmt.Println(orders)
 	return orders
 }
 
@@ -64,6 +74,14 @@ func CreateOrder(order *Order) error {
 		return fmt.Errorf(config.CannotCreate.String())
 	}
 	config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").First(order)
+	return nil
+}
+
+func UpdateOrder(old *Order, new *Order) error {
+	err := config.C.Database.ORM.First(old).Updates(new).Error
+	if err != nil {
+		return fmt.Errorf(config.CannotUpdate.String())
+	}
 	return nil
 }
 

@@ -28,10 +28,14 @@
         <Column field="price" style="text-align: right">
           <template #body="slotProps">{{ convertToEur(slotProps.data.price) }}</template>
         </Column>
-        <Column class="flex justify-content-end flex-nowrap">
+        <Column class="flex align-items-center justify-content-end flex-nowrap">
           <template #body="slotProps">
-            <Button icon="pi pi-pencil" class="p-button-rounded p-button-success mr-1" @click="editOrderItem(slotProps.data)" />
-            <Button icon="pi pi-trash" class="p-button-rounded p-button-warning" @click="confirmDeleteProduct(slotProps.data)" />
+            <div class="btn success mr-2" @click="editOrderItem(slotProps.data)">
+              <i class="pi pi-pencil"></i>
+            </div>
+            <div class="btn danger" @click="confirmDeleteProduct(slotProps.data)">
+              <i class="pi pi-trash"></i>
+            </div>
           </template>
         </Column>
 
@@ -112,7 +116,7 @@ export default defineComponent({
       confirm.require({
         message: item.description + " löschen?",
         header: "Achtung",
-        icon: "pi pi-exclamation-triangle",
+        position: "top",
         accept: () => {
           item.id &&
             OrderItemsService.deleteOrdersItems(item.id)
@@ -149,6 +153,14 @@ export default defineComponent({
 </style>
 
 <style scoped>
+.danger {
+  cursor: pointer;
+  color: red;
+}
+.success {
+  cursor: pointer;
+  color: green;
+}
 .styling {
   cursor: pointer;
   color: gray;

@@ -20,25 +20,23 @@
       @incrementOrder="(order) => incrementOrder(order)"
       @decrementOrder="(order) => decrementOrder(order)"
     />
-    <Dialog position="top" v-model:visible="modal" :modal="true" :showHeader="false" style="min-width: 50vw">
+    <Sidebar v-model:visible="modal" :modal="true" :baseZIndex="10000" position="full">
       <div class="p-fluid">
         <Listbox
-          class="mt-1"
           v-model="selected"
           :options="options"
           :filter="true"
           optionLabel="description"
           dataKey="id"
           optionValue="id"
-          listStyle="max-height:70vh"
+          listStyle="max-height:80vh"
           filterPlaceholder="Suchen"
         />
       </div>
       <div class="flex justify-content-end mt-4">
-        <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-secondary mr-2" @click="modal = false" />
-        <Button icon="pi pi-check" class="p-button-rounded p-button-success" @click="postOrder" />
+        <Button label="Speichern" icon="pi pi-check" class="p-button p-button-success mr-3" @click="postOrder" />
       </div>
-    </Dialog>
+    </Sidebar>
 
     <BottomNavigation>
       <template #left>
@@ -71,12 +69,12 @@ import Button from "primevue/button";
 import { convertToEur, ItemType } from "@/utils";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import Listbox from "primevue/listbox";
-import Dialog from "primevue/dialog";
 import OrderEntry from "@/components/Table/OrderEntry.vue";
+import Sidebar from "primevue/sidebar";
 
 export default defineComponent({
   name: "TableDetail",
-  components: { OrderEntry, BaseToolbar, BottomNavigation, BaseCard, Button, Dialog, Listbox },
+  components: { OrderEntry, BaseToolbar, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
   props: { id: { type: String, default: "0" } },
   setup(props) {
     const isLoading = ref(false);
@@ -151,7 +149,11 @@ export default defineComponent({
 </script>
 
 <style>
-.p-dialog-content {
-  padding: 0.5rem !important;
+.p-sidebar-content {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.p-listbox {
+  border: 0 !important;
 }
 </style>

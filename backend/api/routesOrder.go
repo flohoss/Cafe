@@ -25,7 +25,7 @@ func (a *Api) getOrders(c *gin.Context) {
 	table, present := c.GetQuery("table")
 	var orders []service.Order
 	if !present {
-		orders = service.GetAllOrders()
+		orders = service.GetAllActiveOrders()
 	} else {
 		orders = service.GetAllOrdersForTable(table)
 	}
@@ -88,6 +88,40 @@ func (a *Api) deleteOrder(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, errorResponse{err.Error()})
 	} else {
 		c.Status(http.StatusOK)
+	}
+}
+
+// @Schemes
+// @Summary update an order
+// @Description updates an order with provided information
+// @Tags orders
+// @Accept json
+// @Produce json
+// @Param order body service.Order true "updated Order"
+// @Success 200	{object} service.Order
+// @Failure 400 {object} errorResponse
+// @Failure 401 "Unauthorized"
+// @Failure 404 "Not Found" errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /orders [put]
+// @Security Cookie
+func (a *Api) updateOrder(c *gin.Context) {
+	var newOrder service.Order
+	err := c.ShouldBindJSON(&newOrder)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, errorResponse{config.MissingInformation.String()})
+		return
+	}
+	oldOrder, err := service.DoesOrderExist(strconv.Itoa(int(newOrder.ID)))
+	if err != nil {
+		c.JSON(http.StatusNotFound, errorResponse{err.Error()})
+		return
+	}
+	err = service.UpdateOrder(&oldOrder, &newOrder)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, errorResponse{err.Error()})
+	} else {
+		c.JSON(http.StatusOK, newOrder)
 	}
 }
 
