@@ -9,8 +9,9 @@ import ToastService from "primevue/toastservice";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCheese } from "@fortawesome/free-solid-svg-icons";
 import { faChampagneGlasses } from "@fortawesome/free-solid-svg-icons";
+import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-library.add(faCheese, faChampagneGlasses);
+library.add(faCheese, faChampagneGlasses, faBoxOpen);
 
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";

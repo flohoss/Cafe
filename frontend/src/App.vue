@@ -48,9 +48,6 @@ export default defineComponent({
 .p-button.p-button-danger:enabled:active {
   box-shadow: none !important;
 }
-.router-link-active {
-  background-color: var(--surface-b);
-}
 .overflow-ellipsis {
   white-space: nowrap;
   overflow: hidden;

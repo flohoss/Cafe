@@ -1,6 +1,6 @@
 <template>
   <BaseCard>
-    <BaseToolbar :isDisabled="isLoading" title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" />
+    <BaseToolbar :isDisabled="isLoading" title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" btnIcon="plus" />
     <OrderEntry
       v-for="entry in orders"
       v-bind:key="entry.id"
@@ -10,7 +10,7 @@
       @incrementOrder="(order) => incrementOrder(order)"
       @decrementOrder="(order) => decrementOrder(order)"
     />
-    <BaseToolbar :isDisabled="isLoading" title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" />
+    <BaseToolbar :isDisabled="isLoading" title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" btnIcon="plus" />
     <OrderEntry
       v-for="entry in orders"
       v-bind:key="entry.id"

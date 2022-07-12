@@ -1,7 +1,17 @@
 <template>
   <BaseCard>
     <div v-if="orders.length === 0" class="p-card w-full p-4 text-center">Keine offenen Bestellungen</div>
-    <OrderEntry v-else v-for="entry in orders" v-bind:key="entry.id" :order="entry" :isDisabled="isLoading" @orderDone="(order) => orderDone(order)" />
+    <div v-else>
+      <BaseToolbar icon="fa-box-open" title="Offen" btnIcon="check" @click="checkAllOpenOrders" />
+      <OrderEntry
+        v-for="entry in orders"
+        v-bind:key="entry.id"
+        :isServed="entry.is_served === false"
+        :order="entry"
+        :isDisabled="isLoading"
+        @orderDone="(order) => orderDone(order)"
+      />
+    </div>
   </BaseCard>
 </template>
 
@@ -10,13 +20,16 @@ import { defineComponent, onUnmounted, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { OrdersService, service_Order } from "@/services/openapi";
 import OrderEntry from "@/components/Order/OrderEntry.vue";
-import { ItemType } from "@/utils";
+import { errorToast, ItemType } from "@/utils";
 import { WEBSOCKET_ENDPOINT_URL } from "@/main";
+import BaseToolbar from "@/components/UI/BaseToolbar.vue";
+import { useToast } from "primevue/usetoast";
 
 export default defineComponent({
   name: "OrderView",
-  components: { OrderEntry, BaseCard },
+  components: { BaseToolbar, OrderEntry, BaseCard },
   setup() {
+    const toast = useToast();
     const isLoading = ref(true);
     const orders = ref<service_Order[]>([]);
 
@@ -63,11 +76,22 @@ export default defineComponent({
 
     function orderDone(order: service_Order) {
       order.is_served = true;
-      OrdersService.putOrders(order).then(() => {
-        orders.value = orders.value.filter((oldOrder) => oldOrder.id !== order.id);
+      OrdersService.putOrders(order)
+        .then(() => {
+          orders.value = orders.value.filter((oldOrder) => oldOrder.id !== order.id);
+        })
+        .catch((err) => {
+          errorToast(toast, err.body.error);
+        });
+    }
+
+    function checkAllOpenOrders() {
+      orders.value.forEach((order) => {
+        orderDone(order);
       });
     }
-    return { orders, ItemType, isLoading, orderDone };
+
+    return { orders, ItemType, isLoading, orderDone, checkAllOpenOrders };
   },
 });
 </script>

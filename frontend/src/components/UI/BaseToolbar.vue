@@ -1,11 +1,11 @@
 <template>
-  <Toolbar class="border-0 shadow-1 my-2 p-2 bg-color">
+  <Toolbar class="border-0 shadow-1 my-2 p-2 pr-3 bg-color">
     <template #start>
       <font-awesome-icon :icon="icon" size="1x" style="width: 2.5rem" />
       <div class="font-bold">{{ title }}</div>
     </template>
     <template #end>
-      <Button :disabled="isDisabled" icon="pi pi-plus" class="p-button-success p-button-rounded" @click="$emit('click')" />
+      <Button v-if="btnIcon" :disabled="isDisabled" :icon="'pi pi-' + btnIcon" class="p-button-success p-button-rounded" @click="$emit('click')" />
     </template>
   </Toolbar>
 </template>
@@ -23,6 +23,7 @@ export default defineComponent({
     title: { type: String, default: "" },
     icon: { type: String, default: "" },
     isDisabled: { type: Boolean, default: false },
+    btnIcon: { type: String, default: "" },
   },
 });
 </script>
