@@ -9,7 +9,6 @@ type (
 	Order struct {
 		ID          uint64    `gorm:"primaryKey" json:"id" validate:"optional"`
 		TableID     uint64    `json:"table_id" validate:"required"`
-		Table       Table     `json:"table" validate:"required"`
 		OrderItemID uint64    `json:"order_item_id" validate:"required"`
 		OrderItem   OrderItem `json:"order_item" validate:"required"`
 		IsServed    bool      `json:"is_served" default:"false" validate:"required"`
@@ -33,9 +32,21 @@ func DoesOrderItemExist(id string) (OrderItem, error) {
 	return orderItem, nil
 }
 
-func GetAllOrders(table string, itemType string) []Order {
+func GetAllOrdersForTable(table string) []Order {
 	var orders []Order
-	config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Joins("Table").Select("table_id", "order_item_id", "count(order_item_id) as total").Group("order_item_id").Where("table_id = ? AND item_type = ?", table, itemType).Order("description").Find(&orders)
+	config.C.Database.ORM.Model(
+		&Order{},
+	).Joins(
+		"OrderItem",
+	).Joins(
+		"left join tables on tables.id = orders.table_id",
+	).Select(
+		"table_id, order_item_id, sum(price) as total",
+	).Group(
+		"order_item_id",
+	).Where(
+		"table_id = ?", table,
+	).Order("description").Find(&orders)
 	return orders
 }
 

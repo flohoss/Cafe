@@ -14,7 +14,6 @@ import (
 // @Tags orders
 // @Produce json
 // @Param table query int true "Table ID"
-// @Param type query int true "ItemType"
 // @Success 200 {array} service.Order
 // @Failure 400 {object} errorResponse
 // @Failure 401 "Unauthorized"
@@ -22,11 +21,10 @@ import (
 // @Security Cookie
 func (a *Api) getOrders(c *gin.Context) {
 	table := c.Query("table")
-	orderType := c.Query("type")
-	if table == "" || orderType == "" {
+	if table == "" {
 		c.JSON(http.StatusBadRequest, errorResponse{config.MissingInformation.String()})
 	} else {
-		orders := service.GetAllOrders(table, orderType)
+		orders := service.GetAllOrdersForTable(table)
 		c.JSON(http.StatusOK, orders)
 	}
 }
