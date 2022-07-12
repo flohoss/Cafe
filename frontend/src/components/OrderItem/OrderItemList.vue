@@ -28,13 +28,15 @@
         <Column field="price" style="text-align: right">
           <template #body="slotProps">{{ convertToEur(slotProps.data.price) }}</template>
         </Column>
-        <Column class="flex align-items-center justify-content-end flex-nowrap">
+        <Column style="width: 3.5rem">
           <template #body="slotProps">
-            <div class="btn success mr-2" @click="editOrderItem(slotProps.data)">
-              <i class="pi pi-pencil"></i>
-            </div>
-            <div class="btn danger" @click="confirmDeleteProduct(slotProps.data)">
-              <i class="pi pi-trash"></i>
+            <div class="flex align-items-center justify-content-end">
+              <div class="btn success mr-2" @click="editOrderItem(slotProps.data)">
+                <i class="pi pi-pencil"></i>
+              </div>
+              <div class="btn danger" @click="confirmDeleteProduct(slotProps.data)">
+                <i class="pi pi-trash"></i>
+              </div>
             </div>
           </template>
         </Column>

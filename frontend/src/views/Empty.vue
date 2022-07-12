@@ -1,6 +1,6 @@
 <template>
-  <BaseCard class="text-center">
-    <div class="p-card w-full p-4">Bis jetzt noch nichts...</div>
+  <BaseCard>
+    <div class="p-card w-full p-4 text-center">{{ message }}</div>
   </BaseCard>
 </template>
 
@@ -11,9 +11,7 @@ import BaseCard from "@/components/UI/BaseCard.vue";
 export default defineComponent({
   name: "EmptyView",
   components: { BaseCard },
-  setup() {
-    return {};
-  },
+  props: { message: { type: String, default: "Bis jetzt noch nichts..." } },
 });
 </script>
 

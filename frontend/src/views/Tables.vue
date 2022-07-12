@@ -1,6 +1,7 @@
 <template>
   <BaseCard>
-    <div v-if="tables.length === 0" class="p-card w-full p-4 text-center">Keine Tische</div>
+    <WaveSpinner v-if="isLoading" />
+    <EmptyView v-else-if="tables.length === 0" message="Keine Tische" />
     <TableCard v-else v-for="table in tables" v-bind:key="table.id" :table="table" />
   </BaseCard>
 </template>
@@ -9,18 +10,22 @@
 import { computed, defineComponent, onMounted, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
-import TableCard from "@/components/Table/TableEntry.vue";
+import TableCard from "@/components/Tables/TableCard.vue";
+import EmptyView from "@/views/Empty.vue";
+import WaveSpinner from "@/components/UI/WaveSpinner.vue";
 
 export default defineComponent({
   name: "TablesView",
-  components: { TableCard, BaseCard },
+  components: { WaveSpinner, EmptyView, TableCard, BaseCard },
   setup() {
     const isLoading = ref(false);
     const store = useStore();
     const tables = computed(() => store.getters.getTables);
 
-    function getData() {
-      store.dispatch("getTables");
+    async function getData() {
+      isLoading.value = true;
+      await store.dispatch("getTables");
+      isLoading.value = false;
     }
     onMounted(() => getData());
 

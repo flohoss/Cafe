@@ -69,11 +69,11 @@ import Button from "primevue/button";
 import { convertToEur, ItemType } from "@/utils";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import Listbox from "primevue/listbox";
-import OrderEntry from "@/components/Table/OrderEntry.vue";
+import OrderEntry from "@/components/Tables/OrderCard.vue";
 import Sidebar from "primevue/sidebar";
 
 export default defineComponent({
-  name: "TableDetail",
+  name: "TableOverview",
   components: { OrderEntry, BaseToolbar, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
   props: { id: { type: String, default: "0" } },
   setup(props) {

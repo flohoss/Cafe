@@ -26,7 +26,7 @@ import Button from "primevue/button";
 import Badge from "primevue/badge";
 
 export default defineComponent({
-  name: "OrderEntry",
+  name: "OrderCard",
   components: { BaseItem, Button, Badge },
   props: {
     order: { type: Object as PropType<service_Order>, required: true },

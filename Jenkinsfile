@@ -25,12 +25,5 @@ pipeline {
                 }
             }
         }
-        stage('Cleaning') {
-            steps {
-                script {
-                    sh "docker rmi ${IMAGE_NAME}:latest"
-                }
-            }
-        }
     }
 }

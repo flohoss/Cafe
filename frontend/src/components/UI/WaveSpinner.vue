@@ -16,7 +16,7 @@ export default defineComponent({
   name: "WaveSpinner",
   setup() {
     const isShowing = ref(false);
-    setTimeout(() => (isShowing.value = true), 500);
+    setTimeout(() => (isShowing.value = true), 100);
     return { isShowing };
   },
 });
