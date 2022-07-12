@@ -1,16 +1,18 @@
 <template>
   <BaseCard>
-    <div v-if="orders.length === 0" class="p-card w-full p-4 text-center">Keine offenen Bestellungen</div>
+    <EmptyView v-if="orders.length === 0" message="Keine offenen Bestellungen" />
     <div v-else>
       <BaseToolbar icon="fa-box-open" title="Offen" btnIcon="check" @click="checkAllOpenOrders" />
-      <OrderEntry
-        v-for="entry in orders"
-        v-bind:key="entry.id"
-        :isServed="entry.is_served === false"
-        :order="entry"
-        :isDisabled="isLoading"
-        @orderDone="(order) => orderDone(order)"
-      />
+      <div class="grid">
+        <OrderCard
+          v-for="entry in orders"
+          v-bind:key="entry.id"
+          :isServed="entry.is_served === false"
+          :order="entry"
+          :isDisabled="isLoading"
+          @orderDone="(order) => orderDone(order)"
+        />
+      </div>
     </div>
   </BaseCard>
 </template>
@@ -19,15 +21,16 @@
 import { defineComponent, onUnmounted, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { OrdersService, service_Order } from "@/services/openapi";
-import OrderEntry from "@/components/Order/OrderEntry.vue";
+import OrderCard from "@/components/Orders/OrderCard.vue";
 import { errorToast, ItemType } from "@/utils";
 import { WEBSOCKET_ENDPOINT_URL } from "@/main";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import { useToast } from "primevue/usetoast";
+import EmptyView from "@/views/Empty.vue";
 
 export default defineComponent({
   name: "OrderView",
-  components: { BaseToolbar, OrderEntry, BaseCard },
+  components: { EmptyView, BaseToolbar, OrderCard, BaseCard },
   setup() {
     const toast = useToast();
     const isLoading = ref(true);
@@ -95,5 +98,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style></style>

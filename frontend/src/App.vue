@@ -59,15 +59,18 @@ body {
   background-color: var(--surface-b);
 }
 html,
-body,
-.p-component {
+body {
   font-size: 1.2em !important;
   font-family: "roboto", sans-serif !important;
 }
-.p-button {
-  font-size: 1rem !important;
+.p-component {
+  font-size: 1.1em !important;
+  font-family: "roboto", sans-serif !important;
 }
-@media (min-width: 992px) {
+.p-button {
+  font-size: 1em !important;
+}
+@media (min-width: 1200px) {
   html,
   body,
   .p-component {

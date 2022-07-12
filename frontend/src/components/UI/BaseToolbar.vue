@@ -1,7 +1,7 @@
 <template>
-  <Toolbar class="border-0 shadow-1 my-2 p-2 pr-3 bg-color">
+  <Toolbar class="border-0 shadow-1 my-2 p-2 bg-color">
     <template #start>
-      <font-awesome-icon :icon="icon" size="1x" style="width: 2.5rem" />
+      <div class="w-2-5rem"><font-awesome-icon :icon="icon" /></div>
       <div class="font-bold">{{ title }}</div>
     </template>
     <template #end>
@@ -32,5 +32,8 @@ export default defineComponent({
 .bg-color {
   background-color: var(--surface-a);
   color: var(--text-color);
+}
+.w-2-5rem {
+  width: 2.5rem !important;
 }
 </style>

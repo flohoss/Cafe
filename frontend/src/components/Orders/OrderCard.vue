@@ -1,18 +1,20 @@
 <template>
-  <BaseItem paddingRight="1">
-    <div class="flex justify-content-between overflow-hidden">
-      <div class="flex flex-column align-items-start">
-        <div class="white-space-nowrap overflow-hidden text-overflow-ellipsis font-bold">{{ order.order_item.description }}</div>
-        <div class="flex align-items-center mt-1">
-          <Badge severity="danger" class="text-sm">Tisch {{ order.table_id }}</Badge>
-          <Badge severity="info" class="text-sm ml-2">{{ time }} Uhr</Badge>
+  <div class="col-12 lg:col-6">
+    <BaseItem>
+      <div class="flex justify-content-between overflow-hidden">
+        <div class="flex flex-column align-items-start">
+          <div class="white-space-nowrap overflow-hidden text-overflow-ellipsis font-bold">{{ order.order_item.description }}</div>
+          <div class="flex align-items-center mt-1">
+            <Badge severity="danger" class="text-sm">Tisch {{ order.table_id }}</Badge>
+            <Badge severity="info" class="text-sm ml-2">{{ time }} Uhr</Badge>
+          </div>
+        </div>
+        <div class="flex align-items-center">
+          <Button :disabled="isDisabled" icon="pi pi-check" class="p-button-rounded p-button-success" @click="$emit('orderDone', order)" />
         </div>
       </div>
-      <div class="flex align-items-center">
-        <Button :disabled="isDisabled" icon="pi pi-check" class="p-button-rounded p-button-success" @click="$emit('orderDone', order)" />
-      </div>
-    </div>
-  </BaseItem>
+    </BaseItem>
+  </div>
 </template>
 
 <script lang="ts">
@@ -25,7 +27,7 @@ import moment from "moment";
 import Badge from "primevue/badge";
 
 export default defineComponent({
-  name: "OrderEntry",
+  name: "OrderCard",
   components: { BaseItem, Button, Badge },
   props: {
     order: { type: Object as PropType<service_Order>, required: true },

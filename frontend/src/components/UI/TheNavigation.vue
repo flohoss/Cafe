@@ -67,8 +67,14 @@ export default defineComponent({
 
     const items = ref([
       { label: "Bestellungen", icon: "pi pi-fw pi-history", to: "/orders" },
-      { label: "Speisen", icon: "pi pi-fw pi-shopping-cart", to: "/items/" + ItemType.Food },
-      { label: "Getränke", icon: "pi pi-fw pi-shopping-cart", to: "/items/" + ItemType.Drink },
+      {
+        label: "Artikel",
+        icon: "pi pi-fw pi-shopping-cart",
+        items: [
+          { label: "Speisen", icon: "pi pi-fw pi-shopping-cart", to: "/items/" + ItemType.Food },
+          { label: "Getränke", icon: "pi pi-fw pi-shopping-cart", to: "/items/" + ItemType.Drink },
+        ],
+      },
       { label: "Rechnungen", icon: "pi pi-fw pi-euro", to: "/bills" },
       { separator: true },
       {

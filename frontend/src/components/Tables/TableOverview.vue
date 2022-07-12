@@ -1,17 +1,19 @@
 <template>
   <BaseCard>
     <BaseToolbar :isDisabled="isLoading" title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" btnIcon="plus" />
-    <OrderEntry
-      v-for="entry in orders"
-      v-bind:key="entry.id"
-      :itemType="ItemType.Food"
-      :order="entry"
-      :isDisabled="isLoading"
-      @incrementOrder="(order) => incrementOrder(order)"
-      @decrementOrder="(order) => decrementOrder(order)"
-    />
+    <div class="grid">
+      <TableOrderCard
+        v-for="entry in orders"
+        v-bind:key="entry.id"
+        :itemType="ItemType.Food"
+        :order="entry"
+        :isDisabled="isLoading"
+        @incrementOrder="(order) => incrementOrder(order)"
+        @decrementOrder="(order) => decrementOrder(order)"
+      />
+    </div>
     <BaseToolbar :isDisabled="isLoading" title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" btnIcon="plus" />
-    <OrderEntry
+    <TableOrderCard
       v-for="entry in orders"
       v-bind:key="entry.id"
       :itemType="ItemType.Drink"
@@ -69,12 +71,12 @@ import Button from "primevue/button";
 import { convertToEur, ItemType } from "@/utils";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import Listbox from "primevue/listbox";
-import OrderEntry from "@/components/Tables/OrderCard.vue";
+import TableOrderCard from "@/components/Tables/TableOrderCard.vue";
 import Sidebar from "primevue/sidebar";
 
 export default defineComponent({
   name: "TableOverview",
-  components: { OrderEntry, BaseToolbar, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
+  components: { TableOrderCard, BaseToolbar, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
   props: { id: { type: String, default: "0" } },
   setup(props) {
     const isLoading = ref(false);

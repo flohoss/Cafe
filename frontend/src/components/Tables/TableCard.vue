@@ -1,5 +1,5 @@
 <template>
-  <router-link class="col-12 md:col-6 no-underline" :to="'/tables/' + table.id">
+  <router-link class="col-12 lg:col-6 no-underline" :to="'/tables/' + table.id">
     <BaseItem class="relative">
       <Badge v-if="table.order_count" :value="table.order_count" class="topRight text-sm" />
       <div class="flex justify-content-between align-items-end">

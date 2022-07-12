@@ -8,7 +8,7 @@
             <div class="col-9">
               <span class="p-input-icon-left">
                 <i class="pi pi-search" />
-                <InputText v-model="filters['global'].value" placeholder="Suchen..." @keydown.esc="filters['global'].value = null" />
+                <InputText v-model="filters['global'].value" placeholder="Suchen" @keydown.esc="filters['global'].value = null" />
                 <span v-if="filters['global'].value !== null" class="leftMiddle styling" @click="filters['global'].value = null">
                   <i class="pi pi-times"></i>
                 </span>
