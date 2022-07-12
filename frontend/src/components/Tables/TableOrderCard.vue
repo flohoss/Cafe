@@ -1,6 +1,6 @@
 <template>
-  <div class="col-12 lg:col-6">
-    <BaseItem v-if="order.order_item.item_type === itemType" bgColor="c">
+  <div v-if="order.order_item.item_type === itemType" class="col-12 lg:col-6">
+    <BaseItem bgColor="c">
       <div class="flex flex-column overflow-hidden">
         <div class="font-bold white-space-nowrap overflow-hidden text-overflow-ellipsis">{{ order.order_item.description }}</div>
         <div class="flex align-items-baseline justify-content-between">
@@ -28,7 +28,6 @@ import { defineComponent, PropType } from "vue";
 import { service_Order } from "@/services/openapi";
 import BaseItem from "@/components/UI/BaseItem.vue";
 import { convertToEur, ItemType } from "@/utils";
-import Button from "primevue/button";
 import Badge from "primevue/badge";
 
 export default defineComponent({

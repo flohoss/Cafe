@@ -2,7 +2,7 @@
   <Toolbar class="border-0 shadow-1 my-2 p-2 bg-color">
     <template #start>
       <div class="w-2-5rem"><font-awesome-icon :icon="icon" /></div>
-      <div class="font-bold">{{ title }}</div>
+      <div class="font-bold text-2xl">{{ title }}</div>
     </template>
     <template #end>
       <Button v-if="btnIcon" :disabled="isDisabled" :icon="'pi pi-' + btnIcon" class="p-button-success p-button-rounded" @click="$emit('click')" />

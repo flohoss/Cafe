@@ -13,15 +13,17 @@
       />
     </div>
     <BaseToolbar :isDisabled="isLoading" title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" btnIcon="plus" />
-    <TableOrderCard
-      v-for="entry in orders"
-      v-bind:key="entry.id"
-      :itemType="ItemType.Drink"
-      :order="entry"
-      :isDisabled="isLoading"
-      @incrementOrder="(order) => incrementOrder(order)"
-      @decrementOrder="(order) => decrementOrder(order)"
-    />
+    <div class="grid">
+      <TableOrderCard
+        v-for="entry in orders"
+        v-bind:key="entry.id"
+        :itemType="ItemType.Drink"
+        :order="entry"
+        :isDisabled="isLoading"
+        @incrementOrder="(order) => incrementOrder(order)"
+        @decrementOrder="(order) => decrementOrder(order)"
+      />
+    </div>
     <Sidebar v-model:visible="modal" :modal="true" :baseZIndex="10000" position="full">
       <div class="p-fluid">
         <Listbox

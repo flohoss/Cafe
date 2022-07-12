@@ -4,14 +4,7 @@
     <div v-else>
       <BaseToolbar icon="fa-box-open" title="Offen" btnIcon="check" @click="checkAllOpenOrders" />
       <div class="grid">
-        <OrderCard
-          v-for="entry in orders"
-          v-bind:key="entry.id"
-          :isServed="entry.is_served === false"
-          :order="entry"
-          :isDisabled="isLoading"
-          @orderDone="(order) => orderDone(order)"
-        />
+        <OrderCard v-for="entry in orders" v-bind:key="entry.id" :order="entry" :isDisabled="isLoading" @orderDone="(order) => orderDone(order)" />
       </div>
     </div>
   </BaseCard>
