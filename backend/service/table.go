@@ -34,29 +34,36 @@ func GetAllTables() []Table {
 	).Select(
 		"tables.id, tables.updated_at, sum(order_items.price) as total, count(orders.id) as order_count",
 	).Group(
-		"table_id",
-	).Find(&tables)
+		"tables.id",
+	).Order("tables.id").Find(&tables)
 	return tables
 }
 
 func CreateNewTable() (Table, error) {
 	var table Table
+	var err error
 	result := config.C.Database.ORM.Unscoped().Where("is_deleted = ?", 1).Limit(1).Find(&table)
 	if result.RowsAffected == 0 {
-		result = config.C.Database.ORM.Create(&table)
+		err = config.C.Database.ORM.Create(&table).Error
 	} else {
 		table.IsDeleted = 0
-		config.C.Database.ORM.Save(&table)
+		err = config.C.Database.ORM.Save(&table).Error
 	}
-	return table, result.Error
+	if err != nil {
+		return table, fmt.Errorf(config.CannotCreate.String())
+	}
+	return table, nil
 }
 
 func DeleteLatestTable() error {
 	var table Table
-	config.C.Database.ORM.Last(&table)
-	table.Total = 0
-	table.OrderCount = 0
-	config.C.Database.ORM.Save(&table)
-	result := config.C.Database.ORM.Delete(&table)
-	return result.Error
+	err := config.C.Database.ORM.Last(&table).Error
+	if err != nil {
+		return fmt.Errorf(config.CannotFind.String())
+	}
+	err = config.C.Database.ORM.Delete(&table).Error
+	if err != nil {
+		return fmt.Errorf(config.CannotDelete.String())
+	}
+	return nil
 }

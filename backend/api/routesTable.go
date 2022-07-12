@@ -33,7 +33,7 @@ func (a *Api) getTables(c *gin.Context) {
 func (a *Api) createTable(c *gin.Context) {
 	table, err := service.CreateNewTable()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot create table"})
+		c.JSON(http.StatusInternalServerError, errorResponse{err.Error()})
 	} else {
 		c.JSON(http.StatusCreated, table)
 	}
@@ -52,7 +52,7 @@ func (a *Api) createTable(c *gin.Context) {
 func (a *Api) deleteTable(c *gin.Context) {
 	err := service.DeleteLatestTable()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, errorResponse{"Cannot delete table"})
+		c.JSON(http.StatusInternalServerError, errorResponse{err.Error()})
 	} else {
 		c.Status(http.StatusOK)
 	}

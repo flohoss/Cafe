@@ -10,18 +10,18 @@
       type="password"
       v-model="v$.password.$model"
       class="w-full mb-1"
-      placeholder="Password"
+      placeholder="Passwort"
       :class="{ 'p-invalid': v$.password.$invalid && submitted }"
     />
     <small v-if="(v$.password.$invalid && submitted) || v$.password.$pending.$response" class="p-error">
-      {{ v$.password.required.$message.replace("Value", "Password") }}
+      {{ v$.password.required.$message.replace("Value", "Passwort") }}
     </small>
     <Button
       :loading="isLoading"
       @click="login(!v$.$invalid)"
       :label="submitLabel"
       icon="pi pi-user"
-      :class="{ 'p-button-danger': (v$.$invalid && submitted) || submitLabel === 'Please try again' }"
+      :class="{ 'p-button-danger': (v$.$invalid && submitted) || submitLabel === 'Bitte versuchen Sie es erneut' }"
       class="p-button-primary w-full my-1"
     />
   </div>
@@ -48,12 +48,12 @@ export default defineComponent({
     const auth = reactive({ password: "" });
     const rules = { password: { required } };
     const v$ = useVuelidate(rules, auth);
-    const submitLabel = ref("Sign In");
+    const submitLabel = ref("Einloggen");
 
     function login(isFormValid: boolean) {
       submitted.value = true;
       if (!isFormValid) return;
-      submitLabel.value = "Loading";
+      submitLabel.value = "Laden";
       isLoading.value = true;
       AuthorizationService.postAuthLogin(auth.password)
         .then(() => {
@@ -63,7 +63,7 @@ export default defineComponent({
           });
         })
         .catch(() => {
-          submitLabel.value = "Please try again";
+          submitLabel.value = "Bitte versuchen Sie es erneut";
         })
         .finally(() => {
           isLoading.value = false;

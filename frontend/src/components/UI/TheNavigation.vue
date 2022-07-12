@@ -5,7 +5,7 @@
     </template>
     <template #end>
       <div v-if="tablePath">
-        <Button :disabled="isLoading" icon="pi pi-minus" class="p-button-danger p-button-rounded mr-2" @click="removeTable" />
+        <Button v-if="tablesCount !== 0" :disabled="isLoading" icon="pi pi-minus" class="p-button-danger p-button-rounded mr-2" @click="removeTable" />
         <Button :disabled="isLoading" icon="pi pi-plus" class="p-button-success p-button-rounded" @click="addTable" />
       </div>
       <router-link v-else to="/tables" class="mr-1 no-underline">
@@ -32,6 +32,7 @@ export default defineComponent({
     const store = useStore();
     const route = useRoute();
     const isLoading = ref(false);
+    const tablesCount = computed(() => store.getters.getTablesCount);
     const isLoggedIn = computed(() => store.getters.getLoginApiStatus);
     const tablePath = computed(() => route.path === "/tables");
 
@@ -71,7 +72,7 @@ export default defineComponent({
       },
     ]);
 
-    return { items, isLoggedIn, tablePath, removeTable, addTable, isLoading };
+    return { items, isLoggedIn, tablePath, removeTable, addTable, isLoading, tablesCount };
   },
 });
 </script>
