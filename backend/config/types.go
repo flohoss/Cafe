@@ -21,7 +21,7 @@ func (e ErrorResponses) String() string {
 	case CannotFind:
 		return "kann nicht gefunden werden"
 	case StillInUse:
-		return "der Artikel wird noch verwendet"
+		return "noch in Verwendung"
 	default:
 		return "unbekannt"
 	}

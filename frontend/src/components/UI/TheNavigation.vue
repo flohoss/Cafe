@@ -22,13 +22,15 @@ import { useStore } from "vuex";
 import Button from "primevue/button";
 import { useRoute } from "vue-router";
 import { TablesService } from "@/services/openapi";
-import { ItemType } from "@/utils";
+import { errorToast, ItemType } from "@/utils";
+import { useToast } from "primevue/usetoast";
 
 export default defineComponent({
   name: "TheNavigation",
   components: { Menubar, Button },
   emits: ["logout"],
   setup(_, { emit }) {
+    const toast = useToast();
     const store = useStore();
     const route = useRoute();
     const isLoading = ref(false);
@@ -42,6 +44,9 @@ export default defineComponent({
         .then(() => {
           store.dispatch("removeLastTable");
         })
+        .catch((err) => {
+          errorToast(toast, err.body.error);
+        })
         .finally(() => {
           isLoading.value = false;
         });
@@ -51,6 +56,9 @@ export default defineComponent({
       TablesService.postTables()
         .then((res) => {
           store.dispatch("addTable", res);
+        })
+        .catch((err) => {
+          errorToast(toast, err.body.error);
         })
         .finally(() => {
           isLoading.value = false;

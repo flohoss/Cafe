@@ -57,9 +57,22 @@ func CreateNewTable() (Table, error) {
 
 func DeleteLatestTable() error {
 	var table Table
-	err := config.C.Database.ORM.Last(&table).Error
+	err := config.C.Database.ORM.Model(
+		&Table{},
+	).Joins(
+		"left join orders on tables.id = orders.table_id",
+	).Joins(
+		"left join order_items on orders.order_item_id = order_items.id",
+	).Select(
+		"tables.id, count(orders.id) as order_count",
+	).Group(
+		"tables.id",
+	).Last(&table).Error
 	if err != nil {
 		return fmt.Errorf(config.CannotFind.String())
+	}
+	if table.OrderCount != 0 {
+		return fmt.Errorf(config.StillInUse.String())
 	}
 	err = config.C.Database.ORM.Delete(&table).Error
 	if err != nil {
