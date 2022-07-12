@@ -1,5 +1,5 @@
 <template>
-  <div class="col-12 p-card bg-color shadow-1 my-2 p-2 pl-3 md:p-3 relative" :class="'pr-' + paddingRight">
+  <div class="col-12 p-card bg-color shadow-1 my-2 p-2 pl-3 md:px-3 relative" :class="'pr-' + paddingRight">
     <slot></slot>
   </div>
 </template>

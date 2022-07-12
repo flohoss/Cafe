@@ -2,8 +2,9 @@
   <BaseCard>
     <BaseToolbar :isDisabled="isLoading" title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" />
     <OrderEntry
-      v-for="entry in foodOrders"
+      v-for="entry in orders"
       v-bind:key="entry.id"
+      :itemType="ItemType.Food"
       :order="entry"
       :isDisabled="isLoading"
       @incrementOrder="(order) => incrementOrder(order)"
@@ -11,8 +12,9 @@
     />
     <BaseToolbar :isDisabled="isLoading" title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" />
     <OrderEntry
-      v-for="entry in drinkOrders"
+      v-for="entry in orders"
       v-bind:key="entry.id"
+      :itemType="ItemType.Drink"
       :order="entry"
       :isDisabled="isLoading"
       @incrementOrder="(order) => incrementOrder(order)"
@@ -85,35 +87,21 @@ export default defineComponent({
     const total = ref(0);
     const orderItems = computed(() => store.getters.getOrderItems);
     const options = ref();
-    const drinkOrders = ref<service_Order[]>([]);
-    const foodOrders = ref<service_Order[]>([]);
+    const orders = ref<service_Order[]>([]);
     const currentItemType = ref(0);
 
+    store.dispatch("getAllOrderItems");
+
     getData();
-    async function getData(itemType?: ItemType) {
-      if (itemType) {
-        await store.dispatch("getOrderItems", itemType);
-        if (itemType === ItemType.Drink) {
-          drinkOrders.value = await OrdersService.getOrders(table.value, ItemType.Drink);
-        } else {
-          foodOrders.value = await OrdersService.getOrders(table.value, ItemType.Food);
-        }
-      } else {
-        await store.dispatch("getAllOrderItems");
-        drinkOrders.value = await OrdersService.getOrders(table.value, ItemType.Drink);
-        foodOrders.value = await OrdersService.getOrders(table.value, ItemType.Food);
-      }
+    async function getData() {
+      orders.value = await OrdersService.getOrders(table.value);
       updateTotal();
     }
 
     function updateTotal() {
-      if (drinkOrders.value.length > 0) {
-        total.value = drinkOrders.value[0].table.total;
-      } else if (foodOrders.value.length > 0) {
-        total.value = foodOrders.value[0].table.total;
-      } else {
-        total.value = 0;
-      }
+      let temp = 0;
+      orders.value.forEach((order) => (temp += order.total));
+      total.value = temp;
     }
 
     async function addBeverage(type: ItemType) {
@@ -122,31 +110,25 @@ export default defineComponent({
       options.value = orderItems.value.get(type);
     }
 
-    function postOrder() {
-      OrdersService.postOrders(selected.value, table.value)
-        .then((res) => {
-          getData(res.order_item.item_type);
-        })
-        .finally(() => {
-          modal.value = false;
-          selected.value = undefined;
-        });
+    async function postOrder() {
+      OrdersService.postOrders(selected.value, table.value);
+      await getData();
+      modal.value = false;
+      selected.value = undefined;
     }
 
-    function incrementOrder(order: service_Order) {
+    async function incrementOrder(order: service_Order) {
       isLoading.value = true;
-      OrdersService.postOrders(order.order_item_id, order.table_id).then(async () => {
-        await getData(order.order_item.item_type);
-        isLoading.value = false;
-      });
+      await OrdersService.postOrders(order.order_item_id, order.table_id);
+      await getData();
+      isLoading.value = false;
     }
 
-    function decrementOrder(order: service_Order) {
+    async function decrementOrder(order: service_Order) {
       isLoading.value = true;
-      OrdersService.deleteOrders(order.order_item_id, order.table_id).finally(async () => {
-        await getData(order.order_item.item_type);
-        isLoading.value = false;
-      });
+      await OrdersService.deleteOrders(order.order_item_id, order.table_id);
+      await getData();
+      isLoading.value = false;
     }
 
     return {
@@ -160,8 +142,7 @@ export default defineComponent({
       addBeverage,
       ItemType,
       postOrder,
-      foodOrders,
-      drinkOrders,
+      orders,
       incrementOrder,
       decrementOrder,
     };

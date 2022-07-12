@@ -42,7 +42,12 @@ export default defineComponent({
   font-family: "roboto";
   src: url(@/assets/fonts/Roboto-Light.ttf);
 }
-
+.p-button.p-button-success:enabled:focus,
+.p-button.p-button-danger:enabled:focus,
+.p-button.p-button-success:enabled:active,
+.p-button.p-button-danger:enabled:active {
+  box-shadow: none !important;
+}
 .router-link-active {
   background-color: var(--surface-b);
 }

@@ -5,6 +5,7 @@ type ErrorResponses uint
 const (
 	MissingInformation ErrorResponses = iota
 	CannotCreate
+	CannotUpdate
 	CannotDelete
 	CannotFind
 	StillInUse
@@ -16,6 +17,8 @@ func (e ErrorResponses) String() string {
 		return "fehlende Informationen"
 	case CannotCreate:
 		return "kann nicht gespeichert werden"
+	case CannotUpdate:
+		return "kann nicht geändert werden"
 	case CannotDelete:
 		return "kann nicht gelöscht werden"
 	case CannotFind:

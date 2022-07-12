@@ -160,7 +160,7 @@ func (a *Api) updateOrderItem(c *gin.Context) {
 		c.JSON(http.StatusNotFound, errorResponse{err.Error()})
 		return
 	}
-	err = service.UpdateOrderItem(oldOrderItem, newOrderItem)
+	err = service.UpdateOrderItem(&oldOrderItem, &newOrderItem)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{err.Error()})
 	} else {

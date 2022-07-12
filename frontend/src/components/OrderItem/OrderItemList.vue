@@ -20,7 +20,11 @@
           </div>
         </template>
 
-        <Column field="description"></Column>
+        <Column field="description">
+          <template #body="slotProps">
+            <span class="white-space-nowrap">{{ slotProps.data.description }}</span>
+          </template>
+        </Column>
         <Column field="price" style="text-align: right">
           <template #body="slotProps">{{ convertToEur(slotProps.data.price) }}</template>
         </Column>

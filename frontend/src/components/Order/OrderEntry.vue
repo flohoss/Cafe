@@ -1,16 +1,15 @@
 <template>
-  <BaseItem paddingRight="1">
-    <div class="flex justify-content-between">
-      <div class="flex flex-column justify-content-between">
-        <div>{{ order.order_item.description }}</div>
-        <div class="text-sm">Einzelpreis: {{ convertToEur(order.order_item.price) }}</div>
-      </div>
-      <div class="flex align-items-center">
-        <div>
-          <Button :disabled="isDisabled" icon="pi pi-minus" class="p-button-rounded p-button-text p-button-danger" @click="$emit('decrementOrder', order)" />
+  <BaseItem v-if="order.order_item.item_type === itemType" paddingRight="1">
+    <div class="flex flex-column overflow-hidden">
+      <div class="white-space-nowrap overflow-hidden text-overflow-ellipsis">{{ order.order_item.description }}</div>
+      <div class="flex align-items-baseline justify-content-between">
+        <div class="text-sm">
+          {{ convertToEur(order.order_item.price) }}
+          <span class="text-sm" v-if="order.order_item.price !== order.total">({{ convertToEur(order.total) }})</span>
         </div>
-        <div>{{ order.total }}</div>
-        <div>
+        <div class="flex align-items-center">
+          <Button :disabled="isDisabled" icon="pi pi-minus" class="p-button-rounded p-button-text p-button-danger" @click="$emit('decrementOrder', order)" />
+          <div class="mx-1 font-bold">{{ order.order_count }}</div>
           <Button :disabled="isDisabled" icon="pi pi-plus" class="p-button-rounded p-button-text p-button-success" @click="$emit('incrementOrder', order)" />
         </div>
       </div>
@@ -22,16 +21,20 @@
 import { defineComponent, PropType } from "vue";
 import { service_Order } from "@/services/openapi";
 import BaseItem from "@/components/UI/BaseItem.vue";
-import { convertToEur } from "@/utils";
+import { convertToEur, ItemType } from "@/utils";
 import Button from "primevue/button";
 
 export default defineComponent({
   name: "OrderEntry",
   components: { BaseItem, Button },
-  props: { order: { type: Object as PropType<service_Order>, required: true }, isDisabled: { type: Boolean, default: false } },
+  props: {
+    order: { type: Object as PropType<service_Order>, required: true },
+    isDisabled: { type: Boolean, default: false },
+    itemType: { type: Number, required: true },
+  },
   emits: ["decrementOrder", "incrementOrder"],
   setup() {
-    return { convertToEur };
+    return { convertToEur, ItemType };
   },
 });
 </script>

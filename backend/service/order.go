@@ -12,7 +12,8 @@ type (
 		OrderItemID uint64    `json:"order_item_id" validate:"required"`
 		OrderItem   OrderItem `json:"order_item" validate:"required"`
 		IsServed    bool      `json:"is_served" default:"false" validate:"required"`
-		Total       uint64    `json:"total" validate:"optional"`
+		Total       uint64    `json:"total" validate:"required"`
+		OrderCount  uint64    `json:"order_count" validate:"required"`
 	}
 
 	OrderItem struct {
@@ -41,7 +42,7 @@ func GetAllOrdersForTable(table string) []Order {
 	).Joins(
 		"left join tables on tables.id = orders.table_id",
 	).Select(
-		"table_id, order_item_id, sum(price) as total",
+		"table_id, order_item_id, sum(price) as total, count(order_item_id) as order_count",
 	).Group(
 		"order_item_id",
 	).Where(
@@ -86,13 +87,11 @@ func CreateOrderItem(oderItem *OrderItem) error {
 	return nil
 }
 
-func UpdateOrderItem(old OrderItem, new OrderItem) error {
-	var order Order
-	result := config.C.Database.ORM.Where("order_item_id = ?", old.ID).Limit(1).Find(&order)
-	if result.RowsAffected != 0 {
-		return fmt.Errorf(config.StillInUse.String())
+func UpdateOrderItem(old *OrderItem, new *OrderItem) error {
+	err := config.C.Database.ORM.First(old).Updates(new).Error
+	if err != nil {
+		return fmt.Errorf(config.CannotUpdate.String())
 	}
-	config.C.Database.ORM.First(&old).Updates(&new)
 	return nil
 }
 
