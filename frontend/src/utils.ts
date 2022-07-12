@@ -13,5 +13,6 @@ import { ToastServiceMethods } from "primevue/toastservice";
 const timeToLife = 3600;
 
 export function errorToast(toast: ToastServiceMethods, message: string) {
+  toast.removeAllGroups();
   toast.add({ severity: "error", summary: "Fehler", detail: message, group: "br", life: timeToLife });
 }
