@@ -25,7 +25,17 @@ func DoesTableExist(id string) (Table, error) {
 
 func GetAllTables() []Table {
 	var tables []Table
-	config.C.Database.ORM.Find(&tables)
+	config.C.Database.ORM.Model(
+		&Table{},
+	).Joins(
+		"left join orders on tables.id = orders.table_id",
+	).Joins(
+		"left join order_items on orders.order_item_id = order_items.id",
+	).Select(
+		"tables.id, tables.updated_at, sum(order_items.price) as total, count(orders.id) as order_count",
+	).Group(
+		"table_id",
+	).Find(&tables)
 	return tables
 }
 

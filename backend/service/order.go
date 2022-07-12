@@ -3,8 +3,6 @@ package service
 import (
 	"cafe/config"
 	"fmt"
-	"gorm.io/gorm"
-	"math"
 )
 
 type (
@@ -25,33 +23,6 @@ type (
 		Price       float64  `json:"price" validate:"required"`
 	}
 )
-
-func processOrderChange(tx *gorm.DB, u *Order, increment bool) {
-	var table Table
-	var orderItem OrderItem
-	tx.Where("id = ?", u.TableID).First(&table)
-	tx.Where("id = ?", u.OrderItemID).First(&orderItem)
-	if increment {
-		table.OrderCount += 1
-		table.Total += orderItem.Price
-	} else {
-		table.OrderCount -= 1
-		table.Total -= orderItem.Price
-	}
-	// floating point round to 2 decimal places
-	table.Total = math.Round(table.Total*100) / 100
-	tx.Save(&table)
-}
-
-func (u *Order) AfterCreate(tx *gorm.DB) (err error) {
-	processOrderChange(tx, u, true)
-	return
-}
-
-func (u *Order) BeforeDelete(tx *gorm.DB) (err error) {
-	processOrderChange(tx, u, false)
-	return
-}
 
 func DoesOrderItemExist(id string) (OrderItem, error) {
 	var orderItem OrderItem
