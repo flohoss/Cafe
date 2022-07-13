@@ -48,11 +48,6 @@ export default defineComponent({
 .p-button.p-button-danger:enabled:active {
   box-shadow: none !important;
 }
-.overflow-ellipsis {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 body {
   margin: 0.2rem;
   padding: 0.2rem;
