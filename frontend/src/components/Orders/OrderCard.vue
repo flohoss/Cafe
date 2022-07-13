@@ -5,8 +5,8 @@
         <div class="flex flex-column align-items-start">
           <div class="white-space-nowrap overflow-hidden text-overflow-ellipsis font-bold">{{ order.order_item.description }}</div>
           <div class="flex align-items-center mt-1">
-            <Badge severity="danger" class="text-sm">Tisch {{ order.table_id }}</Badge>
-            <Badge severity="info" class="text-sm ml-2">{{ time }} Uhr</Badge>
+            <TheBadge size="sm" color="danger">Tisch {{ order.table_id }}</TheBadge>
+            <TheBadge size="sm" color="info" class="ml-2">{{ time }} Uhr</TheBadge>
           </div>
         </div>
         <div class="flex align-items-center">
@@ -24,11 +24,11 @@ import BaseItem from "@/components/UI/BaseItem.vue";
 import { convertToEur, ItemType } from "@/utils";
 import Button from "primevue/button";
 import moment from "moment";
-import Badge from "primevue/badge";
+import TheBadge from "@/components/UI/TheBadge.vue";
 
 export default defineComponent({
   name: "OrderCard",
-  components: { BaseItem, Button, Badge },
+  components: { TheBadge, BaseItem, Button },
   props: {
     order: { type: Object as PropType<service_Order>, required: true },
     isDisabled: { type: Boolean, default: false },

@@ -1,11 +1,11 @@
 <template>
   <router-link class="col-12 lg:col-6 no-underline" :to="'/tables/' + table.id">
     <BaseItem class="relative">
-      <Badge v-if="table.order_count" :value="table.order_count" class="topRight text-sm" />
+      <TheBadge v-if="table.order_count" class="topRight text-sm">{{ table.order_count }}</TheBadge>
       <div class="flex justify-content-between align-items-end">
         <div>
-          <div class="font-bold mb-2">Tisch {{ table.id }}</div>
-          <div class="text-sm">{{ since }}</div>
+          <div class="font-bold mb-1">Tisch {{ table.id }}</div>
+          <TheBadge color="success">{{ since }}</TheBadge>
         </div>
         <div>
           <div v-if="table.total" class="font-bold">{{ convertToEur(table.total) }}</div>
@@ -21,11 +21,11 @@ import { service_Table } from "@/services/openapi";
 import BaseItem from "@/components/UI/BaseItem.vue";
 import moment from "moment";
 import { convertToEur } from "@/utils";
-import Badge from "primevue/badge";
+import TheBadge from "@/components/UI/TheBadge.vue";
 
 export default defineComponent({
   name: "TableCard",
-  components: { Badge, BaseItem },
+  components: { TheBadge, BaseItem },
   props: { table: { type: Object as PropType<service_Table>, required: true } },
   setup(props) {
     moment.locale("de");
