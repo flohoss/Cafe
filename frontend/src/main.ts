@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import { TablesService, OpenAPI } from "@/services/openapi";
+import { OpenAPI } from "@/services/openapi";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";

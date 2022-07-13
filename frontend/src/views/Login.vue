@@ -36,7 +36,6 @@ import { required } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
-import { ItemType } from "@/utils";
 
 export default defineComponent({
   name: "LoginView",
