@@ -94,9 +94,19 @@ export default defineComponent({
     store.dispatch("getAllOrderItems");
 
     getData();
-    async function getData() {
-      orders.value = await OrdersService.getOrders(table.value);
-      updateTotal();
+    function getData() {
+      OrdersService.getOrders(table.value)
+        .then((res) => (orders.value = res))
+        .finally(() => {
+          updateTotal();
+          resetValues();
+        });
+    }
+
+    function resetValues() {
+      modal.value = false;
+      selected.value = undefined;
+      isLoading.value = false;
     }
 
     function updateTotal() {
@@ -110,25 +120,19 @@ export default defineComponent({
       options.value = orderItems.value.get(type);
     }
 
-    async function postOrder() {
-      OrdersService.postOrders(selected.value, table.value);
-      await getData();
-      modal.value = false;
-      selected.value = undefined;
+    function postOrder() {
+      isLoading.value = true;
+      OrdersService.postOrders(selected.value, table.value).finally(() => getData());
     }
 
-    async function incrementOrder(order: service_Order) {
+    function incrementOrder(order: service_Order) {
       isLoading.value = true;
-      await OrdersService.postOrders(order.order_item_id, order.table_id);
-      await getData();
-      isLoading.value = false;
+      OrdersService.postOrders(order.order_item_id, order.table_id).finally(() => getData());
     }
 
-    async function decrementOrder(order: service_Order) {
+    function decrementOrder(order: service_Order) {
       isLoading.value = true;
-      await OrdersService.deleteOrders(order.order_item_id, order.table_id);
-      await getData();
-      isLoading.value = false;
+      OrdersService.deleteOrders(order.order_item_id, order.table_id).finally(() => getData());
     }
 
     return {

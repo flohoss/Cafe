@@ -16,7 +16,7 @@ export default defineComponent({
   name: "WaveSpinner",
   setup() {
     const isShowing = ref(false);
-    setTimeout(() => (isShowing.value = true), 100);
+    setTimeout(() => (isShowing.value = true), 200);
     return { isShowing };
   },
 });
@@ -26,8 +26,6 @@ export default defineComponent({
 .center {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
 }
 
 .lds-ellipsis {

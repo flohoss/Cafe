@@ -1,17 +1,18 @@
 <template>
   <BaseCard>
-    <EmptyView v-if="orders.length === 0" message="Keine offenen Bestellungen" />
+    <WaveSpinner v-if="isLoading" />
+    <EmptyView v-else-if="orders.length === 0" message="Keine offenen Bestellungen" />
     <div v-else>
       <BaseToolbar icon="fa-box-open" title="Offen" btnIcon="check" @click="checkAllOpenOrders" />
       <div class="grid">
-        <OrderCard v-for="entry in orders" v-bind:key="entry.id" :order="entry" :isDisabled="isLoading" @orderDone="(order) => orderDone(order)" />
+        <OrderCard v-for="entry in orders" v-bind:key="entry.id" :order="entry" :isDisabled="isDisabled" @orderDone="(order) => orderDone(order)" />
       </div>
     </div>
   </BaseCard>
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, ref } from "vue";
+import { defineComponent, onMounted, onUnmounted, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { OrdersService, service_Order } from "@/services/openapi";
 import OrderCard from "@/components/Orders/OrderCard.vue";
@@ -20,20 +21,25 @@ import { WEBSOCKET_ENDPOINT_URL } from "@/main";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import { useToast } from "primevue/usetoast";
 import EmptyView from "@/views/Empty.vue";
+import WaveSpinner from "@/components/UI/WaveSpinner.vue";
 
 export default defineComponent({
   name: "OrderView",
-  components: { EmptyView, BaseToolbar, OrderCard, BaseCard },
+  components: { EmptyView, BaseToolbar, OrderCard, BaseCard, WaveSpinner },
   setup() {
     const toast = useToast();
     const isLoading = ref(true);
+    const isDisabled = ref(false);
     const orders = ref<service_Order[]>([]);
-
-    OrdersService.getOrders()
-      .then((res) => (orders.value = res))
-      .finally(() => (isLoading.value = false));
     let ws = ref<WebSocket | null>(null);
-    startWebsocket();
+
+    onMounted(() => {
+      isLoading.value = true;
+      OrdersService.getOrders()
+        .then((res) => (orders.value = res))
+        .finally(() => (isLoading.value = false));
+      startWebsocket();
+    });
     onUnmounted(() => stopWebsocket());
 
     function startWebsocket() {
@@ -58,7 +64,7 @@ export default defineComponent({
     }
 
     function parseWebsocket(evt: Event) {
-      isLoading.value = true;
+      isDisabled.value = true;
       const messageEvent = evt as MessageEvent;
       const order: WebSocketMsg = JSON.parse(messageEvent.data);
       if (order.type === NotifierType.Create) {
@@ -67,7 +73,7 @@ export default defineComponent({
         orders.value = orders.value.filter((o) => o.id !== order.payload.id);
       }
       sortOrders();
-      isLoading.value = false;
+      isDisabled.value = false;
     }
 
     function sortOrders() {
@@ -75,14 +81,12 @@ export default defineComponent({
     }
 
     function orderDone(order: service_Order) {
+      isDisabled.value = true;
       order.is_served = true;
       OrdersService.putOrders(order)
-        .then(() => {
-          orders.value = orders.value.filter((oldOrder) => oldOrder.id !== order.id);
-        })
-        .catch((err) => {
-          errorToast(toast, err.body.error);
-        });
+        .then(() => (orders.value = orders.value.filter((oldOrder) => oldOrder.id !== order.id)))
+        .catch((err) => errorToast(toast, err.body.error))
+        .finally(() => (isDisabled.value = false));
     }
 
     function checkAllOpenOrders() {
@@ -91,7 +95,7 @@ export default defineComponent({
       });
     }
 
-    return { orders, ItemType, isLoading, orderDone, checkAllOpenOrders };
+    return { orders, ItemType, isLoading, isDisabled, orderDone, checkAllOpenOrders };
   },
 });
 </script>
