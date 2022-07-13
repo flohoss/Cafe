@@ -29,7 +29,10 @@ export default defineComponent({
 
     function getData() {
       isLoading.value = true;
-      store.dispatch("fetchTables").then(() => (isLoading.value = false));
+      store.dispatch("fetchTables").then((res) => {
+        store.commit("setTables", res);
+        isLoading.value = false;
+      });
     }
     onMounted(() => getData());
 

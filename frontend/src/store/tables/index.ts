@@ -31,7 +31,7 @@ const tableStore = {
     // eslint-disable-next-line
     fetchTables(context: any) {
       context.commit("setTables", null);
-      TablesService.getTables().then((tables) => context.commit("setTables", tables));
+      return TablesService.getTables();
     },
     // eslint-disable-next-line
     removeLastTable(context: any) {
