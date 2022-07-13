@@ -1,7 +1,7 @@
 <template>
   <Menubar v-if="isLoggedIn" :model="items" class="p-1 mb-3 shadow-1 border-0 bg-color">
     <template #start>
-      <router-link to="/"><img alt="logo" class="h-3rem mx-2" /></router-link>
+      <router-link class="no-underline" to="/"><img alt="logo" class="h-3rem mx-2" /></router-link>
     </template>
     <template #end>
       <div v-if="tablePath">

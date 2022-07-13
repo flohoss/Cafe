@@ -58,7 +58,6 @@ func (a *Api) createOrder(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, errorResponse{err.Error()})
 	} else {
-		service.LiveCh <- order
 		c.JSON(http.StatusCreated, order)
 	}
 }

@@ -6,7 +6,7 @@ import (
 )
 
 type (
-	NotifierChan chan service.Order
+	NotifierChan chan service.WebSocketMsg
 
 	Hub struct {
 		Notifier       NotifierChan

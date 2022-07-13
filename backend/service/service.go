@@ -5,14 +5,28 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type ItemType uint
+type (
+	ItemType uint
+
+	NotifierType uint
+
+	WebSocketMsg struct {
+		Type    NotifierType `json:"type"`
+		Payload Order        `json:"payload"`
+	}
+)
+
+const (
+	Create NotifierType = iota
+	Delete
+)
 
 const (
 	Food ItemType = iota
 	Drink
 )
 
-var LiveCh chan Order
+var LiveCh chan WebSocketMsg
 
 func ParseItemType(itemType string) ItemType {
 	switch itemType {
@@ -38,5 +52,5 @@ func Initialize() {
 	migrateHelper(OrderItem{}, "orderItem")
 	migrateHelper(Bill{}, "bill")
 	migrateHelper(BillItem{}, "billItem")
-	LiveCh = make(chan Order)
+	LiveCh = make(chan WebSocketMsg)
 }

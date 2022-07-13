@@ -15,7 +15,7 @@ import { defineComponent, onUnmounted, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { OrdersService, service_Order } from "@/services/openapi";
 import OrderCard from "@/components/Orders/OrderCard.vue";
-import { errorToast, ItemType } from "@/utils";
+import { errorToast, ItemType, NotifierType, WebSocketMsg } from "@/utils";
 import { WEBSOCKET_ENDPOINT_URL } from "@/main";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import { useToast } from "primevue/usetoast";
@@ -60,8 +60,12 @@ export default defineComponent({
     function parseWebsocket(evt: Event) {
       isLoading.value = true;
       const messageEvent = evt as MessageEvent;
-      const order = JSON.parse(messageEvent.data);
-      orders.value.push(order);
+      const order: WebSocketMsg = JSON.parse(messageEvent.data);
+      if (order.type === NotifierType.Create) {
+        orders.value.push(order.payload);
+      } else if (order.type === NotifierType.Delete) {
+        orders.value = orders.value.filter((o) => o.id !== order.payload.id);
+      }
       sortOrders();
       isLoading.value = false;
     }

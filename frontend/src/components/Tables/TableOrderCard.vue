@@ -1,5 +1,5 @@
 <template>
-  <div v-if="order.order_item.item_type === itemType" class="col-12 lg:col-6">
+  <div class="col-12 lg:col-6">
     <BaseItem bgColor="c">
       <div class="flex flex-column overflow-hidden">
         <div class="font-bold white-space-nowrap overflow-hidden text-overflow-ellipsis mb-1">{{ order.order_item.description }}</div>
@@ -36,7 +36,6 @@ export default defineComponent({
   props: {
     order: { type: Object as PropType<service_Order>, required: true },
     isDisabled: { type: Boolean, default: false },
-    itemType: { type: Number, required: true },
   },
   emits: ["decrementOrder", "incrementOrder"],
   setup() {

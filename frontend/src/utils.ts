@@ -1,3 +1,5 @@
+import { service_Order } from "@/services/openapi";
+
 export function convertToEur(value: number | undefined) {
   const temp: number = value ? value : 0;
   return temp.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
@@ -6,6 +8,16 @@ export function convertToEur(value: number | undefined) {
 export enum ItemType {
   Food,
   Drink,
+}
+
+export interface WebSocketMsg {
+  type: NotifierType;
+  payload: service_Order;
+}
+
+export enum NotifierType {
+  Create,
+  Delete,
 }
 
 import { ToastServiceMethods } from "primevue/toastservice";

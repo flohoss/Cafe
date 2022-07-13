@@ -46,7 +46,6 @@ func DoesOrderExist(id string) (Order, error) {
 func GetAllActiveOrders() []Order {
 	var orders []Order
 	config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Where("is_served = ?", 0).Order("updated_at").Find(&orders)
-	fmt.Println(orders)
 	return orders
 }
 
@@ -74,6 +73,10 @@ func CreateOrder(order *Order) error {
 		return fmt.Errorf(config.CannotCreate.String())
 	}
 	config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").First(order)
+	LiveCh <- WebSocketMsg{
+		Type:    Create,
+		Payload: *order,
+	}
 	return nil
 }
 
@@ -87,13 +90,17 @@ func UpdateOrder(old *Order, new *Order) error {
 
 func DeleteOrder(tableId string, orderItemId string) error {
 	var order Order
-	err := config.C.Database.ORM.Where("table_id = ? AND order_item_id = ?", tableId, orderItemId).First(&order).Error
+	err := config.C.Database.ORM.Where("table_id = ? AND order_item_id = ?", tableId, orderItemId).Last(&order).Error
 	if err != nil {
 		return fmt.Errorf(config.CannotFind.String())
 	}
 	err = config.C.Database.ORM.Delete(&order).Error
 	if err != nil {
 		return fmt.Errorf(config.CannotDelete.String())
+	}
+	LiveCh <- WebSocketMsg{
+		Type:    Delete,
+		Payload: order,
 	}
 	return nil
 }

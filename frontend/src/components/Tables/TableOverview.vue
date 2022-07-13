@@ -3,9 +3,8 @@
     <BaseToolbar :isDisabled="isLoading" title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" btnIcon="plus" />
     <div class="grid">
       <TableOrderCard
-        v-for="entry in orders"
+        v-for="entry in food"
         v-bind:key="entry.id"
-        :itemType="ItemType.Food"
         :order="entry"
         :isDisabled="isLoading"
         @incrementOrder="(order) => incrementOrder(order)"
@@ -15,9 +14,8 @@
     <BaseToolbar :isDisabled="isLoading" title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" btnIcon="plus" />
     <div class="grid">
       <TableOrderCard
-        v-for="entry in orders"
+        v-for="entry in drinks"
         v-bind:key="entry.id"
-        :itemType="ItemType.Drink"
         :order="entry"
         :isDisabled="isLoading"
         @incrementOrder="(order) => incrementOrder(order)"
@@ -90,7 +88,8 @@ export default defineComponent({
     const orderItems = computed(() => store.getters.getOrderItems);
     const options = ref();
     const orders = ref<service_Order[]>([]);
-    const currentItemType = ref(0);
+    const drinks = computed(() => orders.value.filter((order) => order.order_item.item_type === ItemType.Drink));
+    const food = computed(() => orders.value.filter((order) => order.order_item.item_type === ItemType.Food));
 
     store.dispatch("getAllOrderItems");
 
@@ -108,7 +107,6 @@ export default defineComponent({
 
     async function addBeverage(type: ItemType) {
       modal.value = true;
-      currentItemType.value = type;
       options.value = orderItems.value.get(type);
     }
 
@@ -144,7 +142,8 @@ export default defineComponent({
       addBeverage,
       ItemType,
       postOrder,
-      orders,
+      drinks,
+      food,
       incrementOrder,
       decrementOrder,
     };

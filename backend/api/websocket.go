@@ -24,10 +24,6 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-type Client struct {
-	conn *websocket.Conn
-}
-
 func readPump(conn *websocket.Conn) {
 	defer conn.Close()
 	for {
