@@ -31,7 +31,7 @@
           optionLabel="description"
           dataKey="id"
           optionValue="id"
-          listStyle="max-height:80vh"
+          listStyle="max-height:65vh"
           filterPlaceholder="Suchen"
         />
       </div>
