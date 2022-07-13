@@ -6,7 +6,7 @@
         <div class="flex align-items-center justify-content-between">
           <div>
             <TheBadge> {{ convertToEur(order.order_item.price) }} </TheBadge>
-            <TheBadge color="warning" v-if="order.order_item.price !== order.total" class="ml-2"> {{ convertToEur(order.total) }} </TheBadge>
+            <TheBadge v-if="showTotal" class="ml-2" color="warning"> {{ convertToEur(order.total) }} </TheBadge>
           </div>
           <div class="flex align-items-center">
             <div @click="!isDisabled && $emit('decrementOrder', order)" :style="{ color: isDisabled ? 'grey' : 'red' }" style="cursor: pointer">
@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from "vue";
+import { computed, defineComponent, PropType } from "vue";
 import { service_Order } from "@/services/openapi";
 import BaseItem from "@/components/UI/BaseItem.vue";
 import { convertToEur, ItemType } from "@/utils";
@@ -38,8 +38,9 @@ export default defineComponent({
     isDisabled: { type: Boolean, default: false },
   },
   emits: ["decrementOrder", "incrementOrder"],
-  setup() {
-    return { convertToEur, ItemType };
+  setup(props) {
+    const showTotal = computed(() => props.order.order_item.price !== props.order.total);
+    return { convertToEur, ItemType, showTotal };
   },
 });
 </script>
