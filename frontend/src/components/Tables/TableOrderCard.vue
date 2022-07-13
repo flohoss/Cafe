@@ -1,6 +1,6 @@
 <template>
   <div class="col-12 lg:col-6">
-    <BaseItem bgColor="c">
+    <BaseItem bgColor="d">
       <div class="flex flex-column overflow-hidden">
         <div class="font-bold white-space-nowrap overflow-hidden text-overflow-ellipsis mb-1">{{ order.order_item.description }}</div>
         <div class="flex align-items-center justify-content-between">

@@ -1,6 +1,6 @@
 <template>
   <div class="col-12 lg:col-6">
-    <BaseItem>
+    <BaseItem bgColor="d" :border="order.order_item.item_type === ItemType.Food ? '2px dashed red' : '2px dashed var(--primary-color)'">
       <div class="flex justify-content-between overflow-hidden">
         <div class="flex flex-column align-items-start">
           <div class="white-space-nowrap overflow-hidden text-overflow-ellipsis font-bold">{{ order.order_item.description }}</div>
