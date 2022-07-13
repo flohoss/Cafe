@@ -26,10 +26,9 @@ export default defineComponent({
     const store = useStore();
     const tables = computed(() => store.getters.getTables);
 
-    async function getData() {
+    function getData() {
       isLoading.value = true;
-      await store.dispatch("fetchTables");
-      isLoading.value = false;
+      store.dispatch("fetchTables").then(() => (isLoading.value = false));
     }
     onMounted(() => getData());
 
