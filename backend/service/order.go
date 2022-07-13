@@ -3,6 +3,8 @@ package service
 import (
 	"cafe/config"
 	"fmt"
+	"gorm.io/gorm"
+	"time"
 )
 
 type (
@@ -24,6 +26,23 @@ type (
 		Price       float64  `json:"price" validate:"required"`
 	}
 )
+
+func updateTableUpdatedAt(tx *gorm.DB, o *Order) {
+	var table Table
+	tx.Where("id = ?", o.TableID).First(&table)
+	table.UpdatedAt = time.Now().Unix()
+	tx.Save(&table)
+}
+
+func (o *Order) AfterCreate(tx *gorm.DB) (err error) {
+	updateTableUpdatedAt(tx, o)
+	return
+}
+
+func (o *Order) AfterDelete(tx *gorm.DB) (err error) {
+	updateTableUpdatedAt(tx, o)
+	return
+}
 
 func DoesOrderItemExist(id string) (OrderItem, error) {
 	var orderItem OrderItem

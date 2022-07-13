@@ -36,7 +36,7 @@
         />
       </div>
       <div class="flex justify-content-end mt-4">
-        <Button label="Speichern" icon="pi pi-check" class="p-button p-button-success mr-3" @click="postOrder" />
+        <Button :loading="isLoading" label="Speichern" icon="pi pi-check" class="p-button p-button-success mr-3" @click="postOrder" />
       </div>
     </Sidebar>
 
