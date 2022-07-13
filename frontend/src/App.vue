@@ -49,7 +49,7 @@ export default defineComponent({
   box-shadow: none !important;
 }
 body {
-  margin: 0.2rem;
+  margin: 0.3rem;
   padding: 0.2rem;
   background-color: var(--surface-b);
 }

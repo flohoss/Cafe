@@ -22,6 +22,8 @@
         @decrementOrder="(order) => decrementOrder(order)"
       />
     </div>
+    <div class="h-4rem"></div>
+
     <Sidebar v-model:visible="modal" :modal="true" :baseZIndex="10000" position="full">
       <div class="p-fluid">
         <Listbox
