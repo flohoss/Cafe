@@ -1,13 +1,15 @@
 <template>
   <BaseCard>
-    <WaveSpinner v-if="isLoading" />
-    <EmptyView v-else-if="orders.length === 0" message="Keine offenen Bestellungen" />
-    <div v-else>
-      <BaseToolbar icon="fa-box-open" title="Offen" btnIcon="check" @click="checkAllOpenOrders" />
-      <div class="grid">
-        <OrderCard v-for="entry in orders" v-bind:key="entry.id" :order="entry" :isDisabled="isDisabled" @orderDone="(order) => orderDone(order)" />
+    <Transition>
+      <WaveSpinner v-if="isLoading" />
+      <EmptyView v-else-if="orders.length === 0" message="Keine offenen Bestellungen" />
+      <div v-else>
+        <BaseToolbar icon="fa-box-open" title="Offen" btnIcon="check" @click="checkAllOpenOrders" />
+        <div class="grid">
+          <OrderCard v-for="entry in orders" v-bind:key="entry.id" :order="entry" :isDisabled="isDisabled" @orderDone="(order) => orderDone(order)" />
+        </div>
       </div>
-    </div>
+    </Transition>
   </BaseCard>
 </template>
 
@@ -37,8 +39,10 @@ export default defineComponent({
       isLoading.value = true;
       OrdersService.getOrders()
         .then((res) => (orders.value = res))
-        .finally(() => (isLoading.value = false));
-      startWebsocket();
+        .finally(() => {
+          isLoading.value = false;
+          startWebsocket();
+        });
     });
     onUnmounted(() => stopWebsocket());
 

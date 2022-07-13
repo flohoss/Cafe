@@ -63,7 +63,7 @@ body {
 }
 </style>
 
-<style scoped>
+<style>
 .v-enter-active {
   transition: all 0.2s ease-in;
 }

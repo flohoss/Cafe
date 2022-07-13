@@ -36,6 +36,7 @@ import { required } from "@vuelidate/validators";
 import { useVuelidate } from "@vuelidate/core";
 import Button from "primevue/button";
 import InputText from "primevue/inputtext";
+import { ItemType } from "@/utils";
 
 export default defineComponent({
   name: "LoginView",
@@ -57,7 +58,7 @@ export default defineComponent({
       isLoading.value = true;
       AuthorizationService.postAuthLogin(auth.password)
         .then(() => {
-          store.dispatch("getTables").then(() => {
+          store.dispatch("getOrderItems", ItemType.Drink).then(() => {
             store.commit("login");
             router.replace({ name: "Tables" });
           });
@@ -83,11 +84,13 @@ export default defineComponent({
   margin-right: -50%;
   transform: translate(-50%, -50%);
 }
+
 @media (prefers-color-scheme: light) {
   img {
     content: url("../assets/logo.png");
   }
 }
+
 @media (prefers-color-scheme: dark) {
   img {
     content: url("../assets/logo_white.png");

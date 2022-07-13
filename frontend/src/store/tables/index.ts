@@ -29,9 +29,8 @@ const tableStore = {
   },
   actions: {
     // eslint-disable-next-line
-    async getTables(context: any) {
-      const tables: service_Table[] = await TablesService.getTables();
-      context.commit("setTables", tables);
+    fetchTables(context: any) {
+      TablesService.getTables().then((tables) => context.commit("setTables", tables));
     },
     // eslint-disable-next-line
     removeLastTable(context: any) {

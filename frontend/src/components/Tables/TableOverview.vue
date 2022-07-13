@@ -1,28 +1,33 @@
 <template>
   <BaseCard>
-    <BaseToolbar :isDisabled="isLoading" title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" btnIcon="plus" />
-    <div class="grid">
-      <TableOrderCard
-        v-for="entry in food"
-        v-bind:key="entry.id"
-        :order="entry"
-        :isDisabled="isLoading"
-        @incrementOrder="(order) => incrementOrder(order)"
-        @decrementOrder="(order) => decrementOrder(order)"
-      />
-    </div>
-    <BaseToolbar :isDisabled="isLoading" title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" btnIcon="plus" />
-    <div class="grid">
-      <TableOrderCard
-        v-for="entry in drinks"
-        v-bind:key="entry.id"
-        :order="entry"
-        :isDisabled="isLoading"
-        @incrementOrder="(order) => incrementOrder(order)"
-        @decrementOrder="(order) => decrementOrder(order)"
-      />
-    </div>
-    <div class="h-4rem"></div>
+    <Transition>
+      <WaveSpinner v-if="isLoading" />
+      <div v-else>
+        <BaseToolbar :isDisabled="isDisabled" title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" btnIcon="plus" />
+        <div class="grid">
+          <TableOrderCard
+            v-for="entry in food"
+            v-bind:key="entry.id"
+            :order="entry"
+            :isDisabled="isDisabled"
+            @incrementOrder="(order) => incrementOrder(order)"
+            @decrementOrder="(order) => decrementOrder(order)"
+          />
+        </div>
+        <BaseToolbar :isDisabled="isDisabled" title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" btnIcon="plus" />
+        <div class="grid">
+          <TableOrderCard
+            v-for="entry in drinks"
+            v-bind:key="entry.id"
+            :order="entry"
+            :isDisabled="isDisabled"
+            @incrementOrder="(order) => incrementOrder(order)"
+            @decrementOrder="(order) => decrementOrder(order)"
+          />
+        </div>
+        <div class="h-4rem"></div>
+      </div>
+    </Transition>
 
     <Sidebar v-model:visible="modal" :modal="true" :baseZIndex="10000" position="full">
       <div class="p-fluid">
@@ -38,14 +43,14 @@
         />
       </div>
       <div class="flex justify-content-end mt-4">
-        <Button :loading="isLoading" label="Speichern" icon="pi pi-check" class="p-button p-button-success mr-3" @click="postOrder" />
+        <Button :loading="isDisabled" label="Speichern" icon="pi pi-check" class="p-button p-button-success mr-3" @click="postOrder" />
       </div>
     </Sidebar>
 
     <BottomNavigation>
       <template #left>
         <router-link to="/tables" class="no-underline">
-          <Button :disabled="isLoading" icon="pi pi-arrow-left" class="p-button-rounded" />
+          <Button :disabled="isDisabled" icon="pi pi-arrow-left" class="p-button-rounded" />
         </router-link>
       </template>
       <template #middle>
@@ -56,7 +61,7 @@
       </template>
       <template #right>
         <router-link to="/bills" class="no-underline">
-          <Button :disabled="isLoading" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" />
+          <Button :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" />
         </router-link>
       </template>
     </BottomNavigation>
@@ -75,13 +80,15 @@ import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import Listbox from "primevue/listbox";
 import TableOrderCard from "@/components/Tables/TableOrderCard.vue";
 import Sidebar from "primevue/sidebar";
+import WaveSpinner from "@/components/UI/WaveSpinner.vue";
 
 export default defineComponent({
   name: "TableOverview",
-  components: { TableOrderCard, BaseToolbar, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
+  components: { WaveSpinner, TableOrderCard, BaseToolbar, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
   props: { id: { type: String, default: "0" } },
   setup(props) {
     const isLoading = ref(false);
+    const isDisabled = ref(false);
     const modal = ref(false);
     const store = useStore();
     const selected = ref();
@@ -95,8 +102,10 @@ export default defineComponent({
 
     store.dispatch("getAllOrderItems");
 
-    getData();
-    function getData() {
+    getData(true);
+
+    function getData(initial = false) {
+      if (initial) isLoading.value = true;
       OrdersService.getOrders(table.value)
         .then((res) => (orders.value = res))
         .finally(() => {
@@ -109,6 +118,7 @@ export default defineComponent({
       modal.value = false;
       selected.value = undefined;
       isLoading.value = false;
+      isDisabled.value = false;
     }
 
     function updateTotal() {
@@ -123,17 +133,17 @@ export default defineComponent({
     }
 
     function postOrder() {
-      isLoading.value = true;
+      isDisabled.value = true;
       OrdersService.postOrders(selected.value, table.value).finally(() => getData());
     }
 
     function incrementOrder(order: service_Order) {
-      isLoading.value = true;
+      isDisabled.value = true;
       OrdersService.postOrders(order.order_item_id, order.table_id).finally(() => getData());
     }
 
     function decrementOrder(order: service_Order) {
-      isLoading.value = true;
+      isDisabled.value = true;
       OrdersService.deleteOrders(order.order_item_id, order.table_id).finally(() => getData());
     }
 
@@ -143,6 +153,7 @@ export default defineComponent({
       options,
       table,
       total,
+      isDisabled,
       isLoading,
       convertToEur,
       addBeverage,
@@ -162,6 +173,7 @@ export default defineComponent({
   margin: 0 !important;
   padding: 0 !important;
 }
+
 .p-listbox {
   border: 0 !important;
 }

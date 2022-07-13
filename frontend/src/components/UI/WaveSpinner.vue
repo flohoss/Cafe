@@ -1,5 +1,5 @@
 <template>
-  <div class="center" v-if="isShowing">
+  <div class="center">
     <div class="lds-ellipsis">
       <div></div>
       <div></div>
@@ -14,11 +14,6 @@ import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   name: "WaveSpinner",
-  setup() {
-    const isShowing = ref(false);
-    setTimeout(() => (isShowing.value = true), 200);
-    return { isShowing };
-  },
 });
 </script>
 
@@ -26,6 +21,7 @@ export default defineComponent({
 .center {
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 .lds-ellipsis {

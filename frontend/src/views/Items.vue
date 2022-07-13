@@ -1,14 +1,16 @@
 <template>
   <BaseCard>
-    <WaveSpinner v-if="isLoading" />
-    <OrderItemList
-      v-else
-      :orderItems="currentOrderItems"
-      :emptyOrderItem="emptyOrderItem"
-      @orderItemChanged="(item) => orderItemChanged(item)"
-      @orderItemDeleted="(item) => orderItemDeleted(item)"
-      @orderItemCreated="(item) => orderItemCreated(item)"
-    />
+    <Transition>
+      <WaveSpinner v-if="isLoading" />
+      <OrderItemList
+        v-else
+        :orderItems="currentOrderItems"
+        :emptyOrderItem="emptyOrderItem"
+        @orderItemChanged="(item) => orderItemChanged(item)"
+        @orderItemDeleted="(item) => orderItemDeleted(item)"
+        @orderItemCreated="(item) => orderItemCreated(item)"
+      />
+    </Transition>
   </BaseCard>
 </template>
 

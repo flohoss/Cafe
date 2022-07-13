@@ -1,10 +1,12 @@
 <template>
   <BaseCard>
-    <WaveSpinner v-if="isLoading" />
-    <EmptyView v-else-if="tables.length === 0" message="Keine Tische" />
-    <div v-else class="grid">
-      <TableCard v-for="table in tables" v-bind:key="table.id" :table="table" />
-    </div>
+    <Transition>
+      <WaveSpinner v-if="isLoading" />
+      <EmptyView v-else-if="tables.length === 0" message="Keine Tische" />
+      <div v-else class="grid">
+        <TableCard v-for="table in tables" v-bind:key="table.id" :table="table" />
+      </div>
+    </Transition>
   </BaseCard>
 </template>
 
