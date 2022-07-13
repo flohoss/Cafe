@@ -28,7 +28,7 @@ export default defineComponent({
 
     async function getData() {
       isLoading.value = true;
-      await store.dispatch("getTables");
+      await store.dispatch("fetchTables");
       isLoading.value = false;
     }
     onMounted(() => getData());

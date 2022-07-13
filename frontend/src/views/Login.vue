@@ -58,10 +58,8 @@ export default defineComponent({
       isLoading.value = true;
       AuthorizationService.postAuthLogin(auth.password)
         .then(() => {
-          store.dispatch("getOrderItems", ItemType.Drink).then(() => {
-            store.commit("login");
-            router.replace({ name: "Tables" });
-          });
+          store.commit("login");
+          router.replace({ name: "Tables" });
         })
         .catch(() => {
           submitLabel.value = "Bitte versuchen Sie es erneut";
