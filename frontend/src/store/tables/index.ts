@@ -1,19 +1,19 @@
 import { service_Table, TablesService } from "@/services/openapi";
 
 interface AppStateModel {
-  tables: service_Table[];
+  tables: service_Table[] | null;
 }
 
 const tableStore = {
   state: () => ({
-    tables: [],
+    tables: null,
   }),
   getters: {
     getTables(state: AppStateModel) {
       return state.tables;
     },
     getTablesCount(state: AppStateModel) {
-      return state.tables.length;
+      return state.tables && state.tables.length;
     },
   },
   mutations: {
@@ -21,15 +21,16 @@ const tableStore = {
       state.tables = tables;
     },
     popTables(state: AppStateModel) {
-      state.tables.pop();
+      state.tables && state.tables.pop();
     },
     pushTable(state: AppStateModel, table: service_Table) {
-      state.tables.push(table);
+      state.tables && state.tables.push(table);
     },
   },
   actions: {
     // eslint-disable-next-line
     fetchTables(context: any) {
+      context.commit("setTables", null);
       TablesService.getTables().then((tables) => context.commit("setTables", tables));
     },
     // eslint-disable-next-line

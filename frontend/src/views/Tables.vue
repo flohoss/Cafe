@@ -2,7 +2,7 @@
   <BaseCard>
     <Transition>
       <WaveSpinner v-if="isLoading" />
-      <EmptyView v-else-if="tables.length === 0" message="Keine Tische" />
+      <EmptyView v-else-if="tables && tables.length === 0" message="Keine Tische" />
       <div v-else class="grid">
         <TableCard v-for="table in tables" v-bind:key="table.id" :table="table" />
       </div>
@@ -17,6 +17,7 @@ import { useStore } from "vuex";
 import TableCard from "@/components/Tables/TableCard.vue";
 import EmptyView from "@/views/Empty.vue";
 import WaveSpinner from "@/components/UI/WaveSpinner.vue";
+import { TablesService } from "@/services/openapi";
 
 export default defineComponent({
   name: "TablesView",
