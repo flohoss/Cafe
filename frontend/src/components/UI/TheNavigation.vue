@@ -8,7 +8,7 @@
         <Button v-if="tablesCount !== 0" :disabled="isLoading" icon="pi pi-minus" class="p-button-danger p-button-rounded mr-2" @click="removeTable" />
         <Button :disabled="isLoading" icon="pi pi-plus" class="p-button-success p-button-rounded" @click="addTable" />
       </div>
-      <router-link v-else to="/tables" class="mr-1 no-underline">
+      <router-link v-else :to="{ name: 'Tables' }" class="mr-1 no-underline">
         <Button label="Tische" class="p-button-secondary" icon="pi pi-table" />
       </router-link>
     </template>
