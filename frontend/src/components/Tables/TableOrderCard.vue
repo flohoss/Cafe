@@ -6,17 +6,10 @@
         <div class="flex align-items-center justify-content-between">
           <div>
             <TheBadge> {{ convertToEur(order.order_item.price) }} </TheBadge>
-            <TheBadge v-if="showTotal" class="ml-2" color="warning"> {{ convertToEur(order.total) }} </TheBadge>
+            <TheBadge v-if="showTotal && total" class="ml-2" color="warning"> {{ convertToEur(order.total) }} </TheBadge>
+            <TheBadge v-if="amount" class="ml-2" color="warning"> {{ order.order_count }}x </TheBadge>
           </div>
-          <div class="flex align-items-center">
-            <div @click="!isDisabled && $emit('decrementOrder', order)" :style="{ color: isDisabled ? 'grey' : 'red' }" style="cursor: pointer">
-              <i class="pi pi-minus"></i>
-            </div>
-            <div class="mx-2 font-bold">{{ order.order_count }}</div>
-            <div @click="!isDisabled && $emit('incrementOrder', order)" :style="{ color: isDisabled ? 'grey' : 'green' }" style="cursor: pointer">
-              <i class="pi pi-plus"></i>
-            </div>
-          </div>
+          <slot></slot>
         </div>
       </div>
     </BaseItem>
@@ -35,7 +28,8 @@ export default defineComponent({
   components: { TheBadge, BaseItem },
   props: {
     order: { type: Object as PropType<service_Order>, required: true },
-    isDisabled: { type: Boolean, default: false },
+    amount: { type: Boolean, required: false, default: false },
+    total: { type: Boolean, required: false, default: true },
   },
   emits: ["decrementOrder", "incrementOrder"],
   setup(props) {

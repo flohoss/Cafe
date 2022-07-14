@@ -82,7 +82,7 @@ func GetAllOrdersForTable(table string) []Order {
 		"order_item_id",
 	).Where(
 		"table_id = ?", table,
-	).Order("description").Find(&orders)
+	).Order("item_type, description").Find(&orders)
 	return orders
 }
 

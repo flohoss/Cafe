@@ -3,28 +3,22 @@
     <Transition>
       <WaveSpinner v-if="isLoading" />
       <div v-else>
-        <BaseToolbar :isDisabled="isDisabled" title="Speisen" icon="fa-cheese" @click="addBeverage(ItemType.Food)" btnIcon="plus" />
-        <div class="grid">
-          <TableOrderCard
-            v-for="entry in food"
-            v-bind:key="entry.id"
-            :order="entry"
-            :isDisabled="isDisabled"
-            @incrementOrder="(order) => incrementOrder(order)"
-            @decrementOrder="(order) => decrementOrder(order)"
-          />
-        </div>
-        <BaseToolbar :isDisabled="isDisabled" title="Getränke" icon="fa-champagne-glasses" @click="addBeverage(ItemType.Drink)" btnIcon="plus" />
-        <div class="grid">
-          <TableOrderCard
-            v-for="entry in drinks"
-            v-bind:key="entry.id"
-            :order="entry"
-            :isDisabled="isDisabled"
-            @incrementOrder="(order) => incrementOrder(order)"
-            @decrementOrder="(order) => decrementOrder(order)"
-          />
-        </div>
+        <TableOverviewType
+          :type="ItemType.Food"
+          :orders="orders"
+          title="Speisen"
+          :checkout="checkout"
+          @getData="getData"
+          @openModal="(type) => addBeverage(type)"
+        />
+        <TableOverviewType
+          :type="ItemType.Drink"
+          :orders="orders"
+          title="Getränke"
+          :checkout="checkout"
+          @getData="getData"
+          @openModal="(type) => addBeverage(type)"
+        />
         <div class="h-4rem"></div>
       </div>
     </Transition>
@@ -43,13 +37,14 @@
         />
       </div>
       <div class="flex justify-content-end mt-4">
-        <Button :loading="isDisabled" label="Speichern" icon="pi pi-check" class="p-button p-button-success mr-3" @click="postOrder" />
+        <Button :loading="isLoading" label="Speichern" icon="pi pi-check" class="p-button p-button-success mr-3" @click="postOrder" />
       </div>
     </Sidebar>
 
     <BottomNavigation>
       <template #left>
-        <router-link to="/tables" class="no-underline">
+        <Button v-if="checkout" :disabled="isDisabled" icon="pi pi-arrow-left" class="p-button-rounded" @click="checkout = false" />
+        <router-link v-else :to="{ name: 'Tables' }" class="no-underline">
           <Button :disabled="isDisabled" icon="pi pi-arrow-left" class="p-button-rounded" />
         </router-link>
       </template>
@@ -60,9 +55,7 @@
         </div>
       </template>
       <template #right>
-        <router-link to="/bills" class="no-underline">
-          <Button :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" />
-        </router-link>
+        <Button :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="checkout = true" />
       </template>
     </BottomNavigation>
   </BaseCard>
@@ -76,15 +69,14 @@ import { OrdersService, service_Order } from "@/services/openapi";
 import BottomNavigation from "@/components/UI/BottomNavigation.vue";
 import Button from "primevue/button";
 import { convertToEur, ItemType } from "@/utils";
-import BaseToolbar from "@/components/UI/BaseToolbar.vue";
-import Listbox from "primevue/listbox";
-import TableOrderCard from "@/components/Tables/TableOrderCard.vue";
-import Sidebar from "primevue/sidebar";
 import WaveSpinner from "@/components/UI/WaveSpinner.vue";
+import TableOverviewType from "@/components/Tables/OverviewPerType.vue";
+import Sidebar from "primevue/sidebar";
+import Listbox from "primevue/listbox";
 
 export default defineComponent({
   name: "TableOverview",
-  components: { WaveSpinner, TableOrderCard, BaseToolbar, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
+  components: { TableOverviewType, WaveSpinner, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
   props: { id: { type: String, default: "0" } },
   setup(props) {
     const isLoading = ref(false);
@@ -97,8 +89,7 @@ export default defineComponent({
     const orderItems = computed(() => store.getters.getOrderItems);
     const options = ref();
     const orders = ref<service_Order[]>([]);
-    const drinks = computed(() => orders.value.filter((order) => order.order_item.item_type === ItemType.Drink));
-    const food = computed(() => orders.value.filter((order) => order.order_item.item_type === ItemType.Food));
+    const checkout = ref(false);
 
     store.dispatch("getAllOrderItems");
 
@@ -134,17 +125,9 @@ export default defineComponent({
 
     function postOrder() {
       isDisabled.value = true;
-      OrdersService.postOrders(selected.value, table.value).finally(() => getData());
-    }
-
-    function incrementOrder(order: service_Order) {
-      isDisabled.value = true;
-      OrdersService.postOrders(order.order_item_id, order.table_id).finally(() => getData());
-    }
-
-    function decrementOrder(order: service_Order) {
-      isDisabled.value = true;
-      OrdersService.deleteOrders(order.order_item_id, order.table_id).finally(() => getData());
+      if (selected.value) {
+        OrdersService.postOrders(selected.value, table.value).finally(() => getData());
+      } else isLoading.value = false;
     }
 
     return {
@@ -159,10 +142,9 @@ export default defineComponent({
       addBeverage,
       ItemType,
       postOrder,
-      drinks,
-      food,
-      incrementOrder,
-      decrementOrder,
+      orders,
+      checkout,
+      getData,
     };
   },
 });
