@@ -1,6 +1,10 @@
 package service
 
-import "cafe/config"
+import (
+	"cafe/config"
+	"fmt"
+	"time"
+)
 
 type (
 	Bill struct {
@@ -19,10 +23,18 @@ type (
 	}
 )
 
-func GetAllBills() []Bill {
+func GetAllBills(year string, month string, day string) ([]Bill, error) {
 	var bills []Bill
-	config.C.Database.ORM.Find(&bills)
-	return bills
+	const layout = "2006-1-02"
+	date := fmt.Sprintf("%s-%s-%s", year, month, day)
+	today, err := time.Parse(layout, date)
+	if err != nil {
+		return bills, fmt.Errorf(config.CannotFind.String())
+	}
+	beginningOfDay := today.Unix()
+	endOfDay := today.Add(23 * time.Hour).Add(59 * time.Minute).Add(59 * time.Second).Unix()
+	config.C.Database.ORM.Where("created_at BETWEEN ? AND ?", beginningOfDay, endOfDay).Find(&bills)
+	return bills, nil
 }
 
 func CreateBill(table *Table) Bill {

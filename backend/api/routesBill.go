@@ -12,12 +12,27 @@ import (
 // @Description gets all bills as array
 // @Tags bills
 // @Produce json
+// @Param year query int true "year"
+// @Param month query int true "month (1-12)"
+// @Param day query int true "day (1-31)"
 // @Success 200 {array} service.Bill
 // @Failure 401 "Unauthorized"
 // @Router /bills [get]
 // @Security Cookie
 func (a *Api) getBills(c *gin.Context) {
-	c.JSON(http.StatusOK, service.GetAllBills())
+	year, presentYear := c.GetQuery("year")
+	month, presentMonth := c.GetQuery("month")
+	day, presentDay := c.GetQuery("day")
+	if !presentYear || !presentMonth || !presentDay {
+		c.JSON(http.StatusBadRequest, errorResponse{config.MissingInformation.String()})
+		return
+	}
+	bills, err := service.GetAllBills(year, month, day)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, errorResponse{err.Error()})
+	} else {
+		c.JSON(http.StatusOK, bills)
+	}
 }
 
 // @Schemes
