@@ -17,7 +17,7 @@ import { OrdersService, service_Order } from "@/services/openapi";
 import { convertToEur, ItemType } from "@/utils";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import TableOrderCard from "@/components/Tables/TableOrderCard.vue";
-import OrderAmountChange from "@/components/Orders/OrderAmountChange.vue";
+import OrderAmountChange from "@/components/Tables/OrderAmountChange.vue";
 
 export default defineComponent({
   name: "OverviewPerType",
