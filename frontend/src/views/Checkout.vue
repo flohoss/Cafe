@@ -13,6 +13,25 @@
       </div>
 
       <Sidebar v-model:visible="checkoutModal" :baseZIndex="10000" position="full"> </Sidebar>
+
+      <BottomNavigation>
+        <template #left>
+          <router-link :to="{ name: 'TableDetail' }" class="no-underline">
+            <Button icon="pi pi-arrow-left" class="p-button-rounded" />
+          </router-link>
+        </template>
+        <template #middle>
+          <div class="flex flex-column align-items-center">
+            <div class="text-sm">Tisch {{ total }}</div>
+            <div class="font-bold">{{ convertToEur(total) }}</div>
+          </div>
+        </template>
+        <template #right>
+          <router-link :to="{ name: 'Checkout' }" class="no-underline">
+            <Button icon="pi pi-money-bill" class="p-button-danger p-button-rounded" />
+          </router-link>
+        </template>
+      </BottomNavigation>
     </BaseItem>
   </BaseCard>
 </template>
@@ -27,10 +46,13 @@ import InputSwitch from "primevue/inputswitch";
 import Checkbox from "primevue/checkbox";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import Divider from "primevue/divider";
+import BottomNavigation from "@/components/UI/BottomNavigation.vue";
+import { convertToEur } from "@/utils";
+import Button from "primevue/button";
 
 export default defineComponent({
   name: "CheckoutView",
-  components: { BaseToolbar, BaseItem, BaseCard, Sidebar, Checkbox, Divider },
+  components: { BaseToolbar, BaseItem, BaseCard, Sidebar, Checkbox, Divider, BottomNavigation, Button },
   props: { id: { type: String, default: "0" } },
   setup(props) {
     const orders = ref<service_Order[]>([]);
@@ -38,6 +60,7 @@ export default defineComponent({
     const checkoutModal = ref(false);
     const checkAll = ref(selected.value.length === orders.value.length);
     const table = computed(() => parseInt(props.id));
+    const total = ref(0);
     watch(selected, (newValue) => {
       checkAll.value = newValue.length === orders.value.length;
     });
@@ -56,7 +79,7 @@ export default defineComponent({
       checkAll.value ? (selected.value = []) : initSelectedArray();
     }
 
-    return { checkoutModal, orders, selected, checkAll, checkAllClicked };
+    return { checkoutModal, orders, selected, checkAll, checkAllClicked, convertToEur, total };
   },
 });
 </script>
