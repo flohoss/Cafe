@@ -1,5 +1,6 @@
 <template>
   <BaseCard>
+    <ConfirmDialog></ConfirmDialog>
     <Transition>
       <WaveSpinner v-if="isLoading" />
       <div v-else>
@@ -55,7 +56,8 @@
         </div>
       </template>
       <template #right>
-        <Button :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="checkout = true" />
+        <Button v-if="checkout" :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="confirmCheckout" />
+        <Button v-else :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="checkout = true" />
       </template>
     </BottomNavigation>
   </BaseCard>
@@ -73,12 +75,15 @@ import WaveSpinner from "@/components/UI/WaveSpinner.vue";
 import TableOverviewType from "@/components/Tables/OverviewPerType.vue";
 import Sidebar from "primevue/sidebar";
 import Listbox from "primevue/listbox";
+import { useConfirm } from "primevue/useconfirm";
+import ConfirmDialog from "primevue/confirmdialog";
 
 export default defineComponent({
   name: "TableOverview",
-  components: { TableOverviewType, WaveSpinner, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
+  components: { TableOverviewType, WaveSpinner, BottomNavigation, BaseCard, Button, Sidebar, Listbox, ConfirmDialog },
   props: { id: { type: String, default: "0" } },
   setup(props) {
+    const confirm = useConfirm();
     const isLoading = ref(false);
     const isDisabled = ref(false);
     const modal = ref(false);
@@ -130,6 +135,17 @@ export default defineComponent({
       } else isLoading.value = false;
     }
 
+    const confirmCheckout = () => {
+      confirm.require({
+        message: "Soll abgerechnet werden?",
+        header: "Abrechnen",
+        icon: "pi pi-exclamation-triangle",
+        accept: () => {
+          console.log("checkout");
+        },
+      });
+    };
+
     return {
       modal,
       selected,
@@ -145,6 +161,7 @@ export default defineComponent({
       orders,
       checkout,
       getData,
+      confirmCheckout,
     };
   },
 });
