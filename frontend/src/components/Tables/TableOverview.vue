@@ -1,16 +1,15 @@
 <template>
   <BaseCard>
-    <ConfirmDialog></ConfirmDialog>
     <Transition>
       <WaveSpinner v-if="isLoading" />
       <div v-else>
-        <TableOverviewType :type="ItemType.Food" :orders="orders" @getData="getData" @openModal="(type) => addBeverage(type)" />
-        <TableOverviewType :type="ItemType.Drink" :orders="orders" @getData="getData" @openModal="(type) => addBeverage(type)" />
+        <OverviewPerType :type="ItemType.Food" :orders="orders" @getData="getData" @openModal="(type) => addBeverage(type)" />
+        <OverviewPerType :type="ItemType.Drink" :orders="orders" @getData="getData" @openModal="(type) => addBeverage(type)" />
         <div class="h-4rem"></div>
       </div>
     </Transition>
 
-    <Sidebar v-model:visible="modal" :modal="true" :baseZIndex="10000" position="full">
+    <Sidebar v-model:visible="newOrderModal" :baseZIndex="10000" position="full">
       <div class="p-fluid">
         <Listbox
           v-model="selected"
@@ -41,7 +40,9 @@
         </div>
       </template>
       <template #right>
-        <Button :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="confirmCheckout" />
+        <router-link :to="{ name: 'Checkout' }" class="no-underline">
+          <Button :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" />
+        </router-link>
       </template>
     </BottomNavigation>
   </BaseCard>
@@ -51,28 +52,23 @@
 import { computed, defineComponent, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
-import { BillsService, OrdersService, service_Order } from "@/services/openapi";
+import { OrdersService, service_Order } from "@/services/openapi";
 import BottomNavigation from "@/components/UI/BottomNavigation.vue";
 import Button from "primevue/button";
 import { convertToEur, ItemType } from "@/utils";
 import WaveSpinner from "@/components/UI/WaveSpinner.vue";
-import TableOverviewType from "@/components/Tables/OverviewPerType.vue";
 import Sidebar from "primevue/sidebar";
 import Listbox from "primevue/listbox";
-import { useConfirm } from "primevue/useconfirm";
-import ConfirmDialog from "primevue/confirmdialog";
-import { useRouter } from "vue-router";
+import OverviewPerType from "@/components/Tables/OverviewPerType.vue";
 
 export default defineComponent({
   name: "TableOverview",
-  components: { TableOverviewType, WaveSpinner, BottomNavigation, BaseCard, Button, Sidebar, Listbox, ConfirmDialog },
+  components: { OverviewPerType, WaveSpinner, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
   props: { id: { type: String, default: "0" } },
   setup(props) {
-    const router = useRouter();
-    const confirm = useConfirm();
     const isLoading = ref(false);
     const isDisabled = ref(false);
-    const modal = ref(false);
+    const newOrderModal = ref(false);
     const store = useStore();
     const selected = ref();
     const table = computed(() => parseInt(props.id));
@@ -96,7 +92,7 @@ export default defineComponent({
     }
 
     function resetValues() {
-      modal.value = false;
+      newOrderModal.value = false;
       selected.value = undefined;
       isLoading.value = false;
       isDisabled.value = false;
@@ -109,7 +105,7 @@ export default defineComponent({
     }
 
     async function addBeverage(type: ItemType) {
-      modal.value = true;
+      newOrderModal.value = true;
       options.value = orderItems.value.get(type);
     }
 
@@ -120,19 +116,8 @@ export default defineComponent({
       } else isLoading.value = false;
     }
 
-    const confirmCheckout = () => {
-      confirm.require({
-        message: "Soll abgerechnet werden?",
-        header: "Abrechnen",
-        icon: "pi pi-exclamation-triangle",
-        accept: () => {
-          BillsService.postBills(table.value).then(() => router.push({ name: "Tables" }));
-        },
-      });
-    };
-
     return {
-      modal,
+      newOrderModal,
       selected,
       options,
       table,
@@ -145,7 +130,6 @@ export default defineComponent({
       postOrder,
       orders,
       getData,
-      confirmCheckout,
     };
   },
 });

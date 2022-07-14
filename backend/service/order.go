@@ -68,21 +68,13 @@ func GetAllActiveOrders() []Order {
 	return orders
 }
 
-func GetAllOrdersForTable(table string) []Order {
+func GetAllOrdersForTable(table string, grouping bool) []Order {
 	var orders []Order
-	config.C.Database.ORM.Model(
-		&Order{},
-	).Joins(
-		"OrderItem",
-	).Joins(
-		"left join tables on tables.id = orders.table_id",
-	).Select(
-		"table_id, order_item_id, sum(price) as total, count(order_item_id) as order_count",
-	).Group(
-		"order_item_id",
-	).Where(
-		"table_id = ?", table,
-	).Order("item_type, description").Find(&orders)
+	if grouping {
+		config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Select("table_id, order_item_id, sum(price) as total, count(order_item_id) as order_count").Group("order_item_id").Where("table_id = ?", table).Order("item_type, description").Find(&orders)
+	} else {
+		config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Where("table_id = ?", table).Order("item_type, description").Find(&orders)
+	}
 	return orders
 }
 

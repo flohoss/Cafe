@@ -17,17 +17,23 @@ import (
 // @Tags orders
 // @Produce json
 // @Param table query int false "Table ID"
+// @Param grouping query bool false "Table ID"
 // @Success 200 {array} service.Order
 // @Failure 401 "Unauthorized"
 // @Router /orders [get]
 // @Security Cookie
 func (a *Api) getOrders(c *gin.Context) {
 	table, present := c.GetQuery("table")
+	grouping := c.Query("grouping")
 	var orders []service.Order
 	if !present {
 		orders = service.GetAllActiveOrders()
 	} else {
-		orders = service.GetAllOrdersForTable(table)
+		if grouping == "false" {
+			orders = service.GetAllOrdersForTable(table, false)
+		} else {
+			orders = service.GetAllOrdersForTable(table, true)
+		}
 	}
 	c.JSON(http.StatusOK, orders)
 }

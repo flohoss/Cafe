@@ -53,7 +53,7 @@ func (a *Api) createBill(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errorResponse{config.MissingInformation.String()})
 		return
 	}
-	orders := service.GetAllOrdersForTable(id)
+	orders := service.GetAllOrdersForTable(id, false)
 	bill := service.CreateBill(orders)
 	c.JSON(http.StatusCreated, bill)
 }
