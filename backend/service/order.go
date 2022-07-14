@@ -23,7 +23,7 @@ type (
 		ID          uint64   `gorm:"primaryKey" json:"id" validate:"optional"`
 		ItemType    ItemType `json:"item_type" validate:"required"`
 		Description string   `json:"description" validate:"required"`
-		Price       float64  `json:"price" validate:"required"`
+		Price       float32  `json:"price" validate:"required"`
 	}
 )
 

@@ -17,9 +17,7 @@ import (
 // @Router /bills [get]
 // @Security Cookie
 func (a *Api) getBills(c *gin.Context) {
-	var bills []service.Bill
-	config.C.Database.ORM.Find(&bills)
-	c.JSON(http.StatusOK, bills)
+	c.JSON(http.StatusOK, service.GetAllBills())
 }
 
 // @Schemes
@@ -28,22 +26,23 @@ func (a *Api) getBills(c *gin.Context) {
 // @Tags bills
 // @Produce json
 // @Param id path int true "Table ID"
-// @Success 201 {object} service.Bill "Bill has been created"
+// @Success 201 {object} service.Bill
 // @Failure 401 "Unauthorized"
 // @Failure 404 "Not Found"
-// @Failure 500 {object} errorResponse "Cannot create bill"
+// @Failure 500 {object} errorResponse
 // @Router /bills/{id} [post]
 // @Security Cookie
 func (a *Api) createBill(c *gin.Context) {
 	id := c.Param("id")
-	table, err := service.DoesTableExist(id)
-	if err != nil {
-		c.Status(http.StatusNotFound)
+	if id == "" {
+		c.JSON(http.StatusBadRequest, errorResponse{config.MissingInformation.String()})
 		return
 	}
-	var bill service.Bill
-	bill.TableID = table.ID
-	bill.Total = table.Total
-	config.C.Database.ORM.Create(&bill)
+	table, err := service.DoesTableExist(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, errorResponse{config.CannotFind.String()})
+		return
+	}
+	bill := service.CreateBill(&table)
 	c.JSON(http.StatusCreated, bill)
 }
