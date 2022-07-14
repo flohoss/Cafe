@@ -21,10 +21,15 @@ export enum NotifierType {
 }
 
 import { ToastServiceMethods } from "primevue/toastservice";
+import moment from "moment";
 
 const timeToLife = 3600;
 
 export function errorToast(toast: ToastServiceMethods, message: string) {
   toast.removeAllGroups();
   toast.add({ severity: "error", summary: "Fehler", detail: message, group: "br", life: timeToLife });
+}
+
+export function getCurrentTimeSince(updated_at: number | undefined) {
+  return updated_at ? moment.unix(updated_at).fromNow() : "";
 }

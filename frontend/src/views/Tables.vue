@@ -17,7 +17,6 @@ import { useStore } from "vuex";
 import TableCard from "@/components/Tables/TableCard.vue";
 import EmptyView from "@/views/Empty.vue";
 import WaveSpinner from "@/components/UI/WaveSpinner.vue";
-import { TablesService } from "@/services/openapi";
 
 export default defineComponent({
   name: "TablesView",

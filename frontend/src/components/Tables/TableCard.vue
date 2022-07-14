@@ -1,7 +1,7 @@
 <template>
   <router-link class="col-12 lg:col-6 no-underline" :to="'/tables/' + table.id">
     <BaseItem class="relative">
-      <TheBadge v-if="table.order_count" class="topRight text-sm">{{ table.order_count }}</TheBadge>
+      <TheBadge v-if="table.order_count" class="topRight">{{ table.order_count }}</TheBadge>
       <div class="flex justify-content-between align-items-end">
         <div>
           <div class="font-bold mb-1">Tisch {{ table.id }}</div>
@@ -16,11 +16,11 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType } from "vue";
+import { defineComponent, onMounted, onUnmounted, PropType, ref } from "vue";
 import { service_Table } from "@/services/openapi";
 import BaseItem from "@/components/UI/BaseItem.vue";
 import moment from "moment";
-import { convertToEur } from "@/utils";
+import { convertToEur, getCurrentTimeSince } from "@/utils";
 import TheBadge from "@/components/UI/TheBadge.vue";
 
 export default defineComponent({
@@ -29,7 +29,14 @@ export default defineComponent({
   props: { table: { type: Object as PropType<service_Table>, required: true } },
   setup(props) {
     moment.locale("de");
-    const since = computed(() => props.table.updated_at && moment.unix(props.table.updated_at).fromNow());
+    let ticker: null | number = null;
+    const since = ref(getCurrentTimeSince(props.table.updated_at));
+    onMounted(() => {
+      ticker = setInterval(() => {
+        since.value = getCurrentTimeSince(props.table.updated_at);
+      }, 1000);
+    });
+    onUnmounted(() => ticker && clearInterval(ticker));
     return { since, convertToEur };
   },
 });
