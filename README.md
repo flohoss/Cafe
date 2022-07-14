@@ -24,7 +24,7 @@ services:
       - ALLOWED_HOSTS=http://localhost:5000,https://home.example.com
       - SWAGGER=true
       - LOG_LEVEL=info # trace,debug,info,warn,error,fatal,panic
-      - AUTH_PASSWORD=SuperSafe # leve empty for no authentication
+      - AUTH_PASSWORD=SuperSafe
       - AUTH_SECRET=example # create with: openssl rand -base64 20
     volumes:
       - ./storage:/app/storage
@@ -78,7 +78,7 @@ services:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=db
-      - AUTH_PASSWORD=SuperSafe # leve empty for no authentication
+      - AUTH_PASSWORD=SuperSafe
       - AUTH_SECRET=example # create with: openssl rand -base64 20
     volumes:
       - ./storage:/app/storage
