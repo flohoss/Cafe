@@ -1,11 +1,13 @@
 <template>
   <Toast style="width: 90vw" position="bottom-right" group="br" />
   <TheNavigation @logout="logout" />
-  <router-view v-slot="{ Component }" mode="out-in">
-    <transition>
-      <component :is="Component" />
-    </transition>
-  </router-view>
+  <div class="m-2">
+    <router-view v-slot="{ Component }" mode="out-in">
+      <transition>
+        <component :is="Component" />
+      </transition>
+    </router-view>
+  </div>
 </template>
 
 <script lang="ts">
