@@ -4,22 +4,8 @@
     <Transition>
       <WaveSpinner v-if="isLoading" />
       <div v-else>
-        <TableOverviewType
-          :type="ItemType.Food"
-          :orders="orders"
-          title="Speisen"
-          :checkout="checkout"
-          @getData="getData"
-          @openModal="(type) => addBeverage(type)"
-        />
-        <TableOverviewType
-          :type="ItemType.Drink"
-          :orders="orders"
-          title="Getränke"
-          :checkout="checkout"
-          @getData="getData"
-          @openModal="(type) => addBeverage(type)"
-        />
+        <TableOverviewType :type="ItemType.Food" :orders="orders" title="Speisen" @getData="getData" @openModal="(type) => addBeverage(type)" />
+        <TableOverviewType :type="ItemType.Drink" :orders="orders" title="Getränke" @getData="getData" @openModal="(type) => addBeverage(type)" />
         <div class="h-4rem"></div>
       </div>
     </Transition>
@@ -44,8 +30,7 @@
 
     <BottomNavigation>
       <template #left>
-        <Button v-if="checkout" :disabled="isDisabled" icon="pi pi-arrow-left" class="p-button-rounded" @click="checkout = false" />
-        <router-link v-else :to="{ name: 'Tables' }" class="no-underline">
+        <router-link :to="{ name: 'Tables' }" class="no-underline">
           <Button :disabled="isDisabled" icon="pi pi-arrow-left" class="p-button-rounded" />
         </router-link>
       </template>
@@ -56,8 +41,7 @@
         </div>
       </template>
       <template #right>
-        <Button v-if="checkout" :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="confirmCheckout" />
-        <Button v-else :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="checkout = true" />
+        <Button :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="confirmCheckout" />
       </template>
     </BottomNavigation>
   </BaseCard>
@@ -94,7 +78,6 @@ export default defineComponent({
     const orderItems = computed(() => store.getters.getOrderItems);
     const options = ref();
     const orders = ref<service_Order[]>([]);
-    const checkout = ref(false);
 
     store.dispatch("getAllOrderItems");
 
@@ -159,7 +142,6 @@ export default defineComponent({
       ItemType,
       postOrder,
       orders,
-      checkout,
       getData,
       confirmCheckout,
     };
