@@ -10,8 +10,9 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCheese } from "@fortawesome/free-solid-svg-icons";
 import { faChampagneGlasses } from "@fortawesome/free-solid-svg-icons";
 import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
+import { faArrowsSplitUpAndLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-library.add(faCheese, faChampagneGlasses, faBoxOpen);
+library.add(faCheese, faChampagneGlasses, faBoxOpen, faArrowsSplitUpAndLeft);
 
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
