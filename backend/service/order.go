@@ -15,7 +15,7 @@ type (
 		OrderItem   OrderItem `json:"order_item" validate:"required"`
 		UpdatedAt   int64     `json:"updated_at" validate:"optional"`
 		IsServed    bool      `json:"is_served" default:"false" validate:"required"`
-		Total       uint64    `json:"total" validate:"required"`
+		Total       float32   `json:"total" validate:"required"`
 		OrderCount  uint64    `json:"order_count" validate:"required"`
 	}
 

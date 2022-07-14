@@ -51,7 +51,7 @@
 import { computed, defineComponent, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
-import { OrdersService, service_Order } from "@/services/openapi";
+import { BillsService, OrdersService, service_Order } from "@/services/openapi";
 import BottomNavigation from "@/components/UI/BottomNavigation.vue";
 import Button from "primevue/button";
 import { convertToEur, ItemType } from "@/utils";
@@ -61,12 +61,14 @@ import Sidebar from "primevue/sidebar";
 import Listbox from "primevue/listbox";
 import { useConfirm } from "primevue/useconfirm";
 import ConfirmDialog from "primevue/confirmdialog";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "TableOverview",
   components: { TableOverviewType, WaveSpinner, BottomNavigation, BaseCard, Button, Sidebar, Listbox, ConfirmDialog },
   props: { id: { type: String, default: "0" } },
   setup(props) {
+    const router = useRouter();
     const confirm = useConfirm();
     const isLoading = ref(false);
     const isDisabled = ref(false);
@@ -124,7 +126,7 @@ export default defineComponent({
         header: "Abrechnen",
         icon: "pi pi-exclamation-triangle",
         accept: () => {
-          console.log("checkout");
+          BillsService.postBills(table.value).then(() => router.push({ name: "Tables" }));
         },
       });
     };

@@ -14,15 +14,6 @@ type Table struct {
 	IsDeleted  soft_delete.DeletedAt `gorm:"softDelete:flag" json:"is_deleted" swaggerignore:"true"`
 }
 
-func DoesTableExist(id string) (Table, error) {
-	var table Table
-	result := config.C.Database.ORM.Limit(1).Find(&table, id)
-	if result.RowsAffected == 0 {
-		return table, fmt.Errorf(config.CannotFind.String())
-	}
-	return table, nil
-}
-
 func GetAllTables() []Table {
 	var tables []Table
 	config.C.Database.ORM.Model(

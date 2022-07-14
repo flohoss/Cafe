@@ -41,7 +41,7 @@ func (a *Api) setupRouter() {
 		{
 			billGroup.Use(a.Auth.CookieAuthRequired())
 			billGroup.GET("", a.getBills)
-			billGroup.POST("/:id", a.createBill)
+			billGroup.POST("", a.createBill)
 		}
 	}
 

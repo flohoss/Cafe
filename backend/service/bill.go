@@ -37,10 +37,16 @@ func GetAllBills(year string, month string, day string) ([]Bill, error) {
 	return bills, nil
 }
 
-func CreateBill(table *Table) Bill {
+func CreateBill(orders []Order) Bill {
 	var bill Bill
-	bill.TableID = table.ID
-	bill.Total = table.Total
+	var total float32 = 0
+	for _, order := range orders {
+		total += order.Total
+	}
+	if len(orders) > 0 {
+		bill.TableID = orders[0].TableID
+	}
+	bill.Total = total
 	config.C.Database.ORM.Create(&bill)
 	return bill
 }
