@@ -4,8 +4,8 @@
     <Transition>
       <WaveSpinner v-if="isLoading" />
       <div v-else>
-        <TableOverviewType :type="ItemType.Food" :orders="orders" title="Speisen" @getData="getData" @openModal="(type) => addBeverage(type)" />
-        <TableOverviewType :type="ItemType.Drink" :orders="orders" title="Getränke" @getData="getData" @openModal="(type) => addBeverage(type)" />
+        <TableOverviewType :type="ItemType.Food" :orders="orders" @getData="getData" @openModal="(type) => addBeverage(type)" />
+        <TableOverviewType :type="ItemType.Drink" :orders="orders" @getData="getData" @openModal="(type) => addBeverage(type)" />
         <div class="h-4rem"></div>
       </div>
     </Transition>

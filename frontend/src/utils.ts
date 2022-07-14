@@ -10,6 +10,28 @@ export enum ItemType {
   Drink,
 }
 
+export function ItemTypeString(type: ItemType) {
+  switch (type) {
+    case ItemType.Food:
+      return "Speisen";
+    case ItemType.Drink:
+      return "Getränke";
+    default:
+      return "";
+  }
+}
+
+export function ItemTypeIcon(type: ItemType) {
+  switch (type) {
+    case ItemType.Food:
+      return "fa-cheese";
+    case ItemType.Drink:
+      return "fa-champagne-glasses";
+    default:
+      return "";
+  }
+}
+
 export interface WebSocketMsg {
   type: NotifierType;
   payload: service_Order;
