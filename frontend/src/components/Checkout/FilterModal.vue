@@ -29,7 +29,7 @@ import Button from "primevue/button";
 export default defineComponent({
   name: "FilterModal",
   components: { Checkbox, Divider, Button },
-  props: { tableId: { type: Number, default: 0 }, filter: { type: Array as PropType<number[]>, required: true } },
+  props: { tableId: { type: Number, default: 0 } },
   emits: ["newFilter"],
   setup(props, { emit }) {
     const orders = ref<service_Order[]>([]);
@@ -42,13 +42,12 @@ export default defineComponent({
     });
 
     onMounted(() => {
-      selected.value = props.filter;
       OrdersService.getOrders(props.tableId, false)
         .then((res) => {
           orders.value = res;
         })
         .finally(() => {
-          props.filter.length === 0 && initSelectedArray();
+          initSelectedArray();
           checkAll.value = sameAmountSelected();
         });
     });
@@ -66,7 +65,10 @@ export default defineComponent({
     }
 
     function applyFilter() {
-      if (selected.value.length !== 0) {
+      if (sameAmountSelected()) {
+        emit("newFilter", []);
+        error.value = "";
+      } else if (selected.value.length !== 0) {
         emit("newFilter", selected.value);
         error.value = "";
       } else error.value = "Bitte mindestens 1 Artikel wählen";

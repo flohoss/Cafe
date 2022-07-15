@@ -92,7 +92,9 @@ export default defineComponent({
     getData(true);
 
     function applyFilter(filter: number[]) {
-      if (filter.length !== 0) {
+      if (filter.length == 0) {
+        getData(false);
+      } else {
         orderFilter.value = filter;
         getData(false, orderFilter.value.toString());
       }
@@ -136,8 +138,8 @@ export default defineComponent({
 
     function checkoutOrders() {
       confirm.require({
-        message: "Do you want to delete this record?",
-        header: "Delete Confirmation",
+        message: "Angezeigte Bestellungen abrechnen?",
+        header: "Abrechnung",
         icon: "pi pi-info-circle",
         acceptClass: "p-button-danger",
         accept: () => {
