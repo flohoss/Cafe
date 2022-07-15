@@ -5,6 +5,7 @@ import (
 	"cafe/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 // @Schemes
@@ -53,7 +54,12 @@ func (a *Api) createBill(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errorResponse{config.MissingInformation.String()})
 		return
 	}
-	orders := service.GetAllOrdersForTable(id, false)
+	tableId, _ := strconv.ParseUint(id, 10, 64)
+	orders := service.GetAllOrdersForTable(service.GetOrderOptions{
+		TableId: tableId,
+		Grouped: false,
+		Filter:  nil,
+	})
 	bill := service.CreateBill(orders)
 	c.JSON(http.StatusCreated, bill)
 }

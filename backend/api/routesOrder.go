@@ -9,6 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // @Schemes
@@ -17,24 +18,27 @@ import (
 // @Tags orders
 // @Produce json
 // @Param table query int false "Table ID"
-// @Param grouping query bool false "Table ID"
+// @Param grouping query bool false "grouping"
+// @Param filter query string false "filter"
 // @Success 200 {array} service.Order
 // @Failure 401 "Unauthorized"
 // @Router /orders [get]
 // @Security Cookie
 func (a *Api) getOrders(c *gin.Context) {
-	table, present := c.GetQuery("table")
-	grouping := c.Query("grouping")
-	var orders []service.Order
-	if !present {
-		orders = service.GetAllActiveOrders()
-	} else {
-		if grouping == "false" {
-			orders = service.GetAllOrdersForTable(table, false)
-		} else {
-			orders = service.GetAllOrdersForTable(table, true)
-		}
+	table, err1 := strconv.ParseUint(c.Query("table"), 10, 64)
+	grouping, err2 := strconv.ParseBool(c.Query("grouping"))
+	if err1 != nil || err2 != nil {
+		c.JSON(http.StatusBadRequest, errorResponse{config.MissingInformation.String()})
+		return
 	}
+	filter := strings.Split(c.Query("filter"), ",")
+	options := service.GetOrderOptions{TableId: table, Grouped: grouping, Filter: filter}
+	var orders []service.Order
+	if options.TableId == 0 {
+		orders = service.GetAllActiveOrders()
+		return
+	}
+	orders = service.GetAllOrdersForTable(options)
 	c.JSON(http.StatusOK, orders)
 }
 
