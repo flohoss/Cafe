@@ -6,7 +6,7 @@ import ItemView from "@/views/Items.vue";
 import OrderView from "@/views/Orders.vue";
 import BillView from "@/views/Bills.vue";
 import TableDetail from "@/components/Tables/TableOverview.vue";
-import CheckoutView from "@/views/Checkout.vue";
+import CheckoutView from "@/components/Checkout/FilterModal.vue";
 
 const routes: Array<RouteRecordRaw> = [
   { path: "/tables", name: "Tables", component: TableView, meta: { needsAuth: true } },

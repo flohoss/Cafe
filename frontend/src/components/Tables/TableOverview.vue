@@ -27,6 +27,8 @@
       </div>
     </Sidebar>
 
+    <Sidebar v-model:visible="filterModal" :baseZIndex="10000" position="full"><CheckoutView :tableId="table" /></Sidebar>
+
     <BottomNavigation>
       <template #left>
         <router-link :to="{ name: 'Tables' }" class="no-underline">
@@ -40,9 +42,7 @@
         </div>
       </template>
       <template #right>
-        <router-link :to="{ name: 'Checkout' }" class="no-underline">
-          <Button :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" />
-        </router-link>
+        <Button :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="filterModal = true" />
       </template>
     </BottomNavigation>
   </BaseCard>
@@ -60,15 +60,17 @@ import WaveSpinner from "@/components/UI/WaveSpinner.vue";
 import Sidebar from "primevue/sidebar";
 import Listbox from "primevue/listbox";
 import OverviewPerType from "@/components/Tables/OverviewPerType.vue";
+import CheckoutView from "@/components/Checkout/FilterModal.vue";
 
 export default defineComponent({
   name: "TableOverview",
-  components: { OverviewPerType, WaveSpinner, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
+  components: { CheckoutView, OverviewPerType, WaveSpinner, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
   props: { id: { type: String, default: "0" } },
   setup(props) {
     const isLoading = ref(false);
     const isDisabled = ref(false);
     const newOrderModal = ref(false);
+    const filterModal = ref(false);
     const store = useStore();
     const selected = ref();
     const table = computed(() => parseInt(props.id));
@@ -83,7 +85,7 @@ export default defineComponent({
 
     function getData(initial = false) {
       if (initial) isLoading.value = true;
-      OrdersService.getOrders(table.value)
+      OrdersService.getOrders(table.value, true)
         .then((res) => (orders.value = res))
         .finally(() => {
           updateTotal();
@@ -118,6 +120,7 @@ export default defineComponent({
 
     return {
       newOrderModal,
+      filterModal,
       selected,
       options,
       table,
