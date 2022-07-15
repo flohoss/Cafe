@@ -1,6 +1,6 @@
 <template>
-  <ConfirmDialog></ConfirmDialog>
   <BaseCard>
+    <ConfirmDialog></ConfirmDialog>
     <Transition>
       <WaveSpinner v-if="isLoading" />
       <div v-else>

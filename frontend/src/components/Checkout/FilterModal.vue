@@ -11,8 +11,8 @@
     </div>
     <div class="flex justify-content-end">
       <div class="text-right">
-        <div v-if="error" class="text-red-500 mb-2">{{ error }}</div>
         <Button label="Anwenden" icon="pi pi-check" @click="applyFilter" />
+        <div v-if="error" class="text-red-500 mt-2 text-sm">{{ error }}</div>
       </div>
     </div>
   </div>
@@ -33,27 +33,27 @@ export default defineComponent({
   emits: ["newFilter"],
   setup(props, { emit }) {
     const orders = ref<service_Order[]>([]);
-    const selected = ref<number[]>(props.filter);
-    const checkAll = ref(setCheckAll());
-    const total = ref(0);
+    const selected = ref<number[]>([]);
+    const checkAll = ref(false);
     const error = ref("");
 
-    watch(selected, (newValue) => {
-      checkAll.value = newValue.length === orders.value.length;
+    watch(selected, () => {
+      checkAll.value = sameAmountSelected();
     });
 
     onMounted(() => {
+      selected.value = props.filter;
       OrdersService.getOrders(props.tableId, false)
         .then((res) => {
           orders.value = res;
         })
         .finally(() => {
           props.filter.length === 0 && initSelectedArray();
-          checkAll.value = setCheckAll();
+          checkAll.value = sameAmountSelected();
         });
     });
 
-    function setCheckAll() {
+    function sameAmountSelected() {
       return selected.value.length === orders.value.length;
     }
 
@@ -72,7 +72,7 @@ export default defineComponent({
       } else error.value = "Bitte mindestens 1 Artikel wählen";
     }
 
-    return { orders, selected, checkAll, checkAllClicked, convertToEur, total, applyFilter, error };
+    return { orders, selected, checkAll, checkAllClicked, convertToEur, applyFilter, error };
   },
 });
 </script>
