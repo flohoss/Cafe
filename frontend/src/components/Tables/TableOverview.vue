@@ -1,4 +1,5 @@
 <template>
+  <ConfirmDialog></ConfirmDialog>
   <BaseCard>
     <Transition>
       <WaveSpinner v-if="isLoading" />
@@ -28,7 +29,7 @@
     </Sidebar>
 
     <Sidebar v-model:visible="filterModal" :baseZIndex="10000" position="full">
-      <CheckoutView :tableId="table" @newFilter="(filter) => getData(false, filter)" />
+      <CheckoutView :filter="orderFilter" :tableId="table" @newFilter="(filter) => getData(false, filter)" />
     </Sidebar>
 
     <BottomNavigation>
@@ -44,7 +45,8 @@
         </div>
       </template>
       <template #right>
-        <Button :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="filterModal = true" />
+        <Button :disabled="isDisabled" icon="pi pi-filter" class="p-button-rounded mr-1" @click="filterModal = true" />
+        <Button :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="checkoutOrders" />
       </template>
     </BottomNavigation>
   </BaseCard>
@@ -63,12 +65,15 @@ import Sidebar from "primevue/sidebar";
 import Listbox from "primevue/listbox";
 import OverviewPerType from "@/components/Tables/OverviewPerType.vue";
 import CheckoutView from "@/components/Checkout/FilterModal.vue";
+import ConfirmDialog from "primevue/confirmdialog";
+import { useConfirm } from "primevue/useconfirm";
 
 export default defineComponent({
   name: "TableOverview",
-  components: { CheckoutView, OverviewPerType, WaveSpinner, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
+  components: { CheckoutView, OverviewPerType, WaveSpinner, BottomNavigation, BaseCard, Button, Sidebar, Listbox, ConfirmDialog },
   props: { id: { type: String, default: "0" } },
   setup(props) {
+    const confirm = useConfirm();
     const isLoading = ref(false);
     const isDisabled = ref(false);
     const newOrderModal = ref(false);
@@ -123,9 +128,22 @@ export default defineComponent({
       } else isLoading.value = false;
     }
 
+    function checkoutOrders() {
+      confirm.require({
+        message: "Do you want to delete this record?",
+        header: "Delete Confirmation",
+        icon: "pi pi-info-circle",
+        acceptClass: "p-button-danger",
+        accept: () => {
+          console.log("checkout");
+        },
+      });
+    }
+
     return {
       newOrderModal,
       filterModal,
+      orderFilter,
       selected,
       options,
       table,
@@ -138,6 +156,7 @@ export default defineComponent({
       postOrder,
       orders,
       getData,
+      checkoutOrders,
     };
   },
 });

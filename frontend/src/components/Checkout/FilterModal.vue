@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from "vue";
+import { defineComponent, onMounted, PropType, ref, watch } from "vue";
 import { OrdersService, service_Order } from "@/services/openapi";
 import Checkbox from "primevue/checkbox";
 import Divider from "primevue/divider";
@@ -26,22 +26,32 @@ import Button from "primevue/button";
 export default defineComponent({
   name: "FilterModal",
   components: { Checkbox, Divider, Button },
-  props: { tableId: { type: Number, default: 0 } },
+  props: { tableId: { type: Number, default: 0 }, filter: { type: Array as PropType<number[]>, required: true } },
   emits: ["newFilter"],
   setup(props) {
     const orders = ref<service_Order[]>([]);
-    const selected = ref<number[]>([]);
-    const checkAll = ref(selected.value.length === orders.value.length);
+    const selected = ref<number[]>(props.filter);
+    const checkAll = ref(setCheckAll());
     const total = ref(0);
+
     watch(selected, (newValue) => {
       checkAll.value = newValue.length === orders.value.length;
     });
+
     onMounted(() => {
-      OrdersService.getOrders(props.tableId, false).then((res) => {
-        orders.value = res;
-        initSelectedArray();
-      });
+      OrdersService.getOrders(props.tableId, false)
+        .then((res) => {
+          orders.value = res;
+        })
+        .finally(() => {
+          props.filter.length === 0 && initSelectedArray();
+          checkAll.value = setCheckAll();
+        });
     });
+
+    function setCheckAll() {
+      return selected.value.length === orders.value.length;
+    }
 
     function initSelectedArray() {
       orders.value.forEach((order) => order.id && selected.value.push(order.id));
