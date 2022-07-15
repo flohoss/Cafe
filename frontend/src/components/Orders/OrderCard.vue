@@ -37,7 +37,8 @@ export default defineComponent({
   emits: ["orderDone"],
   setup(props) {
     moment.locale("de");
-    let ticker: null | number = null;
+    // eslint-disable-next-line
+    let ticker: any;
     const since = ref(getCurrentTimeSince(props.order.updated_at));
     onMounted(() => {
       ticker = setInterval(() => {

@@ -29,7 +29,8 @@ export default defineComponent({
   props: { table: { type: Object as PropType<service_Table>, required: true } },
   setup(props) {
     moment.locale("de");
-    let ticker: null | number = null;
+    // eslint-disable-next-line
+    let ticker: any;
     const since = ref(getCurrentTimeSince(props.table.updated_at));
     onMounted(() => {
       ticker = setInterval(() => {

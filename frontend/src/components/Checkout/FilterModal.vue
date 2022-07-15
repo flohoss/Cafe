@@ -1,12 +1,17 @@
 <template>
-  <div class="field-checkbox mt-2">
-    <Checkbox id="binary" v-model="checkAll" :binary="true" @click="checkAllClicked" />
-    <label for="binary">Alle Auswählen</label>
-  </div>
-  <Divider />
-  <div v-for="order in orders" :key="order.id" class="field-checkbox">
-    <Checkbox :id="order.id" name="order" :value="order.id" v-model="selected" />
-    <label :for="order.id">{{ order.order_item.description }}</label>
+  <div class="m-3">
+    <div class="field-checkbox mt-2">
+      <Checkbox id="binary" v-model="checkAll" :binary="true" @click="checkAllClicked" />
+      <label for="binary">Alle Auswählen</label>
+    </div>
+    <Divider />
+    <div v-for="order in orders" :key="order.id" class="field-checkbox">
+      <Checkbox :id="order.id" name="order" :value="order.id" v-model="selected" />
+      <label :for="order.id">{{ order.order_item.description }}</label>
+    </div>
+    <div class="flex justify-content-end">
+      <Button label="Anwenden" icon="pi pi-check" @click="$emit('newFilter', selected)" />
+    </div>
   </div>
 </template>
 
@@ -16,11 +21,13 @@ import { OrdersService, service_Order } from "@/services/openapi";
 import Checkbox from "primevue/checkbox";
 import Divider from "primevue/divider";
 import { convertToEur } from "@/utils";
+import Button from "primevue/button";
 
 export default defineComponent({
   name: "FilterModal",
-  components: { Checkbox, Divider },
+  components: { Checkbox, Divider, Button },
   props: { tableId: { type: Number, default: 0 } },
+  emits: ["newFilter"],
   setup(props) {
     const orders = ref<service_Order[]>([]);
     const selected = ref<number[]>([]);

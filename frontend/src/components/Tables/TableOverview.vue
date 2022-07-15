@@ -27,7 +27,9 @@
       </div>
     </Sidebar>
 
-    <Sidebar v-model:visible="filterModal" :baseZIndex="10000" position="full"><CheckoutView :tableId="table" /></Sidebar>
+    <Sidebar v-model:visible="filterModal" :baseZIndex="10000" position="full">
+      <CheckoutView :tableId="table" @newFilter="(filter) => getData(false, filter)" />
+    </Sidebar>
 
     <BottomNavigation>
       <template #left>
@@ -78,14 +80,16 @@ export default defineComponent({
     const orderItems = computed(() => store.getters.getOrderItems);
     const options = ref();
     const orders = ref<service_Order[]>([]);
+    const orderFilter = ref<number[]>([]);
 
     store.dispatch("getAllOrderItems");
 
     getData(true);
 
-    function getData(initial = false) {
+    function getData(initial = false, filter: number[] = []) {
       if (initial) isLoading.value = true;
-      OrdersService.getOrders(table.value, true)
+      orderFilter.value = filter;
+      OrdersService.getOrders(table.value, true, orderFilter.value.toString())
         .then((res) => (orders.value = res))
         .finally(() => {
           updateTotal();
@@ -95,6 +99,7 @@ export default defineComponent({
 
     function resetValues() {
       newOrderModal.value = false;
+      filterModal.value = false;
       selected.value = undefined;
       isLoading.value = false;
       isDisabled.value = false;
