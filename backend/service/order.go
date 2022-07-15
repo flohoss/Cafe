@@ -77,7 +77,7 @@ func GetAllActiveOrders() []Order {
 func GetAllOrdersForTable(options GetOrderOptions) []Order {
 	var orders []Order
 	if options.Grouped {
-		if options.Filter[0] == "" {
+		if len(options.Filter) == 0 {
 			config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").Select("table_id, order_item_id, sum(price) as total, count(order_item_id) as order_count").Group("order_item_id").Where("table_id = ?", options.TableId).Order("item_type, description").Find(&orders)
 		} else {
 			config.C.Database.ORM.Model(&Order{}).Find(&orders, options.Filter).Joins("OrderItem").Select("table_id, order_item_id, sum(price) as total, count(order_item_id) as order_count").Group("order_item_id").Where("table_id = ?", options.TableId).Order("item_type, description").Find(&orders)

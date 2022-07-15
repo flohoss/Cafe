@@ -29,7 +29,7 @@
     </Sidebar>
 
     <Sidebar v-model:visible="filterModal" :baseZIndex="10000" position="full">
-      <CheckoutView :filter="orderFilter" :tableId="table" @newFilter="(filter) => getData(false, filter)" />
+      <CheckoutView :filter="orderFilter" :tableId="table" @newFilter="(filter) => applyFilter(filter)" />
     </Sidebar>
 
     <BottomNavigation>
@@ -91,10 +91,16 @@ export default defineComponent({
 
     getData(true);
 
-    function getData(initial = false, filter: number[] = []) {
+    function applyFilter(filter: number[]) {
+      if (filter.length !== 0) {
+        orderFilter.value = filter;
+        getData(false, orderFilter.value.toString());
+      }
+    }
+
+    function getData(initial = false, filter?: string) {
       if (initial) isLoading.value = true;
-      orderFilter.value = filter;
-      OrdersService.getOrders(table.value, true, orderFilter.value.toString())
+      OrdersService.getOrders(table.value, true, filter)
         .then((res) => (orders.value = res))
         .finally(() => {
           updateTotal();
@@ -157,6 +163,7 @@ export default defineComponent({
       orders,
       getData,
       checkoutOrders,
+      applyFilter,
     };
   },
 });

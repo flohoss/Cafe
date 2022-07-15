@@ -31,7 +31,11 @@ func (a *Api) getOrders(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, errorResponse{config.MissingInformation.String()})
 		return
 	}
-	filter := strings.Split(c.Query("filter"), ",")
+	stringFiler, filterPresent := c.GetQuery("filter")
+	var filter []string
+	if filterPresent {
+		filter = strings.Split(stringFiler, ",")
+	}
 	options := service.GetOrderOptions{TableId: table, Grouped: grouping, Filter: filter}
 	var orders []service.Order
 	if options.TableId == 0 {

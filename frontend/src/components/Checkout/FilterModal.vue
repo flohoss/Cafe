@@ -10,7 +10,10 @@
       <label :for="order.id">{{ order.order_item.description }}</label>
     </div>
     <div class="flex justify-content-end">
-      <Button label="Anwenden" icon="pi pi-check" @click="$emit('newFilter', selected)" />
+      <div class="text-right">
+        <div v-if="error" class="text-red-500 mb-2">{{ error }}</div>
+        <Button label="Anwenden" icon="pi pi-check" @click="applyFilter" />
+      </div>
     </div>
   </div>
 </template>
@@ -28,11 +31,12 @@ export default defineComponent({
   components: { Checkbox, Divider, Button },
   props: { tableId: { type: Number, default: 0 }, filter: { type: Array as PropType<number[]>, required: true } },
   emits: ["newFilter"],
-  setup(props) {
+  setup(props, { emit }) {
     const orders = ref<service_Order[]>([]);
     const selected = ref<number[]>(props.filter);
     const checkAll = ref(setCheckAll());
     const total = ref(0);
+    const error = ref("");
 
     watch(selected, (newValue) => {
       checkAll.value = newValue.length === orders.value.length;
@@ -61,7 +65,14 @@ export default defineComponent({
       checkAll.value ? (selected.value = []) : initSelectedArray();
     }
 
-    return { orders, selected, checkAll, checkAllClicked, convertToEur, total };
+    function applyFilter() {
+      if (selected.value.length !== 0) {
+        emit("newFilter", selected.value);
+        error.value = "";
+      } else error.value = "Bitte mindestens 1 Artikel wählen";
+    }
+
+    return { orders, selected, checkAll, checkAllClicked, convertToEur, total, applyFilter, error };
   },
 });
 </script>
