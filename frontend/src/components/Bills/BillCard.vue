@@ -23,7 +23,7 @@ export default defineComponent({
     bill: { type: Object as PropType<service_Bill>, required: true },
   },
   setup(props) {
-    const date = computed(() => props.bill.created_at && moment.unix(props.bill.created_at).format("DD.MM.YY HH:mm") + " Uhr");
+    const date = computed(() => props.bill.created_at && moment.unix(props.bill.created_at).format("HH:mm") + " Uhr");
     return { convertToEur, date };
   },
 });

@@ -64,7 +64,7 @@ import { useStore } from "vuex";
 import { BillsService, OrdersService, service_Order } from "@/services/openapi";
 import BottomNavigation from "@/components/UI/BottomNavigation.vue";
 import Button from "primevue/button";
-import { convertToEur, ItemType } from "@/utils";
+import { convertToEur, errorToast, ItemType } from "@/utils";
 import WaveSpinner from "@/components/UI/WaveSpinner.vue";
 import Sidebar from "primevue/sidebar";
 import Listbox from "primevue/listbox";
@@ -73,6 +73,8 @@ import CheckoutView from "@/components/Tables/FilterModal.vue";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 import { filter, loading } from "@/keys";
+import { useToast } from "primevue/usetoast";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "TableOverview",
@@ -80,6 +82,8 @@ export default defineComponent({
   props: { id: { type: String, default: "0" } },
   setup(props) {
     const confirm = useConfirm();
+    const toast = useToast();
+    const router = useRouter();
     const initialLoading = ref(false);
     const isLoading = ref(false);
     provide(loading, isLoading);
@@ -142,7 +146,23 @@ export default defineComponent({
         icon: "pi pi-info-circle",
         acceptClass: "p-button-danger",
         accept: () => {
-          BillsService.postBills(table.value, orderFilter.value && orderFilter.value.toString()).then(() => getData());
+          isLoading.value = true;
+          BillsService.postBills(table.value, orderFilter.value && orderFilter.value.toString())
+            .catch((err) => errorToast(toast, err.body.error))
+            .finally(() => {
+              confirm.require({
+                message: "Zu Rechnungen wechseln?",
+                header: "Erfolgreich",
+                icon: "pi pi-info-circle",
+                acceptClass: "p-button-success",
+                reject: () => {
+                  getData();
+                },
+                accept: () => {
+                  router.push({ name: "Bills" });
+                },
+              });
+            });
         },
       });
     }
