@@ -1,17 +1,51 @@
 <template>
   <BaseCard>
-    <BaseItem bgColor="c" class="flex justify-content-center mb-2">
-      <Calendar id="basic" v-model="today" autocomplete="off" inputStyle="text-align:center" :manualInput="false" />
-    </BaseItem>
-    <Transition>
-      <WaveSpinner v-if="isLoading" />
-      <div v-else>
-        <EmptyView v-if="bills.length === 0" message="Keine Rechnungen" />
-        <div v-else class="grid">
-          <BillCard v-for="bill in bills" v-bind:key="bill.id" :bill="bill" style="cursor: pointer" @click="openBill(bill.id)" />
-        </div>
-      </div>
-    </Transition>
+    <ConfirmDialog></ConfirmDialog>
+    <div class="p-card shadow-1 md:p-3">
+      <DataTable :value="bills" :loading="isLoading" :lazy="true" dataKey="id" :filters="filters" responsiveLayout="scroll" stripedRows class="p-datatable-sm">
+        <template #header>
+          <div class="grid p-fluid align-items-center">
+            <div class="col-12 md:col-4">
+              <Calendar id="basic" v-model="today" autocomplete="off" inputStyle="text-align:center" :manualInput="false" />
+            </div>
+            <div class="col-12 md:col-8">
+              <span class="p-input-icon-left">
+                <i class="pi pi-search" />
+                <InputText v-model="filters['global'].value" placeholder="Suchen" @keydown.esc="filters['global'].value = null" />
+                <span v-if="filters['global'].value !== null" class="leftMiddle styling" @click="filters['global'].value = null">
+                  <i class="pi pi-times"></i>
+                </span>
+              </span>
+            </div>
+          </div>
+        </template>
+
+        <Column field="table_id">
+          <template #body="slotProps">
+            <span class="white-space-nowrap">
+              Tisch {{ slotProps.data.table_id }} <span class="text-sm">({{ time(slotProps.data.created_at) }})</span>
+            </span>
+          </template>
+        </Column>
+        <Column field="total" style="text-align: right">
+          <template #body="slotProps">{{ convertToEur(slotProps.data.total) }}</template>
+        </Column>
+        <Column style="width: 3.5rem">
+          <template #body="slotProps">
+            <div class="flex align-items-center justify-content-end">
+              <div class="btn success mr-2" @click="openBill(slotProps.data.id)">
+                <i class="pi pi-eye"></i>
+              </div>
+              <div class="btn danger" @click="deleteBill(slotProps.data.id)">
+                <i class="pi pi-trash"></i>
+              </div>
+            </div>
+          </template>
+        </Column>
+
+        <template #empty><div class="mb-1">Keine Rechnungen</div></template>
+      </DataTable>
+    </div>
     <Sidebar v-model:visible="billModal" :baseZIndex="10000" position="full">
       <BillModal :bill="bill" />
     </Sidebar>
@@ -21,26 +55,34 @@
 <script lang="ts">
 import { defineComponent, ref, watch } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
-import BaseItem from "@/components/UI/BaseItem.vue";
 import Calendar from "primevue/calendar";
-import BillCard from "@/components/Bills/BillCard.vue";
 import { BillsService, service_Bill } from "@/services/openapi";
-import EmptyView from "@/views/Empty.vue";
-import WaveSpinner from "@/components/UI/WaveSpinner.vue";
 import Sidebar from "primevue/sidebar";
 import BillModal from "@/components/Bills/BillModal.vue";
-import { emptyBill } from "@/utils";
+import { convertToEur, emptyBill, errorToast } from "@/utils";
+import { FilterMatchMode } from "primevue/api";
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import InputText from "primevue/inputtext";
+import moment from "moment";
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
+import ConfirmDialog from "primevue/confirmdialog";
 
 export default defineComponent({
   name: "BillView",
-  components: { BillModal, WaveSpinner, EmptyView, BillCard, BaseItem, BaseCard, Calendar, Sidebar },
-  props: { id: { type: Number, required: true } },
-  setup(props) {
+  components: { BillModal, BaseCard, Calendar, Sidebar, DataTable, Column, InputText, ConfirmDialog },
+  setup() {
+    const confirm = useConfirm();
+    const toast = useToast();
     const today = ref(new Date());
     const bills = ref<service_Bill[]>([]);
     const isLoading = ref(false);
     const billModal = ref(false);
-    const bill = ref<service_Bill>({ ...emptyBill });
+    const bill = ref<service_Bill | undefined>({ ...emptyBill });
+    const filters = ref({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    });
 
     getData();
     watch(today, () => getData());
@@ -50,20 +92,59 @@ export default defineComponent({
       BillsService.getBills(today.value.getFullYear(), today.value.getUTCMonth() + 1, today.value.getDate())
         .then((res) => (bills.value = res))
         .finally(() => {
-          if (props.id) {
-            openBill(props.id);
-          }
           isLoading.value = false;
         });
     }
 
     function openBill(billId: number) {
-      bill.value = bills.value[billId - 1];
+      bill.value = bills.value.find((bill) => bill.id === billId);
       billModal.value = true;
     }
-    return { today, bills, isLoading, openBill, billModal, bill };
+
+    function time(unixDate: number) {
+      return moment.unix(unixDate).format("HH:mm") + " Uhr";
+    }
+
+    function deleteBill(billId: number) {
+      confirm.require({
+        message: "Rechnung löschen?",
+        header: "Rechnung",
+        icon: "pi pi-info-circle",
+        acceptClass: "p-button-danger",
+        accept: () => {
+          isLoading.value = true;
+          BillsService.deleteBills(billId)
+            .then(() => (bills.value = bills.value.filter((bill) => bill.id !== billId)))
+            .catch((err) => errorToast(toast, err.body.error))
+            .finally(() => (isLoading.value = false));
+        },
+      });
+    }
+
+    return { convertToEur, openBill, deleteBill, today, bills, isLoading, filters, billModal, bill, time };
   },
 });
 </script>
 
-<style></style>
+<style scoped>
+.danger {
+  cursor: pointer;
+  color: red;
+}
+.success {
+  cursor: pointer;
+  color: green;
+}
+.styling {
+  cursor: pointer;
+  color: gray;
+  border-radius: 50%;
+  padding: 0.2rem;
+}
+.leftMiddle {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(-50%, -50%);
+}
+</style>

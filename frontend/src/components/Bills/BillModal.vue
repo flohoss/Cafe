@@ -9,7 +9,9 @@
       <div v-else>
         <div class="flex justify-content-between my-5">
           <div>{{ date }}</div>
+          <div>|</div>
           <div class="mb-1">Tisch {{ bill.table_id }}</div>
+          <div>|</div>
           <div>{{ time }}</div>
         </div>
         <div class="text-lg">

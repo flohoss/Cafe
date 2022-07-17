@@ -13,7 +13,6 @@ const routes: Array<RouteRecordRaw> = [
   { path: "/orders", name: "Orders", component: OrderView, meta: { needsAuth: true } },
   { path: "/items/:id", name: "Items", props: true, component: ItemView, meta: { needsAuth: true } },
   { path: "/bills", name: "Bills", component: BillView, meta: { needsAuth: true } },
-  { path: "/bills/:id", name: "BillDetails", props: true, component: BillView, meta: { needsAuth: true } },
   { path: "/login", name: "Login", component: LoginView },
   { path: "/:pathMatch(.*)*", redirect: { name: "Tables" } },
 ];

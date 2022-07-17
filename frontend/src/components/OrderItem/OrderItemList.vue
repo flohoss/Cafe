@@ -2,7 +2,7 @@
   <BaseCard>
     <ConfirmDialog></ConfirmDialog>
     <div class="p-card shadow-1 md:p-3">
-      <DataTable :value="orderItems" dataKey="id" :filters="filters" responsiveLayout="scroll" :showAddButton="true" stripedRows class="p-datatable-sm">
+      <DataTable :value="orderItems" dataKey="id" :filters="filters" responsiveLayout="scroll" stripedRows class="p-datatable-sm">
         <template #header>
           <div class="grid p-fluid align-items-center">
             <div class="col-9">
@@ -41,7 +41,7 @@
           </template>
         </Column>
 
-        <template #empty>Keine Einträge</template>
+        <template #empty><div class="mb-1">Keine Einträge</div></template>
       </DataTable>
     </div>
 

@@ -3,6 +3,7 @@ package service
 import (
 	"cafe/config"
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -45,12 +46,14 @@ func GetAllBillItems(billId uint64) ([]BillItem, error) {
 
 func GetAllBills(year string, month string, day string) ([]Bill, error) {
 	var bills []Bill
-	const layout = "2006-1-02"
-	date := fmt.Sprintf("%s-%s-%s", year, month, day)
-	today, err := time.Parse(layout, date)
-	if err != nil {
+	yearI, err1 := strconv.Atoi(year)
+	monthI, err2 := strconv.Atoi(month)
+	dayI, err3 := strconv.Atoi(day)
+	loc, err4 := time.LoadLocation("Europe/Berlin")
+	if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
 		return bills, fmt.Errorf(config.CannotFind.String())
 	}
+	today := time.Date(yearI, time.Month(monthI), dayI, 0, 0, 0, 0, loc)
 	beginningOfDay := today.Unix()
 	endOfDay := today.Add(23 * time.Hour).Add(59 * time.Minute).Add(59 * time.Second).Unix()
 	config.C.Database.ORM.Where("created_at BETWEEN ? AND ?", beginningOfDay, endOfDay).Order("table_id, created_at").Find(&bills)
