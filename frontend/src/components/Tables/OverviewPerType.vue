@@ -4,20 +4,21 @@
     <div class="grid">
       <TableOrderCard v-for="order in OrdersForType" v-bind:key="order.id" :order="order">
         <TheBadge v-if="filter" size="md" color="warning"> {{ order.order_count }}x </TheBadge>
-        <OrderAmountChange v-else :order="order" :isDisabled="isDisabled" @incrementOrder="incrementOrder(order)" @decrementOrder="decrementOrder(order)" />
+        <OrderAmountChange v-else :order="order" :isDisabled="isLoading" @incrementOrder="incrementOrder(order)" @decrementOrder="decrementOrder(order)" />
       </TableOrderCard>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, inject, PropType, ref } from "vue";
 import { OrdersService, service_Order } from "@/services/openapi";
 import { convertToEur, ItemType, ItemTypeIcon, ItemTypeString } from "@/utils";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import TableOrderCard from "@/components/Tables/TableOrderCard.vue";
 import OrderAmountChange from "@/components/Tables/OrderAmountChange.vue";
 import TheBadge from "@/components/UI/TheBadge.vue";
+import { loading } from "@/keys";
 
 export default defineComponent({
   name: "OverviewPerType",
@@ -30,26 +31,21 @@ export default defineComponent({
   emits: ["openModal", "getData"],
   setup(props, { emit }) {
     const OrdersForType = computed(() => props.orders.filter((order) => order.order_item.item_type === props.type));
-    const isDisabled = ref(false);
+    const isLoading = inject(loading, ref(false));
     const icon = computed(() => ItemTypeIcon(props.type));
     const title = computed(() => ItemTypeString(props.type));
 
-    function getData() {
-      emit("getData");
-      isDisabled.value = false;
-    }
-
     function incrementOrder(order: service_Order) {
-      isDisabled.value = true;
-      OrdersService.postOrders(order.order_item_id, order.table_id).finally(() => getData());
+      isLoading.value = true;
+      OrdersService.postOrders(order.order_item_id, order.table_id).finally(() => emit("getData"));
     }
 
     function decrementOrder(order: service_Order) {
-      isDisabled.value = true;
-      OrdersService.deleteOrders(order.order_item_id, order.table_id).finally(() => getData());
+      isLoading.value = true;
+      OrdersService.deleteOrders(order.order_item_id, order.table_id).finally(() => emit("getData"));
     }
 
-    return { OrdersForType, isDisabled, convertToEur, ItemType, incrementOrder, decrementOrder, icon, title };
+    return { OrdersForType, isLoading, convertToEur, ItemType, incrementOrder, decrementOrder, icon, title };
   },
 });
 </script>

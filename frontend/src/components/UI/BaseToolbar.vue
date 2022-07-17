@@ -5,15 +5,16 @@
       <div class="font-bold text-2xl">{{ title }}</div>
     </template>
     <template #end>
-      <Button v-if="btnIcon" :disabled="isDisabled" :icon="'pi pi-' + btnIcon" class="p-button-success p-button-rounded" @click="$emit('click')" />
+      <Button v-if="btnIcon" :disabled="isLoading" :icon="'pi pi-' + btnIcon" class="p-button-success p-button-rounded" @click="$emit('click')" />
     </template>
   </Toolbar>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, inject, ref } from "vue";
 import Toolbar from "primevue/toolbar";
 import Button from "primevue/button";
+import { loading } from "@/keys";
 
 export default defineComponent({
   name: "BaseToolbar",
@@ -22,8 +23,11 @@ export default defineComponent({
   props: {
     title: { type: String, default: "" },
     icon: { type: String, default: "" },
-    isDisabled: { type: Boolean, default: false },
     btnIcon: { type: String, default: "" },
+  },
+  setup() {
+    const isLoading = inject(loading, ref(false));
+    return { isLoading };
   },
 });
 </script>

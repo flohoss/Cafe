@@ -1,6 +1,6 @@
 <template>
   <div class="fixed-bottom">
-    <div class="flex justify-content-between align-items-center border-round-xs p-2 bg-color shadow-1">
+    <div class="flex justify-content-between align-items-center border-round-xs py-2 px-3 bg-color shadow-1">
       <div><slot name="left"></slot></div>
       <div><slot name="middle"></slot></div>
       <div><slot name="right"></slot></div>

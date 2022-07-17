@@ -2,11 +2,29 @@
   <BaseCard>
     <ConfirmDialog></ConfirmDialog>
     <Transition>
-      <WaveSpinner v-if="isLoading" />
+      <WaveSpinner v-if="initialLoading" />
       <div v-else>
         <OverviewPerType :filter="!!orderFilter" :type="ItemType.Food" :orders="orders" @getData="getData" @openModal="addBeverage(ItemType.Food)" />
         <OverviewPerType :filter="!!orderFilter" :type="ItemType.Drink" :orders="orders" @getData="getData" @openModal="addBeverage(ItemType.Drink)" />
         <div class="h-4rem"></div>
+
+        <BottomNavigation>
+          <template #left>
+            <router-link :to="{ name: 'Tables' }" class="no-underline">
+              <Button :disabled="isLoading" icon="pi pi-arrow-left" class="p-button-rounded" />
+            </router-link>
+          </template>
+          <template #middle>
+            <div class="flex flex-column align-items-center">
+              <div class="text-sm">Tisch {{ table }}</div>
+              <div class="font-bold">{{ convertToEur(total) }}</div>
+            </div>
+          </template>
+          <template #right>
+            <Button :disabled="isLoading" icon="pi pi-filter" class="p-button-rounded mr-1" @click="filterModal = true" />
+            <Button :disabled="isLoading" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="checkoutOrders" />
+          </template>
+        </BottomNavigation>
       </div>
     </Transition>
 
@@ -31,24 +49,6 @@
     <Sidebar v-model:visible="filterModal" :baseZIndex="10000" position="full">
       <CheckoutView :tableId="table" @newFilter="getData" />
     </Sidebar>
-
-    <BottomNavigation>
-      <template #left>
-        <router-link :to="{ name: 'Tables' }" class="no-underline">
-          <Button :disabled="isDisabled" icon="pi pi-arrow-left" class="p-button-rounded" />
-        </router-link>
-      </template>
-      <template #middle>
-        <div class="flex flex-column align-items-center">
-          <div class="text-sm">Tisch {{ table }}</div>
-          <div class="font-bold">{{ convertToEur(total) }}</div>
-        </div>
-      </template>
-      <template #right>
-        <Button :disabled="isDisabled" icon="pi pi-filter" class="p-button-rounded mr-1" @click="filterModal = true" />
-        <Button :disabled="isDisabled" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="checkoutOrders" />
-      </template>
-    </BottomNavigation>
   </BaseCard>
 </template>
 
@@ -67,7 +67,7 @@ import OverviewPerType from "@/components/Tables/OverviewPerType.vue";
 import CheckoutView from "@/components/Tables/FilterModal.vue";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
-import { filter } from "@/keys";
+import { filter, loading } from "@/keys";
 
 export default defineComponent({
   name: "TableOverview",
@@ -75,8 +75,9 @@ export default defineComponent({
   props: { id: { type: String, default: "0" } },
   setup(props) {
     const confirm = useConfirm();
+    const initialLoading = ref(false);
     const isLoading = ref(false);
-    const isDisabled = ref(false);
+    provide(loading, isLoading);
     const newOrderModal = ref(false);
     const filterModal = ref(false);
     const store = useStore();
@@ -94,7 +95,7 @@ export default defineComponent({
     getData(true);
 
     function getData(initial = false) {
-      initial && (isLoading.value = true);
+      initial && (initialLoading.value = true);
       OrdersService.getOrders(table.value, true, orderFilter.value && orderFilter.value.toString())
         .then((res) => (orders.value = res))
         .finally(() => {
@@ -108,7 +109,7 @@ export default defineComponent({
       filterModal.value = false;
       selectedOrder.value = undefined;
       isLoading.value = false;
-      isDisabled.value = false;
+      initialLoading.value = false;
     }
 
     function updateTotal() {
@@ -123,7 +124,7 @@ export default defineComponent({
     }
 
     function postOrder() {
-      isDisabled.value = true;
+      isLoading.value = true;
       if (selectedOrder.value) {
         OrdersService.postOrders(selectedOrder.value, table.value).finally(() => getData());
       } else isLoading.value = false;
@@ -142,6 +143,8 @@ export default defineComponent({
     }
 
     return {
+      initialLoading,
+      isLoading,
       newOrderModal,
       filterModal,
       orderFilter,
@@ -149,8 +152,6 @@ export default defineComponent({
       options,
       table,
       total,
-      isDisabled,
-      isLoading,
       convertToEur,
       addBeverage,
       ItemType,

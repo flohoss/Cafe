@@ -1,14 +1,14 @@
 <template>
-  <Menubar v-if="isLoggedIn" :model="items" class="p-1 mb-3 shadow-1 border-0 bg-color">
+  <Menubar v-if="isLoggedIn" :model="items" class="py-1 px-3 mb-3 shadow-1 border-0 bg-color">
     <template #start>
-      <router-link class="no-underline" to="/tables"><img alt="logo" class="h-3rem mx-2" /></router-link>
+      <router-link class="no-underline" to="/tables"><img alt="logo" class="h-3rem mr-2" /></router-link>
     </template>
     <template #end>
       <div v-if="tablePath">
         <Button v-if="tablesCount !== 0" :disabled="isLoading" icon="pi pi-minus" class="p-button-danger p-button-rounded mr-2" @click="removeTable" />
         <Button :disabled="isLoading" icon="pi pi-plus" class="p-button-success p-button-rounded" @click="addTable" />
       </div>
-      <router-link v-else :to="{ name: 'Tables' }" class="mr-1 no-underline">
+      <router-link v-else :to="{ name: 'Tables' }" class="no-underline">
         <Button label="Tische" class="p-button-secondary" icon="pi pi-table" />
       </router-link>
     </template>
