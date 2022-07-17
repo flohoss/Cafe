@@ -10,7 +10,6 @@ RUN go mod download
 
 COPY ./backend .
 RUN ./swagger.sh init
-RUN go clean --cache
 RUN go build -o app
 
 FROM alpine AS logo
@@ -28,7 +27,7 @@ RUN npm install
 COPY --from=go /backend/docs/ /backend/docs/
 COPY ./frontend .
 RUN npm run types:openapi -i /backend/docs/swagger.json -o src/services/openapi
-RUN npm run build --no-cache
+RUN npm run build
 
 FROM alpine AS final
 WORKDIR /app
