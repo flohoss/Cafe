@@ -1,5 +1,5 @@
 <template>
-  <div class="m-3">
+  <div class="container">
     <div class="field-checkbox mt-2">
       <Checkbox id="binary" v-model="checkAll" :binary="true" @click="checkAllClicked" />
       <label for="binary">Alle Auswählen</label>
@@ -11,7 +11,8 @@
     </div>
     <div class="flex justify-content-end">
       <div class="text-right">
-        <Button label="Anwenden" icon="pi pi-check" @click="$emit('newFilter')" />
+        <Button label="Löschen" icon="pi pi-times" class="p-button-danger mr-2 p-button-text" @click="deleteFilter" />
+        <Button icon="pi pi-check" class="p-button-success p-button-rounded" @click="$emit('newFilter')" />
       </div>
     </div>
   </div>
@@ -65,9 +66,49 @@ export default defineComponent({
       }
     }
 
-    return { orders, orderFilter, checkAll, checkAllClicked, convertToEur };
+    function deleteFilter() {
+      orderFilter.value = undefined;
+      emit("newFilter");
+    }
+
+    return { orders, orderFilter, checkAll, checkAllClicked, convertToEur, deleteFilter };
   },
 });
 </script>
 
-<style></style>
+<style scoped>
+.container {
+  --bs-gutter-x: 0;
+  --bs-gutter-y: 0;
+  width: 100%;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+  margin-right: auto;
+  margin-left: auto;
+}
+@media (min-width: 576px) {
+  .container {
+    max-width: 540px;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    max-width: 720px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    max-width: 960px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1140px;
+  }
+}
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1320px;
+  }
+}
+</style>

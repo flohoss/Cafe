@@ -6,8 +6,7 @@
         <div class="flex align-items-center justify-content-between">
           <div>
             <TheBadge> {{ convertToEur(order.order_item.price) }} </TheBadge>
-            <TheBadge v-if="showTotal && total" class="ml-2" color="warning"> {{ convertToEur(order.total) }} </TheBadge>
-            <TheBadge v-if="amount" class="ml-2" color="warning"> {{ order.order_count }}x </TheBadge>
+            <TheBadge v-if="showTotal" class="ml-2" color="warning"> {{ convertToEur(order.total) }} </TheBadge>
           </div>
           <slot></slot>
         </div>
@@ -28,8 +27,6 @@ export default defineComponent({
   components: { TheBadge, BaseItem },
   props: {
     order: { type: Object as PropType<service_Order>, required: true },
-    amount: { type: Boolean, required: false, default: false },
-    total: { type: Boolean, required: false, default: true },
   },
   emits: ["decrementOrder", "incrementOrder"],
   setup(props) {

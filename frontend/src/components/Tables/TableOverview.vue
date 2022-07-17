@@ -4,8 +4,8 @@
     <Transition>
       <WaveSpinner v-if="isLoading" />
       <div v-else>
-        <OverviewPerType :type="ItemType.Food" :orders="orders" @getData="getData" @openModal="addBeverage(ItemType.Food)" />
-        <OverviewPerType :type="ItemType.Drink" :orders="orders" @getData="getData" @openModal="addBeverage(ItemType.Drink)" />
+        <OverviewPerType :filter="!!orderFilter" :type="ItemType.Food" :orders="orders" @getData="getData" @openModal="addBeverage(ItemType.Food)" />
+        <OverviewPerType :filter="!!orderFilter" :type="ItemType.Drink" :orders="orders" @getData="getData" @openModal="addBeverage(ItemType.Drink)" />
         <div class="h-4rem"></div>
       </div>
     </Transition>
@@ -29,7 +29,7 @@
     </Sidebar>
 
     <Sidebar v-model:visible="filterModal" :baseZIndex="10000" position="full">
-      <CheckoutView :tableId="table" @newFilter="applyFilter" />
+      <CheckoutView :tableId="table" @newFilter="getData" />
     </Sidebar>
 
     <BottomNavigation>
@@ -93,13 +93,9 @@ export default defineComponent({
 
     getData(true);
 
-    function applyFilter() {
-      getData(false, orderFilter.value && orderFilter.value.toString());
-    }
-
-    function getData(initial = false, filter?: string) {
+    function getData(initial = false) {
       initial && (isLoading.value = true);
-      OrdersService.getOrders(table.value, true, filter)
+      OrdersService.getOrders(table.value, true, orderFilter.value && orderFilter.value.toString())
         .then((res) => (orders.value = res))
         .finally(() => {
           updateTotal();
@@ -162,7 +158,6 @@ export default defineComponent({
       orders,
       getData,
       checkoutOrders,
-      applyFilter,
     };
   },
 });

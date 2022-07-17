@@ -25,12 +25,8 @@ import (
 // @Router /orders [get]
 // @Security Cookie
 func (a *Api) getOrders(c *gin.Context) {
-	table, err1 := strconv.ParseUint(c.Query("table"), 10, 64)
-	grouping, err2 := strconv.ParseBool(c.Query("grouping"))
-	if err1 != nil || err2 != nil {
-		c.JSON(http.StatusBadRequest, errorResponse{config.MissingInformation.String()})
-		return
-	}
+	table, _ := strconv.ParseUint(c.Query("table"), 10, 64)
+	grouping, _ := strconv.ParseBool(c.Query("grouping"))
 	stringFiler, filterPresent := c.GetQuery("filter")
 	var filter []string
 	if filterPresent {
@@ -40,9 +36,9 @@ func (a *Api) getOrders(c *gin.Context) {
 	var orders []service.Order
 	if options.TableId == 0 {
 		orders = service.GetAllActiveOrders()
-		return
+	} else {
+		orders = service.GetAllOrdersForTable(options)
 	}
-	orders = service.GetAllOrdersForTable(options)
 	c.JSON(http.StatusOK, orders)
 }
 
