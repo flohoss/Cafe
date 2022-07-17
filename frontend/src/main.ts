@@ -25,7 +25,7 @@ OpenAPI.BASE = API_ENDPOINT_URL;
 OpenAPI.WITH_CREDENTIALS = true;
 
 store
-  .dispatch("getOrderItems", ItemType.Drink)
+  .dispatch("getOrderItems", ItemType.Food)
   .then(() => store.commit("login"))
   .catch(() => store.commit("logout"))
   .finally(() => {

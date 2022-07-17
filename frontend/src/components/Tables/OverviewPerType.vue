@@ -1,6 +1,6 @@
 <template>
   <div>
-    <BaseToolbar :title="title" :icon="icon" @click="$emit('openModal', type)" btnIcon="plus" />
+    <BaseToolbar :title="title" :icon="icon" @click="$emit('openModal')" btnIcon="plus" />
     <div class="grid">
       <TableOrderCard v-for="order in OrdersForType" v-bind:key="order.id" :order="order">
         <OrderAmountChange :order="order" :isDisabled="isDisabled" @incrementOrder="incrementOrder(order)" @decrementOrder="decrementOrder(order)" />

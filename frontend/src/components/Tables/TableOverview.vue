@@ -4,8 +4,8 @@
     <Transition>
       <WaveSpinner v-if="isLoading" />
       <div v-else>
-        <OverviewPerType :type="ItemType.Food" :orders="orders" @getData="getData" @openModal="(type) => addBeverage(type)" />
-        <OverviewPerType :type="ItemType.Drink" :orders="orders" @getData="getData" @openModal="(type) => addBeverage(type)" />
+        <OverviewPerType :type="ItemType.Food" :orders="orders" @getData="getData" @openModal="addBeverage(ItemType.Food)" />
+        <OverviewPerType :type="ItemType.Drink" :orders="orders" @getData="getData" @openModal="addBeverage(ItemType.Drink)" />
         <div class="h-4rem"></div>
       </div>
     </Transition>
@@ -29,7 +29,7 @@
     </Sidebar>
 
     <Sidebar v-model:visible="filterModal" :baseZIndex="10000" position="full">
-      <CheckoutView :filter="orderFilter" :tableId="table" @newFilter="(filter) => applyFilter(filter)" />
+      <CheckoutView :tableId="table" @newFilter="applyFilter" />
     </Sidebar>
 
     <BottomNavigation>
@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, provide, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
 import { OrdersService, service_Order } from "@/services/openapi";
@@ -67,6 +67,7 @@ import OverviewPerType from "@/components/Tables/OverviewPerType.vue";
 import CheckoutView from "@/components/Checkout/FilterModal.vue";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
+import { filter } from "@/keys";
 
 export default defineComponent({
   name: "TableOverview",
@@ -79,29 +80,27 @@ export default defineComponent({
     const newOrderModal = ref(false);
     const filterModal = ref(false);
     const store = useStore();
-    const selected = ref();
+    const selectedOrder = ref();
     const table = computed(() => parseInt(props.id));
     const total = ref(0);
     const orderItems = computed(() => store.getters.getOrderItems);
     const options = ref();
     const orders = ref<service_Order[]>([]);
-    const orderFilter = ref<number[]>([]);
+    const orderFilter = ref<number[]>();
+    provide(filter, orderFilter);
 
     store.dispatch("getAllOrderItems");
 
     getData(true);
 
-    function applyFilter(filter: number[]) {
-      if (filter.length == 0) {
-        getData(false);
-      } else {
-        orderFilter.value = filter;
-        getData(false, orderFilter.value.toString());
-      }
+    function applyFilter() {
+      let currentFilter: number[] = [];
+      orderFilter.value && (currentFilter = orderFilter.value);
+      getData(false, currentFilter.toString());
     }
 
     function getData(initial = false, filter?: string) {
-      if (initial) isLoading.value = true;
+      initial && (isLoading.value = true);
       OrdersService.getOrders(table.value, true, filter)
         .then((res) => (orders.value = res))
         .finally(() => {
@@ -113,7 +112,7 @@ export default defineComponent({
     function resetValues() {
       newOrderModal.value = false;
       filterModal.value = false;
-      selected.value = undefined;
+      selectedOrder.value = undefined;
       isLoading.value = false;
       isDisabled.value = false;
     }
@@ -124,15 +123,15 @@ export default defineComponent({
       total.value = temp;
     }
 
-    async function addBeverage(type: ItemType) {
+    function addBeverage(type: ItemType) {
       newOrderModal.value = true;
       options.value = orderItems.value.get(type);
     }
 
     function postOrder() {
       isDisabled.value = true;
-      if (selected.value) {
-        OrdersService.postOrders(selected.value, table.value).finally(() => getData());
+      if (selectedOrder.value) {
+        OrdersService.postOrders(selectedOrder.value, table.value).finally(() => getData());
       } else isLoading.value = false;
     }
 
@@ -152,7 +151,7 @@ export default defineComponent({
       newOrderModal,
       filterModal,
       orderFilter,
-      selected,
+      selected: selectedOrder,
       options,
       table,
       total,

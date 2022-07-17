@@ -6,75 +6,69 @@
     </div>
     <Divider />
     <div v-for="order in orders" :key="order.id" class="field-checkbox">
-      <Checkbox :id="order.id" name="order" :value="order.id" v-model="selected" />
+      <Checkbox :id="order.id" name="order" :value="order.id" v-model="orderFilter" />
       <label :for="order.id">{{ order.order_item.description }}</label>
     </div>
     <div class="flex justify-content-end">
       <div class="text-right">
-        <Button label="Anwenden" icon="pi pi-check" @click="applyFilter" />
-        <div v-if="error" class="text-red-500 mt-2 text-sm">{{ error }}</div>
+        <Button label="Anwenden" icon="pi pi-check" @click="$emit('newFilter')" />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, ref, watch } from "vue";
+import { defineComponent, inject, ref, watch } from "vue";
 import { OrdersService, service_Order } from "@/services/openapi";
 import Checkbox from "primevue/checkbox";
 import Divider from "primevue/divider";
 import { convertToEur } from "@/utils";
 import Button from "primevue/button";
+import { filter } from "@/keys";
 
 export default defineComponent({
   name: "FilterModal",
   components: { Checkbox, Divider, Button },
-  props: { tableId: { type: Number, default: 0 } },
+  props: { tableId: { type: Number, required: true } },
   emits: ["newFilter"],
-  setup(props, { emit }) {
+  setup(props) {
     const orders = ref<service_Order[]>([]);
-    const selected = ref<number[]>([]);
+    const orderFilter = inject(filter, ref());
     const checkAll = ref(false);
-    const error = ref("");
 
-    watch(selected, () => {
-      checkAll.value = sameAmountSelected();
-    });
-
-    onMounted(() => {
-      OrdersService.getOrders(props.tableId, false)
-        .then((res) => {
-          orders.value = res;
-        })
-        .finally(() => {
-          initSelectedArray();
-          checkAll.value = sameAmountSelected();
-        });
-    });
-
-    function sameAmountSelected() {
-      return selected.value.length === orders.value.length;
+    function checkAllCheck() {
+      if (orderFilter.value) {
+        console.log(orderFilter.value.length, orders.value.length);
+        checkAll.value = orderFilter.value.length === orders.value.length;
+      }
     }
 
-    function initSelectedArray() {
-      orders.value.forEach((order) => order.id && selected.value.push(order.id));
+    watch(orderFilter, () => checkAllCheck());
+
+    OrdersService.getOrders(props.tableId, false).then((res) => {
+      orders.value = res;
+      checkAllCheck();
+    });
+
+    function setAllOrdersSelected() {
+      const temp: number[] = [];
+      orders.value.forEach((order) => order.id && temp.push(order.id));
+      orderFilter.value = temp;
     }
 
     function checkAllClicked() {
-      checkAll.value ? (selected.value = []) : initSelectedArray();
+      if (!orderFilter.value) {
+        setAllOrdersSelected();
+      } else if (orderFilter.value) {
+        if (orderFilter.value.length === orders.value.length) {
+          orderFilter.value = [];
+        } else {
+          setAllOrdersSelected();
+        }
+      }
     }
 
-    function applyFilter() {
-      if (sameAmountSelected()) {
-        emit("newFilter", []);
-        error.value = "";
-      } else if (selected.value.length !== 0) {
-        emit("newFilter", selected.value);
-        error.value = "";
-      } else error.value = "Bitte mindestens 1 Artikel wählen";
-    }
-
-    return { orders, selected, checkAll, checkAllClicked, convertToEur, applyFilter, error };
+    return { orders, orderFilter, checkAll, checkAllClicked, convertToEur };
   },
 });
 </script>
