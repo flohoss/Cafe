@@ -74,7 +74,7 @@ services:
       - ALLOWED_HOSTS=http://localhost:5000,https://home.example.com
       - SWAGGER=true
       - LOG_LEVEL=info # trace,debug,info,warn,error,fatal,panic
-      - MYSQL_URL=dashboard-db:3306
+      - MYSQL_URL=cafe-db:3306
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=db
