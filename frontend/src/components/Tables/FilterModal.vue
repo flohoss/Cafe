@@ -31,16 +31,13 @@ export default defineComponent({
   components: { Checkbox, Divider, Button },
   props: { tableId: { type: Number, required: true } },
   emits: ["newFilter"],
-  setup(props) {
+  setup(props, { emit }) {
     const orders = ref<service_Order[]>([]);
     const orderFilter = inject(filter, ref());
     const checkAll = ref(false);
 
     function checkAllCheck() {
-      if (orderFilter.value) {
-        console.log(orderFilter.value.length, orders.value.length);
-        checkAll.value = orderFilter.value.length === orders.value.length;
-      }
+      if (orderFilter.value) checkAll.value = orderFilter.value.length === orders.value.length;
     }
 
     watch(orderFilter, () => checkAllCheck());
@@ -61,7 +58,7 @@ export default defineComponent({
         setAllOrdersSelected();
       } else if (orderFilter.value) {
         if (orderFilter.value.length === orders.value.length) {
-          orderFilter.value = [];
+          orderFilter.value = undefined;
         } else {
           setAllOrdersSelected();
         }

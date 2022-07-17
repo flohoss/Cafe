@@ -64,7 +64,7 @@ import WaveSpinner from "@/components/UI/WaveSpinner.vue";
 import Sidebar from "primevue/sidebar";
 import Listbox from "primevue/listbox";
 import OverviewPerType from "@/components/Tables/OverviewPerType.vue";
-import CheckoutView from "@/components/Checkout/FilterModal.vue";
+import CheckoutView from "@/components/Tables/FilterModal.vue";
 import ConfirmDialog from "primevue/confirmdialog";
 import { useConfirm } from "primevue/useconfirm";
 import { filter } from "@/keys";
@@ -94,9 +94,7 @@ export default defineComponent({
     getData(true);
 
     function applyFilter() {
-      let currentFilter: number[] = [];
-      orderFilter.value && (currentFilter = orderFilter.value);
-      getData(false, currentFilter.toString());
+      getData(false, orderFilter.value && orderFilter.value.toString());
     }
 
     function getData(initial = false, filter?: string) {
