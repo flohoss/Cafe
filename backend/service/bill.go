@@ -85,3 +85,13 @@ func CreateBill(options GetOrderOptions) (Bill, error) {
 	config.C.Database.ORM.Delete(&ordersToDelete)
 	return bill, nil
 }
+
+func DeleteBill(bill *Bill) error {
+	err := config.C.Database.ORM.Delete(bill).Error
+	if err != nil {
+		return fmt.Errorf(config.CannotDelete.String())
+	}
+	billItemsToDelete, _ := GetAllBillItems(bill.ID)
+	config.C.Database.ORM.Delete(&billItemsToDelete)
+	return nil
+}

@@ -91,3 +91,29 @@ func (a *Api) createBill(c *gin.Context) {
 	}
 	c.JSON(http.StatusCreated, bill)
 }
+
+// @Schemes
+// @Summary delete a bill
+// @Description deletes a bill
+// @Tags bills
+// @Produce json
+// @Param id path int true "Bill ID"
+// @Success 200 "OK"
+// @Failure 401 "Unauthorized"
+// @Failure 404 "Not Found"
+// @Failure 500 {object} errorResponse
+// @Router /bills/{id} [delete]
+// @Security Cookie
+func (a *Api) deleteBill(c *gin.Context) {
+	id := c.Param("id")
+	bill, err := service.DoesBillExist(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, errorResponse{err.Error()})
+		return
+	}
+	err = service.DeleteBill(&bill)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, errorResponse{err.Error()})
+	}
+	c.Status(http.StatusOK)
+}

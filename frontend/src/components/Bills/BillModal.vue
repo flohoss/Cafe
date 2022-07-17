@@ -1,29 +1,26 @@
 <template>
   <Transition>
     <div class="container">
-      <div class="flex flex-column align-items-center justify-content-center mb-5">
-        <img alt="logo" class="h-5rem mb-2" />
-        <div class="text-center text-sm">Plätschwiesen 2<br />72622 Nürtingen<br />Baden-Württemberg</div>
+      <div class="flex flex-column align-items-center justify-content-center">
+        <img alt="logo" class="h-6rem mb-3" />
+        <div class="text-center text-sm">Plätschwiesen 2, 72622 Nürtingen<br />Baden-Württemberg</div>
       </div>
       <WaveSpinner v-if="isLoading" />
       <div v-else>
-        <hr style="color: var(--text-color)" class="my-3" />
-        <div class="flex justify-content-between">
+        <div class="flex justify-content-between my-5">
           <div>{{ date }}</div>
           <div class="mb-1">Tisch {{ bill.table_id }}</div>
           <div>{{ time }}</div>
         </div>
-        <hr style="color: var(--text-color)" class="my-3" />
         <div class="text-lg">
-          <div v-for="billItem in billItems" :key="billItem.id" class="flex flex-column mb-2">
+          <div v-for="billItem in billItems" :key="billItem.id" class="flex flex-column mb-1">
             <div class="flex align-items-center justify-content-between">
-              <div>{{ billItem.description }}</div>
+              <div class="entry white-space-nowrap overflow-hidden">{{ billItem.description }}</div>
               <div>{{ convertToEur(billItem.total) }}</div>
             </div>
-            <div class="ml-4 font-italic text-sm">{{ billItem.amount }} x {{ convertToEur(billItem.price) }}</div>
+            <div v-if="billItem.amount !== 1" class="ml-4 font-italic text-sm">{{ billItem.amount }} x {{ convertToEur(billItem.price) }}</div>
           </div>
-          <hr style="color: var(--text-color)" class="my-3" />
-          <div class="flex justify-content-end font-bold">Total: {{ convertToEur(bill.total) }}</div>
+          <div class="flex justify-content-end font-bold mt-5">Total: {{ convertToEur(bill.total) }}</div>
         </div>
       </div>
     </div>
@@ -104,5 +101,8 @@ export default defineComponent({
   img {
     content: url("../../assets/logo_white.png");
   }
+}
+.entry:first-child:after {
+  content: " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . ";
 }
 </style>

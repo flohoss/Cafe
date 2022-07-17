@@ -255,7 +255,7 @@ func (a *Api) updateOrderItem(c *gin.Context) {
 // @Success 200 "OK"
 // @Failure 401 "Unauthorized"
 // @Failure 404 "Not Found"
-// @Failure 500 {object} errorResponse "Cannot delete orderItem"
+// @Failure 500 {object} errorResponse
 // @Router /orders/items/{id} [delete]
 // @Security Cookie
 func (a *Api) deleteOrderItem(c *gin.Context) {
