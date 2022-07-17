@@ -38,6 +38,30 @@ func (a *Api) getBills(c *gin.Context) {
 }
 
 // @Schemes
+// @Summary get all billItems
+// @Description gets all billItems for bill
+// @Tags bills
+// @Produce json
+// @Param bill query int true "Bill ID"
+// @Success 200 {array} service.BillItem
+// @Failure 401 "Unauthorized"
+// @Router /bills/items [get]
+// @Security Cookie
+func (a *Api) getBillItems(c *gin.Context) {
+	bill, err := service.DoesBillExist(c.Query("bill"))
+	if err != nil {
+		c.JSON(http.StatusNotFound, errorResponse{err.Error()})
+		return
+	}
+	billItems, err := service.GetAllBillItems(bill.ID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, errorResponse{err.Error()})
+	} else {
+		c.JSON(http.StatusOK, billItems)
+	}
+}
+
+// @Schemes
 // @Summary create new bill
 // @Description creates a new bill and returns it
 // @Tags bills

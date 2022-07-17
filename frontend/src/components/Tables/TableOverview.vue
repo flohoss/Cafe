@@ -148,21 +148,24 @@ export default defineComponent({
         accept: () => {
           isLoading.value = true;
           BillsService.postBills(table.value, orderFilter.value && orderFilter.value.toString())
-            .catch((err) => errorToast(toast, err.body.error))
-            .finally(() => {
-              confirm.require({
-                message: "Zu Rechnungen wechseln?",
-                header: "Erfolgreich",
-                icon: "pi pi-info-circle",
-                acceptClass: "p-button-success",
-                reject: () => {
-                  getData();
-                },
-                accept: () => {
-                  router.push({ name: "Bills" });
-                },
-              });
-            });
+            .then((res) => {
+              setTimeout(() => {
+                confirm.require({
+                  message: "Zu Rechnungen wechseln?",
+                  header: "Erfolgreich",
+                  icon: "pi pi-info-circle",
+                  acceptClass: "p-button-success",
+                  reject: () => {
+                    orderFilter.value = undefined;
+                    getData();
+                  },
+                  accept: () => {
+                    router.push("/bills/" + res.id);
+                  },
+                });
+              }, 200);
+            })
+            .catch((err) => errorToast(toast, err.body.error));
         },
       });
     }

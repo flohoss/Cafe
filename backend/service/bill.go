@@ -25,6 +25,24 @@ type (
 	}
 )
 
+func DoesBillExist(id string) (Bill, error) {
+	var bill Bill
+	result := config.C.Database.ORM.Limit(1).Find(&bill, id)
+	if result.RowsAffected == 0 {
+		return bill, fmt.Errorf(config.CannotFind.String())
+	}
+	return bill, nil
+}
+
+func GetAllBillItems(billId uint64) ([]BillItem, error) {
+	var billItems []BillItem
+	result := config.C.Database.ORM.Where("bill_id = ?", billId).Find(&billItems)
+	if result.RowsAffected == 0 {
+		return billItems, fmt.Errorf(config.CannotFind.String())
+	}
+	return billItems, nil
+}
+
 func GetAllBills(year string, month string, day string) ([]Bill, error) {
 	var bills []Bill
 	const layout = "2006-1-02"

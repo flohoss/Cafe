@@ -1,4 +1,4 @@
-import { service_Order } from "@/services/openapi";
+import { service_Bill, service_Order } from "@/services/openapi";
 
 export function convertToEur(value: number | undefined) {
   const temp: number = value ? value : 0;
@@ -55,3 +55,5 @@ export function errorToast(toast: ToastServiceMethods, message: string) {
 export function getCurrentTimeSince(updated_at: number | undefined) {
   return updated_at ? moment.unix(updated_at).fromNow() : "";
 }
+
+export const emptyBill: service_Bill = { table_id: 0, total: 0 };
