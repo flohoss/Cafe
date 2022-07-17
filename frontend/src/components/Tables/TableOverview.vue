@@ -155,6 +155,7 @@ export default defineComponent({
             .then((res) => {
               bill.value = res;
               billModal.value = true;
+              orderFilter.value = undefined;
               getData();
             })
             .catch((err) => errorToast(toast, err.body.error));
