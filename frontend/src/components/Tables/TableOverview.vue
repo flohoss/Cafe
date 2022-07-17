@@ -56,7 +56,7 @@
 import { computed, defineComponent, provide, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
-import { OrdersService, service_Order } from "@/services/openapi";
+import { BillsService, OrdersService, service_Order } from "@/services/openapi";
 import BottomNavigation from "@/components/UI/BottomNavigation.vue";
 import Button from "primevue/button";
 import { convertToEur, ItemType } from "@/utils";
@@ -136,7 +136,7 @@ export default defineComponent({
         icon: "pi pi-info-circle",
         acceptClass: "p-button-danger",
         accept: () => {
-          console.log("checkout");
+          BillsService.postBills(table.value, orderFilter.value && orderFilter.value.toString()).then(() => getData());
         },
       });
     }

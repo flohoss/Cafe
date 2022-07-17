@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // @Schemes
@@ -42,6 +43,7 @@ func (a *Api) getBills(c *gin.Context) {
 // @Tags bills
 // @Produce json
 // @Param table query int true "Table ID"
+// @Param filter query string false "filter"
 // @Success 201 {object} service.Bill
 // @Failure 401 "Unauthorized"
 // @Failure 404 "Not Found"
@@ -49,17 +51,16 @@ func (a *Api) getBills(c *gin.Context) {
 // @Router /bills [post]
 // @Security Cookie
 func (a *Api) createBill(c *gin.Context) {
-	id, present := c.GetQuery("table")
-	if !present {
+	table, tableErr := strconv.ParseUint(c.Query("table"), 10, 64)
+	if tableErr != nil {
 		c.JSON(http.StatusBadRequest, errorResponse{config.MissingInformation.String()})
 		return
 	}
-	tableId, _ := strconv.ParseUint(id, 10, 64)
-	orders := service.GetAllOrdersForTable(service.GetOrderOptions{
-		TableId: tableId,
-		Grouped: false,
-		Filter:  nil,
-	})
-	bill := service.CreateBill(orders)
+	stringFiler, filterPresent := c.GetQuery("filter")
+	var filter []string
+	if filterPresent {
+		filter = strings.Split(stringFiler, ",")
+	}
+	bill := service.CreateBill(service.GetOrderOptions{TableId: table, Grouped: true, Filter: filter})
 	c.JSON(http.StatusCreated, bill)
 }

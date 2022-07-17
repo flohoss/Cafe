@@ -37,7 +37,8 @@ func GetAllBills(year string, month string, day string) ([]Bill, error) {
 	return bills, nil
 }
 
-func CreateBill(orders []Order) Bill {
+func CreateBill(options GetOrderOptions) Bill {
+	orders := GetAllOrdersForTable(options)
 	var bill Bill
 	var total float32 = 0
 	for _, order := range orders {
