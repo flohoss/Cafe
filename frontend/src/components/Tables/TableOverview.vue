@@ -21,7 +21,12 @@
             </div>
           </template>
           <template #right>
-            <Button :disabled="isLoading" icon="pi pi-filter" class="p-button-rounded mr-1" @click="filterModal = true" />
+            <Button
+              :disabled="isLoading"
+              :icon="orderFilter ? 'pi pi-filter' : 'pi pi-filter-slash'"
+              class="p-button-rounded mr-1"
+              @click="filterModal = true"
+            />
             <Button :disabled="isLoading" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="checkoutOrders" />
           </template>
         </BottomNavigation>

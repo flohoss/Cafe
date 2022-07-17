@@ -3,7 +3,7 @@
     <BaseToolbar :title="title" :icon="icon" @click="$emit('openModal')" :btnIcon="!filter ? 'plus' : ''" />
     <div class="grid">
       <TableOrderCard v-for="order in OrdersForType" v-bind:key="order.id" :order="order">
-        <TheBadge v-if="filter" size="md" color="warning"> {{ order.order_count }}x </TheBadge>
+        <div v-if="filter" class="font-bold mr-1">{{ order.order_count }}</div>
         <OrderAmountChange v-else :order="order" :isDisabled="isLoading" @incrementOrder="incrementOrder(order)" @decrementOrder="decrementOrder(order)" />
       </TableOrderCard>
     </div>
@@ -17,12 +17,11 @@ import { convertToEur, ItemType, ItemTypeIcon, ItemTypeString } from "@/utils";
 import BaseToolbar from "@/components/UI/BaseToolbar.vue";
 import TableOrderCard from "@/components/Tables/TableOrderCard.vue";
 import OrderAmountChange from "@/components/Tables/OrderAmountChange.vue";
-import TheBadge from "@/components/UI/TheBadge.vue";
 import { loading } from "@/keys";
 
 export default defineComponent({
   name: "OverviewPerType",
-  components: { TableOrderCard, BaseToolbar, OrderAmountChange, TheBadge },
+  components: { TableOrderCard, BaseToolbar, OrderAmountChange },
   props: {
     orders: { type: Array as PropType<service_Order[]>, default: () => [] },
     type: { type: Number, required: true },
