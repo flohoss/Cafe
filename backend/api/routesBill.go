@@ -61,6 +61,9 @@ func (a *Api) createBill(c *gin.Context) {
 	if filterPresent {
 		filter = strings.Split(stringFiler, ",")
 	}
-	bill := service.CreateBill(service.GetOrderOptions{TableId: table, Grouped: true, Filter: filter})
+	bill, err := service.CreateBill(service.GetOrderOptions{TableId: table, Grouped: true, Filter: filter})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, errorResponse{err.Error()})
+	}
 	c.JSON(http.StatusCreated, bill)
 }
