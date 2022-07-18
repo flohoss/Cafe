@@ -60,7 +60,7 @@ func GetAllBills(year string, month string, day string) ([]Bill, error) {
 	}
 	loc, locErr := time.LoadLocation("Local")
 	if locErr != nil {
-		return bills, fmt.Errorf("zeitzone " + config.CannotParse.String())
+		return bills, fmt.Errorf(locErr.Error())
 	}
 	today := time.Date(yearI, time.Month(monthI), dayI, 0, 0, 0, 0, loc)
 	beginningOfDay := today.Unix()
