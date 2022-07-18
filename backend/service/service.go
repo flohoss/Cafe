@@ -12,13 +12,14 @@ type (
 
 	WebSocketMsg struct {
 		Type    NotifierType `json:"type"`
-		Payload Order        `json:"payload"`
+		Payload []Order      `json:"payload"`
 	}
 )
 
 const (
 	Create NotifierType = iota
 	Delete
+	DeleteAll
 )
 
 const (

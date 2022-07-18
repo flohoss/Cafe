@@ -85,7 +85,14 @@ func CreateBill(options GetOrderOptions) (Bill, error) {
 		config.C.Database.ORM.Create(&billItem)
 	}
 	ordersToDelete := GetAllOrdersForTable(GetOrderOptions{TableId: options.TableId, Grouped: false, Filter: options.Filter})
-	config.C.Database.ORM.Delete(&ordersToDelete)
+	err = config.C.Database.ORM.Delete(&ordersToDelete).Error
+	if err != nil {
+		return bill, fmt.Errorf(config.CannotDelete.String())
+	}
+	LiveCh <- WebSocketMsg{
+		Type:    DeleteAll,
+		Payload: ordersToDelete,
+	}
 	return bill, nil
 }
 

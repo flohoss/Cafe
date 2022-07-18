@@ -70,11 +70,15 @@ export default defineComponent({
     function parseWebsocket(evt: Event) {
       isDisabled.value = true;
       const messageEvent = evt as MessageEvent;
-      const order: WebSocketMsg = JSON.parse(messageEvent.data);
-      if (order.type === NotifierType.Create) {
-        orders.value.push(order.payload);
-      } else if (order.type === NotifierType.Delete) {
-        orders.value = orders.value.filter((o) => o.id !== order.payload.id);
+      const webSocketMsg: WebSocketMsg = JSON.parse(messageEvent.data);
+      if (webSocketMsg.type === NotifierType.Create) {
+        orders.value.push(webSocketMsg.payload[0]);
+      } else if (webSocketMsg.type === NotifierType.Delete) {
+        orders.value = orders.value.filter((o) => o.id !== webSocketMsg.payload[0].id);
+      } else if (webSocketMsg.type === NotifierType.DeleteAll) {
+        webSocketMsg.payload.forEach((obj) => {
+          orders.value = orders.value.filter((o) => o.id !== obj.id);
+        });
       }
       sortOrders();
       isDisabled.value = false;

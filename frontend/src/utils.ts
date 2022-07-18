@@ -34,12 +34,13 @@ export function ItemTypeIcon(type: ItemType) {
 
 export interface WebSocketMsg {
   type: NotifierType;
-  payload: service_Order;
+  payload: service_Order[];
 }
 
 export enum NotifierType {
   Create,
   Delete,
+  DeleteAll,
 }
 
 import { ToastServiceMethods } from "primevue/toastservice";

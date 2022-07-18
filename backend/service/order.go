@@ -100,7 +100,7 @@ func CreateOrder(order *Order) error {
 	config.C.Database.ORM.Model(&Order{}).Joins("OrderItem").First(order)
 	LiveCh <- WebSocketMsg{
 		Type:    Create,
-		Payload: *order,
+		Payload: []Order{*order},
 	}
 	return nil
 }
@@ -125,7 +125,7 @@ func DeleteOrder(tableId string, orderItemId string) error {
 	}
 	LiveCh <- WebSocketMsg{
 		Type:    Delete,
-		Payload: order,
+		Payload: []Order{order},
 	}
 	return nil
 }
