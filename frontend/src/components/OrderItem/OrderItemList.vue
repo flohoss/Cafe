@@ -15,7 +15,7 @@
               </span>
             </div>
             <div class="col-3 text-right">
-              <Button icon="pi pi-plus" class="p-button-rounded" @click="modal = true" />
+              <Button :disabled="isDisabled" icon="pi pi-plus" class="p-button-rounded" @click="modal = true" />
             </div>
           </div>
         </template>
@@ -31,10 +31,14 @@
         <Column style="width: 3.5rem">
           <template #body="slotProps">
             <div class="flex align-items-center justify-content-end">
-              <div class="mr-2" :style="{ color: isDisabled ? 'grey' : 'green' }" style="cursor: pointer" @click="editOrderItem(slotProps.data)">
+              <div
+                class="mr-2"
+                :style="{ color: isDisabled ? 'grey' : 'green', cursor: isDisabled ? 'default' : 'pointer' }"
+                @click="editOrderItem(slotProps.data)"
+              >
                 <i class="pi pi-pencil"></i>
               </div>
-              <div :style="{ color: isDisabled ? 'grey' : 'red' }" style="cursor: pointer" @click="confirmDeleteProduct(slotProps.data)">
+              <div :style="{ color: isDisabled ? 'grey' : 'red', cursor: isDisabled ? 'default' : 'pointer' }" @click="confirmDeleteProduct(slotProps.data)">
                 <i class="pi pi-trash"></i>
               </div>
             </div>
@@ -126,11 +130,13 @@ export default defineComponent({
     }
 
     function confirmDeleteProduct(item: service_OrderItem) {
+      if (isDisabled.value) return;
       confirm.require({
         message: item.description + " löschen?",
         header: "Achtung",
         position: "top",
         accept: () => {
+          isDisabled.value = true;
           item.id &&
             OrderItemsService.deleteOrdersItems(item.id)
               .then(() => emit("orderItemDeleted", item))
