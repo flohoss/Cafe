@@ -44,28 +44,35 @@ func GetAllBillItems(billId uint64) ([]BillItem, error) {
 	return billItems, nil
 }
 
-func GetAllBills(year string, month string, day string) ([]Bill, error) {
-	var bills []Bill
+func getDate(year string, month string, day string) (time.Time, error) {
 	yearI, yearErr := strconv.Atoi(year)
 	if yearErr != nil {
-		return bills, fmt.Errorf("jahr " + config.CannotParse.String())
+		return time.Time{}, fmt.Errorf("jahr " + config.CannotParse.String())
 	}
 	monthI, monthErr := strconv.Atoi(month)
 	if monthErr != nil {
-		return bills, fmt.Errorf("monat " + config.CannotParse.String())
+		return time.Time{}, fmt.Errorf("monat " + config.CannotParse.String())
 	}
 	dayI, dayErr := strconv.Atoi(day)
 	if dayErr != nil {
-		return bills, fmt.Errorf("tag " + config.CannotParse.String())
+		return time.Time{}, fmt.Errorf("tag " + config.CannotParse.String())
 	}
 	loc, locErr := time.LoadLocation("Local")
 	if locErr != nil {
-		return bills, fmt.Errorf(locErr.Error())
+		return time.Time{}, fmt.Errorf("timezone " + config.CannotParse.String())
 	}
-	today := time.Date(yearI, time.Month(monthI), dayI, 0, 0, 0, 0, loc)
+	return time.Date(yearI, time.Month(monthI), dayI, 0, 0, 0, 0, loc), nil
+}
+
+func GetAllBills(year string, month string, day string) ([]Bill, error) {
+	var bills []Bill
+	today, err := getDate(year, month, day)
+	if err != nil {
+		return bills, err
+	}
 	beginningOfDay := today.Unix()
 	endOfDay := today.Add(23 * time.Hour).Add(59 * time.Minute).Add(59 * time.Second).Unix()
-	config.C.Database.ORM.Where("created_at BETWEEN ? AND ?", beginningOfDay, endOfDay).Order("table_id, created_at").Find(&bills)
+	config.C.Database.ORM.Where("created_at BETWEEN ? AND ?", beginningOfDay, endOfDay).Order("created_at").Find(&bills)
 	return bills, nil
 }
 
