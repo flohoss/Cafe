@@ -35,10 +35,10 @@
           <Column style="width: 3.5rem">
             <template #body="slotProps">
               <div class="flex align-items-center justify-content-end">
-                <div class="btn success mr-2" @click="openBill(slotProps.data.id)">
+                <div class="mr-2" :style="{ color: isDisabled ? 'grey' : 'green' }" style="cursor: pointer" @click="openBill(slotProps.data.id)">
                   <i class="pi pi-eye"></i>
                 </div>
-                <div class="btn danger" @click="deleteBill(slotProps.data.id)">
+                <div :style="{ color: isDisabled ? 'grey' : 'red' }" style="cursor: pointer" @click="deleteBill(slotProps.data.id)">
                   <i class="pi pi-trash"></i>
                 </div>
               </div>
@@ -82,6 +82,7 @@ export default defineComponent({
     const today = ref(new Date());
     const bills = ref<service_Bill[]>([]);
     const isLoading = ref(false);
+    const isDisabled = ref(false);
     const billModal = ref(false);
     const bill = ref<service_Bill>({ ...emptyBill });
     const filters = ref({
@@ -102,6 +103,7 @@ export default defineComponent({
     }
 
     function openBill(billId: number) {
+      if (isDisabled.value) return;
       const temp: service_Bill | undefined = bills.value.find((bill) => bill.id === billId);
       temp && (bill.value = temp);
       billModal.value = true;
@@ -112,35 +114,28 @@ export default defineComponent({
     }
 
     function deleteBill(billId: number) {
+      if (isDisabled.value) return;
       confirm.require({
         message: "Rechnung löschen?",
         header: "Rechnung",
         icon: "pi pi-info-circle",
         acceptClass: "p-button-danger",
         accept: () => {
-          isLoading.value = true;
+          isDisabled.value = true;
           BillsService.deleteBills(billId)
             .then(() => (bills.value = bills.value.filter((bill) => bill.id !== billId)))
             .catch((err) => errorToast(toast, err.body.error))
-            .finally(() => (isLoading.value = false));
+            .finally(() => (isDisabled.value = false));
         },
       });
     }
 
-    return { convertToEur, openBill, deleteBill, today, bills, isLoading, filters, billModal, bill, time };
+    return { convertToEur, openBill, deleteBill, today, bills, isLoading, isDisabled, filters, billModal, bill, time };
   },
 });
 </script>
 
 <style scoped>
-.danger {
-  cursor: pointer;
-  color: red;
-}
-.success {
-  cursor: pointer;
-  color: green;
-}
 .styling {
   cursor: pointer;
   color: gray;

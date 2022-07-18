@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, reactive, ref, watch } from "vue";
+import { computed, defineComponent, reactive, ref, watch } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { service_OrderItem } from "@/services/openapi";
 import OrderItemList from "@/components/OrderItem/OrderItemList.vue";
@@ -35,6 +35,7 @@ export default defineComponent({
     const emptyOrderItem = reactive<service_OrderItem>({ description: "", item_type: 0, price: 0 });
     const intId = ref<ItemType>(parseInt(props.id));
 
+    getData();
     async function getData() {
       isLoading.value = true;
       intId.value = parseInt(props.id);
@@ -48,7 +49,6 @@ export default defineComponent({
       currentOrderItems.value = orderItems.value.get(intId.value);
     }
 
-    onMounted(() => getData());
     watch(props, () => getData());
 
     function orderItemChanged(item: service_OrderItem) {

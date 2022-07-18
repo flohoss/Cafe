@@ -31,10 +31,10 @@
         <Column style="width: 3.5rem">
           <template #body="slotProps">
             <div class="flex align-items-center justify-content-end">
-              <div class="btn success mr-2" @click="editOrderItem(slotProps.data)">
+              <div class="mr-2" :style="{ color: isDisabled ? 'grey' : 'green' }" style="cursor: pointer" @click="editOrderItem(slotProps.data)">
                 <i class="pi pi-pencil"></i>
               </div>
-              <div class="btn danger" @click="confirmDeleteProduct(slotProps.data)">
+              <div :style="{ color: isDisabled ? 'grey' : 'red' }" style="cursor: pointer" @click="confirmDeleteProduct(slotProps.data)">
                 <i class="pi pi-trash"></i>
               </div>
             </div>
@@ -48,15 +48,23 @@
     <Dialog position="top" v-model:visible="modal" :modal="true" :showHeader="false" @hide="resetModal" style="min-width: 50vw">
       <div class="p-fluid">
         <div class="field mt-5">
-          <InputText id="name" v-model.trim="orderItem.description" required="true" autofocus @keydown.enter="saveOrderItem" />
+          <InputText :disabled="isDisabled" id="name" v-model.trim="orderItem.description" required="true" autofocus @keydown.enter="saveOrderItem" />
         </div>
         <div class="field">
-          <InputNumber id="currency-germany" v-model="orderItem.price" mode="currency" currency="EUR" locale="de-DE" @keydown.enter="saveOrderItem" />
+          <InputNumber
+            :disabled="isDisabled"
+            id="currency-germany"
+            v-model="orderItem.price"
+            mode="currency"
+            currency="EUR"
+            locale="de-DE"
+            @keydown.enter="saveOrderItem"
+          />
         </div>
       </div>
       <div class="flex justify-content-end">
-        <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-secondary mr-2" @click="resetModal" />
-        <Button icon="pi pi-check" class="p-button-rounded p-button-success" @click="saveOrderItem" />
+        <Button :disabled="isDisabled" icon="pi pi-times" class="p-button-text p-button-rounded p-button-secondary mr-2" @click="resetModal" />
+        <Button :loading="isDisabled" icon="pi pi-check" class="p-button-rounded p-button-success" @click="saveOrderItem" />
       </div>
     </Dialog>
   </BaseCard>
@@ -88,6 +96,7 @@ export default defineComponent({
   },
   emits: ["orderItemChanged", "orderItemDeleted", "orderItemCreated"],
   setup(props, { emit }) {
+    const isDisabled = ref(false);
     const toast = useToast();
     const confirm = useConfirm();
     const modal = ref(false);
@@ -102,6 +111,8 @@ export default defineComponent({
     watch(props.emptyOrderItem, () => resetModal());
 
     function saveOrderItem() {
+      if (isDisabled.value) return;
+      isDisabled.value = true;
       if (orderItem.value.id) {
         OrderItemsService.putOrdersItems(orderItem.value)
           .then((res) => emit("orderItemChanged", res))
@@ -131,9 +142,10 @@ export default defineComponent({
     function resetModal() {
       modal.value = false;
       orderItem.value = { ...props.emptyOrderItem };
+      isDisabled.value = false;
     }
 
-    return { filters, convertToEur, editOrderItem, saveOrderItem, confirmDeleteProduct, modal, orderItem, resetModal };
+    return { filters, convertToEur, editOrderItem, saveOrderItem, confirmDeleteProduct, modal, orderItem, resetModal, isDisabled };
   },
 });
 </script>
@@ -155,14 +167,6 @@ export default defineComponent({
 </style>
 
 <style scoped>
-.danger {
-  cursor: pointer;
-  color: red;
-}
-.success {
-  cursor: pointer;
-  color: green;
-}
 .styling {
   cursor: pointer;
   color: gray;

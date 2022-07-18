@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted, ref } from "vue";
+import { defineComponent, onUnmounted, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { OrdersService, service_Order } from "@/services/openapi";
 import OrderCard from "@/components/Orders/OrderCard.vue";
@@ -35,7 +35,8 @@ export default defineComponent({
     const orders = ref<service_Order[]>([]);
     let ws = ref<WebSocket | null>(null);
 
-    onMounted(() => {
+    getData();
+    function getData() {
       isLoading.value = true;
       OrdersService.getOrders()
         .then((res) => (orders.value = res))
@@ -43,7 +44,7 @@ export default defineComponent({
           isLoading.value = false;
           startWebsocket();
         });
-    });
+    }
     onUnmounted(() => stopWebsocket());
 
     function startWebsocket() {
@@ -60,7 +61,7 @@ export default defineComponent({
       }
     }
 
-    async function handleWebsocketError() {
+    function handleWebsocketError() {
       stopWebsocket();
       setTimeout(() => {
         startWebsocket();

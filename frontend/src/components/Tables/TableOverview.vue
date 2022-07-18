@@ -20,9 +20,13 @@
             </div>
           </template>
           <template #right>
-            <router-link :to="{ name: 'Checkout' }" class="no-underline">
-              <Button :disabled="isLoading || orders.length === 0" icon="pi pi-money-bill" class="p-button-danger p-button-rounded"
-            /></router-link>
+            <router-link
+              :style="{ cursor: isLoading || orders.length === 0 ? 'default' : 'pointer' }"
+              :to="{ name: isLoading || orders.length === 0 ? 'TableDetail' : 'Checkout' }"
+              class="no-underline"
+            >
+              <Button :disabled="isLoading || orders.length === 0" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" />
+            </router-link>
           </template>
         </BottomNavigation>
       </div>
@@ -82,7 +86,6 @@ export default defineComponent({
     store.dispatch("getAllOrderItems");
 
     getData(true);
-
     function getData(initial = false) {
       initial && (initialLoading.value = true);
       OrdersService.getOrders(table.value, true)

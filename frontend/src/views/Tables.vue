@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
 import TableCard from "@/components/Tables/TableCard.vue";
@@ -26,6 +26,7 @@ export default defineComponent({
     const store = useStore();
     const tables = computed(() => store.getters.getTables);
 
+    getData();
     function getData() {
       isLoading.value = true;
       store.dispatch("fetchTables").then((res) => {
@@ -33,7 +34,6 @@ export default defineComponent({
         isLoading.value = false;
       });
     }
-    onMounted(() => getData());
 
     return { tables, isLoading };
   },

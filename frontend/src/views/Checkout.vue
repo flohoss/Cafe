@@ -1,5 +1,6 @@
 <template>
   <BaseCard>
+    <ConfirmDialog></ConfirmDialog>
     <Transition>
       <WaveSpinner v-if="isLoading" />
       <div v-else>
@@ -28,54 +29,83 @@
             </router-link>
           </template>
           <template #middle>
-            <div class="flex flex-column align-items-center"></div>
+            <div class="flex flex-column align-items-center">
+              <div class="text-sm">Tisch {{ table }}</div>
+              <div class="font-bold">{{ convertToEur(total) }}</div>
+            </div>
           </template>
           <template #right>
             <Button
-              :disabled="deleteFilterLoading"
+              :disabled="total === 0"
               :loading="applyFilterLoading"
-              icon="pi pi-check"
-              class="p-button-success p-button-rounded"
+              icon="pi pi-money-bill"
+              class="p-button-danger p-button-rounded"
               @click="generateBill"
             />
           </template>
         </BottomNavigation>
       </div>
     </Transition>
+
+    <Sidebar v-model:visible="billModal" :baseZIndex="10000" position="full" @hide="billModalClosed">
+      <BillModal :bill="bill" />
+    </Sidebar>
   </BaseCard>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref, watch } from "vue";
-import { OrdersService, service_Order } from "@/services/openapi";
+import { BillsService, OrdersService, service_Bill, service_Order } from "@/services/openapi";
 import Checkbox from "primevue/checkbox";
-import { convertToEur } from "@/utils";
+import { convertToEur, emptyBill, errorToast } from "@/utils";
 import Button from "primevue/button";
 import WaveSpinner from "@/components/UI/WaveSpinner.vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import BottomNavigation from "@/components/UI/BottomNavigation.vue";
 import BaseItem from "@/components/UI/BaseItem.vue";
+import ConfirmDialog from "primevue/confirmdialog";
+import { useConfirm } from "primevue/useconfirm";
+import { useToast } from "primevue/usetoast";
+import Sidebar from "primevue/sidebar";
+import BillModal from "@/components/Bills/BillModal.vue";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "CheckoutView",
-  components: { BaseItem, BaseCard, WaveSpinner, Checkbox, Button, BottomNavigation },
+  components: { BaseItem, BaseCard, WaveSpinner, Checkbox, Button, BottomNavigation, ConfirmDialog, Sidebar, BillModal },
   props: { id: { type: String, default: "0" } },
   setup(props) {
+    const confirm = useConfirm();
+    const toast = useToast();
+    const router = useRouter();
     const table = computed(() => parseInt(props.id));
     const orders = ref<service_Order[]>([]);
     const orderFilter = ref<number[]>([]);
     const isLoading = ref(false);
     const applyFilterLoading = ref(false);
-    const deleteFilterLoading = ref(false);
     const checkAll = ref(false);
+    const total = ref(0);
+    const bill = ref<service_Bill>({ ...emptyBill });
+    const billModal = ref(false);
 
     function checkAllCheck() {
       if (orderFilter.value) checkAll.value = orderFilter.value.length === orders.value.length;
     }
 
-    watch(orderFilter, () => checkAllCheck());
-    getData();
+    function calculateTotal() {
+      let temp = 0;
+      orders.value.forEach((order) => {
+        if (order.id && orderFilter.value.includes(order.id)) temp += order.order_item.price;
+      });
+      total.value = temp;
+    }
 
+    watch(orderFilter, () => {
+      checkAllCheck();
+      calculateTotal();
+    });
+
+    getData();
     function getData() {
       isLoading.value = true;
       OrdersService.getOrders(table.value, false)
@@ -103,9 +133,49 @@ export default defineComponent({
 
     function generateBill() {
       applyFilterLoading.value = true;
+      confirm.require({
+        message: "Alle ausgewählte Bestellungen abrechnen?",
+        header: "Abrechnen",
+        icon: "pi pi-exclamation-triangle",
+        acceptClass: "p-button-danger",
+        rejectClass: "p-button-secondary",
+        accept: () => {
+          BillsService.postBills(table.value, orderFilter.value.toString())
+            .then((res) => {
+              bill.value = res;
+              billModal.value = true;
+              getData();
+            })
+            .catch((err) => errorToast(toast, err.body.error))
+            .finally(() => (applyFilterLoading.value = false));
+        },
+        reject: () => {
+          applyFilterLoading.value = false;
+        },
+      });
     }
 
-    return { orders, orderFilter, checkAll, checkAllClicked, convertToEur, generateBill, isLoading, applyFilterLoading, deleteFilterLoading };
+    function billModalClosed() {
+      if (orderFilter.value.length === 0) {
+        router.push({ name: "Bills" });
+      }
+    }
+
+    return {
+      orders,
+      orderFilter,
+      checkAll,
+      checkAllClicked,
+      convertToEur,
+      generateBill,
+      isLoading,
+      applyFilterLoading,
+      total,
+      table,
+      bill,
+      billModal,
+      billModalClosed,
+    };
   },
 });
 </script>
