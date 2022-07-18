@@ -1,6 +1,5 @@
 <template>
   <BaseCard>
-    <ConfirmDialog></ConfirmDialog>
     <Transition>
       <WaveSpinner v-if="initialLoading" />
       <div v-else>
@@ -21,13 +20,9 @@
             </div>
           </template>
           <template #right>
-            <Button
-              :disabled="isLoading || orders.length === 0"
-              :icon="orderFilter ? 'pi pi-filter' : 'pi pi-filter-slash'"
-              class="p-button-rounded mr-1"
-              @click="filterModal = true"
-            />
-            <Button :disabled="isLoading || orders.length === 0" icon="pi pi-money-bill" class="p-button-danger p-button-rounded" @click="checkoutOrders" />
+            <router-link :to="{ name: 'Checkout' }" class="no-underline">
+              <Button :disabled="isLoading || orders.length === 0" icon="pi pi-money-bill" class="p-button-danger p-button-rounded"
+            /></router-link>
           </template>
         </BottomNavigation>
       </div>
@@ -50,13 +45,6 @@
         <Button :loading="isLoading" label="Speichern" icon="pi pi-check" class="p-button p-button-success mr-3" @click="postOrder" />
       </div>
     </Sidebar>
-
-    <Sidebar v-model:visible="filterModal" :baseZIndex="10000" position="full">
-      <CheckoutView :tableId="table" @newFilter="getData" />
-    </Sidebar>
-    <Sidebar v-model:visible="billModal" :baseZIndex="10000" position="full">
-      <BillModal :bill="bill" />
-    </Sidebar>
   </BaseCard>
 </template>
 
@@ -64,33 +52,25 @@
 import { computed, defineComponent, provide, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
-import { BillsService, OrdersService, service_Bill, service_Order, service_OrderItem } from "@/services/openapi";
+import { OrdersService, service_Order, service_OrderItem } from "@/services/openapi";
 import BottomNavigation from "@/components/UI/BottomNavigation.vue";
 import Button from "primevue/button";
-import { convertToEur, emptyBill, errorToast, ItemType } from "@/utils";
+import { convertToEur, ItemType } from "@/utils";
 import WaveSpinner from "@/components/UI/WaveSpinner.vue";
 import Sidebar from "primevue/sidebar";
 import Listbox from "primevue/listbox";
 import OverviewPerType from "@/components/Tables/OverviewPerType.vue";
-import CheckoutView from "@/components/Tables/FilterModal.vue";
-import ConfirmDialog from "primevue/confirmdialog";
-import { useConfirm } from "primevue/useconfirm";
-import { filter, loading } from "@/keys";
-import { useToast } from "primevue/usetoast";
-import BillModal from "@/components/Bills/BillModal.vue";
+import { loading } from "@/keys";
 
 export default defineComponent({
   name: "TableOverview",
-  components: { CheckoutView, OverviewPerType, WaveSpinner, BottomNavigation, BaseCard, Button, Sidebar, Listbox, ConfirmDialog, BillModal },
+  components: { OverviewPerType, WaveSpinner, BottomNavigation, BaseCard, Button, Sidebar, Listbox },
   props: { id: { type: String, default: "0" } },
   setup(props) {
-    const confirm = useConfirm();
-    const toast = useToast();
     const initialLoading = ref(false);
     const isLoading = ref(false);
     provide(loading, isLoading);
     const newOrderModal = ref(false);
-    const filterModal = ref(false);
     const store = useStore();
     const selectedOrder = ref();
     const table = computed(() => parseInt(props.id));
@@ -98,10 +78,6 @@ export default defineComponent({
     const orderItems = computed(() => store.getters.getOrderItems);
     const options = ref();
     const orders = ref<service_Order[]>([]);
-    const bill = ref<service_Bill>({ ...emptyBill });
-    const billModal = ref(false);
-    const orderFilter = ref<number[]>();
-    provide(filter, orderFilter);
 
     store.dispatch("getAllOrderItems");
 
@@ -109,7 +85,7 @@ export default defineComponent({
 
     function getData(initial = false) {
       initial && (initialLoading.value = true);
-      OrdersService.getOrders(table.value, true, orderFilter.value && orderFilter.value.toString())
+      OrdersService.getOrders(table.value, true)
         .then((res) => (orders.value = res))
         .finally(() => {
           updateTotal();
@@ -119,7 +95,6 @@ export default defineComponent({
 
     function resetValues() {
       newOrderModal.value = false;
-      filterModal.value = false;
       selectedOrder.value = undefined;
       isLoading.value = false;
       initialLoading.value = false;
@@ -153,32 +128,10 @@ export default defineComponent({
       } else isLoading.value = false;
     }
 
-    function checkoutOrders() {
-      confirm.require({
-        message: "Angezeigte Bestellungen abrechnen?",
-        header: "Abrechnung",
-        icon: "pi pi-info-circle",
-        acceptClass: "p-button-danger",
-        accept: () => {
-          isLoading.value = true;
-          BillsService.postBills(table.value, orderFilter.value && orderFilter.value.toString())
-            .then((res) => {
-              bill.value = res;
-              billModal.value = true;
-              orderFilter.value = undefined;
-              getData();
-            })
-            .catch((err) => errorToast(toast, err.body.error));
-        },
-      });
-    }
-
     return {
       initialLoading,
       isLoading,
       newOrderModal,
-      filterModal,
-      orderFilter,
       selected: selectedOrder,
       options,
       table,
@@ -189,9 +142,6 @@ export default defineComponent({
       postOrder,
       orders,
       getData,
-      checkoutOrders,
-      bill,
-      billModal,
     };
   },
 });

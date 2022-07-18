@@ -5,11 +5,13 @@ import LoginView from "@/views/Login.vue";
 import ItemView from "@/views/Items.vue";
 import OrderView from "@/views/Orders.vue";
 import BillView from "@/views/Bills.vue";
+import CheckoutView from "@/views/Checkout.vue";
 import TableDetail from "@/components/Tables/TableOverview.vue";
 
 const routes: Array<RouteRecordRaw> = [
   { path: "/tables", name: "Tables", component: TableView, meta: { needsAuth: true } },
   { path: "/tables/:id", name: "TableDetail", props: true, component: TableDetail, meta: { needsAuth: true } },
+  { path: "/tables/:id/checkout", name: "Checkout", props: true, component: CheckoutView, meta: { needsAuth: true } },
   { path: "/orders", name: "Orders", component: OrderView, meta: { needsAuth: true } },
   { path: "/items/:id", name: "Items", props: true, component: ItemView, meta: { needsAuth: true } },
   { path: "/bills", name: "Bills", component: BillView, meta: { needsAuth: true } },
