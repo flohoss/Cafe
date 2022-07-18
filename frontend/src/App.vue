@@ -39,6 +39,7 @@ export default defineComponent({
 <style lang="less">
 @import "primevue/resources/themes/saga-blue/theme.css";
 @import "primevue/resources/themes/vela-blue/theme.css" screen and (prefers-color-scheme: dark);
+@import "assets/css/all.min.css";
 
 @font-face {
   font-family: "roboto";
