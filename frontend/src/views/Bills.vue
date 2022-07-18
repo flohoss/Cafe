@@ -95,6 +95,7 @@ export default defineComponent({
       isLoading.value = true;
       BillsService.getBills(today.value.getFullYear(), today.value.getUTCMonth() + 1, today.value.getDate())
         .then((res) => (bills.value = res))
+        .catch((err) => errorToast(toast, err.body.error))
         .finally(() => {
           isLoading.value = false;
         });

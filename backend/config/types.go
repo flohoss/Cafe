@@ -9,6 +9,7 @@ const (
 	CannotDelete
 	CannotFind
 	StillInUse
+	CannotParse
 )
 
 func (e ErrorResponses) String() string {
@@ -25,6 +26,8 @@ func (e ErrorResponses) String() string {
 		return "kann nicht gefunden werden"
 	case StillInUse:
 		return "noch in Verwendung"
+	case CannotParse:
+		return "kann nicht verarbeitet werden"
 	default:
 		return "unbekannt"
 	}

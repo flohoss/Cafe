@@ -46,12 +46,21 @@ func GetAllBillItems(billId uint64) ([]BillItem, error) {
 
 func GetAllBills(year string, month string, day string) ([]Bill, error) {
 	var bills []Bill
-	yearI, err1 := strconv.Atoi(year)
-	monthI, err2 := strconv.Atoi(month)
-	dayI, err3 := strconv.Atoi(day)
-	loc, err4 := time.LoadLocation("Europe/Berlin")
-	if err1 != nil || err2 != nil || err3 != nil || err4 != nil {
-		return bills, fmt.Errorf(config.CannotFind.String())
+	yearI, yearErr := strconv.Atoi(year)
+	if yearErr != nil {
+		return bills, fmt.Errorf("jahr " + config.CannotParse.String())
+	}
+	monthI, monthErr := strconv.Atoi(month)
+	if monthErr != nil {
+		return bills, fmt.Errorf("monat " + config.CannotParse.String())
+	}
+	dayI, dayErr := strconv.Atoi(day)
+	if dayErr != nil {
+		return bills, fmt.Errorf("tag " + config.CannotParse.String())
+	}
+	loc, locErr := time.LoadLocation("Europe/Berlin")
+	if locErr != nil {
+		return bills, fmt.Errorf("zeitzone " + config.CannotParse.String())
 	}
 	today := time.Date(yearI, time.Month(monthI), dayI, 0, 0, 0, 0, loc)
 	beginningOfDay := today.Unix()
