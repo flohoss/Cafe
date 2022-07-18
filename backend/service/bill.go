@@ -58,7 +58,7 @@ func GetAllBills(year string, month string, day string) ([]Bill, error) {
 	if dayErr != nil {
 		return bills, fmt.Errorf("tag " + config.CannotParse.String())
 	}
-	loc, locErr := time.LoadLocation("Europe/Berlin")
+	loc, locErr := time.LoadLocation("Local")
 	if locErr != nil {
 		return bills, fmt.Errorf("zeitzone " + config.CannotParse.String())
 	}
