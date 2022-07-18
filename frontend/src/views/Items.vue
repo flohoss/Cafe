@@ -1,7 +1,7 @@
 <template>
   <BaseCard>
     <Transition>
-      <WaveSpinner v-if="isLoading || currentOrderItems.length === 0" />
+      <WaveSpinner v-if="isLoading" />
       <OrderItemList
         v-else
         :orderItems="currentOrderItems"

@@ -7,28 +7,45 @@ export function convertToEur(value: number | undefined) {
 
 export enum ItemType {
   Food,
-  Drink,
+  ColdDrink,
+  HotDrink,
 }
 
-export function ItemTypeString(type: ItemType) {
+export function detailedItemTypeString(type: ItemType) {
   switch (type) {
     case ItemType.Food:
       return "Speisen";
-    case ItemType.Drink:
-      return "Getränke";
+    case ItemType.ColdDrink:
+      return "Kaltgetränke";
     default:
-      return "";
+      return "Heißgetränke";
   }
 }
 
-export function ItemTypeIcon(type: ItemType) {
+export function generalItemTypeString(type: ItemType[]) {
+  if (type.includes(ItemType.Food)) {
+    return "Speisen";
+  } else {
+    return "Getränke";
+  }
+}
+
+export function detailedItemTypeIcon(type: ItemType) {
   switch (type) {
     case ItemType.Food:
-      return "fa-cheese";
-    case ItemType.Drink:
-      return "fa-champagne-glasses";
+      return "fa-solid fa-cheese";
+    case ItemType.ColdDrink:
+      return "fa-solid fa-champagne-glasses";
     default:
-      return "";
+      return "fa-solid fa-mug-hot";
+  }
+}
+
+export function generalItemTypeIcon(type: ItemType[]) {
+  if (type.includes(ItemType.Food)) {
+    return "fa-solid fa-cheese";
+  } else {
+    return "fa-solid fa-champagne-glasses";
   }
 }
 

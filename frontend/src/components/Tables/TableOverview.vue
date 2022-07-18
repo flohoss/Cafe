@@ -4,8 +4,8 @@
     <Transition>
       <WaveSpinner v-if="initialLoading" />
       <div v-else>
-        <OverviewPerType :filter="!!orderFilter" :type="ItemType.Food" :orders="orders" @getData="getData" @openModal="addBeverage(ItemType.Food)" />
-        <OverviewPerType :filter="!!orderFilter" :type="ItemType.Drink" :orders="orders" @getData="getData" @openModal="addBeverage(ItemType.Drink)" />
+        <OverviewPerType :type="[ItemType.Food]" :orders="orders" @getData="getData" @openModal="(t) => addBeverage(t)" />
+        <OverviewPerType :type="[ItemType.ColdDrink, ItemType.HotDrink]" :orders="orders" @getData="getData" @openModal="(t) => addBeverage(t)" />
         <div class="h-4rem"></div>
 
         <BottomNavigation>
@@ -64,7 +64,7 @@
 import { computed, defineComponent, provide, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { useStore } from "vuex";
-import { BillsService, OrdersService, service_Bill, service_Order } from "@/services/openapi";
+import { BillsService, OrdersService, service_Bill, service_Order, service_OrderItem } from "@/services/openapi";
 import BottomNavigation from "@/components/UI/BottomNavigation.vue";
 import Button from "primevue/button";
 import { convertToEur, emptyBill, errorToast, ItemType } from "@/utils";
@@ -131,9 +131,19 @@ export default defineComponent({
       total.value = temp;
     }
 
-    function addBeverage(type: ItemType) {
+    function addBeverage(itemType: ItemType[]) {
       newOrderModal.value = true;
-      options.value = orderItems.value.get(type);
+      options.value = [];
+      itemType.forEach((type) => {
+        options.value = options.value.concat(orderItems.value.get(type));
+      });
+      options.value.sort((a: service_OrderItem, b: service_OrderItem) => {
+        let x = a.description.toLowerCase();
+        let y = b.description.toLowerCase();
+        if (x < y) return -1;
+        if (x > y) return 1;
+        return 0;
+      });
     }
 
     function postOrder() {

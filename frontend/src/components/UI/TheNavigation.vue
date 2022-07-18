@@ -22,7 +22,7 @@ import { useStore } from "vuex";
 import Button from "primevue/button";
 import { useRoute } from "vue-router";
 import { TablesService } from "@/services/openapi";
-import { errorToast, ItemType } from "@/utils";
+import { detailedItemTypeIcon, detailedItemTypeString, errorToast, ItemType } from "@/utils";
 import { useToast } from "primevue/usetoast";
 
 export default defineComponent({
@@ -71,8 +71,9 @@ export default defineComponent({
         label: "Artikel",
         icon: "pi pi-fw pi-shopping-cart",
         items: [
-          { label: "Speisen", icon: "pi pi-fw pi-shopping-cart", to: "/items/" + ItemType.Food },
-          { label: "Getränke", icon: "pi pi-fw pi-shopping-cart", to: "/items/" + ItemType.Drink },
+          { label: detailedItemTypeString(ItemType.Food), icon: detailedItemTypeIcon(ItemType.Food), to: "/items/" + ItemType.Food },
+          { label: detailedItemTypeString(ItemType.ColdDrink), icon: detailedItemTypeIcon(ItemType.ColdDrink), to: "/items/" + ItemType.ColdDrink },
+          { label: detailedItemTypeString(ItemType.HotDrink), icon: detailedItemTypeIcon(ItemType.HotDrink), to: "/items/" + ItemType.HotDrink },
         ],
       },
       { label: "Rechnungen", icon: "pi pi-fw pi-euro", to: "/bills" },

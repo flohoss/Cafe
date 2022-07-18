@@ -4,7 +4,7 @@
       <WaveSpinner v-if="isLoading" />
       <EmptyView v-else-if="orders.length === 0" message="Keine offenen Bestellungen" />
       <div v-else>
-        <BaseToolbar icon="fa-box-open" title="Offen" btnIcon="check" @click="checkAllOpenOrders" />
+        <BaseToolbar icon="fa-solid fa-box-open" title="Offen" btnIcon="check" @click="checkAllOpenOrders" />
         <div class="grid">
           <OrderCard v-for="entry in orders" v-bind:key="entry.id" :order="entry" :isDisabled="isDisabled" @orderDone="(order) => orderDone(order)" />
         </div>

@@ -47,8 +47,9 @@ const orderItemStore = {
   actions: {
     // eslint-disable-next-line
     async getAllOrderItems(context: any) {
-      await context.dispatch("getOrderItems", ItemType.Drink);
       await context.dispatch("getOrderItems", ItemType.Food);
+      await context.dispatch("getOrderItems", ItemType.ColdDrink);
+      await context.dispatch("getOrderItems", ItemType.HotDrink);
     },
     // eslint-disable-next-line
     async getOrderItems(context: any, orderType: ItemType) {

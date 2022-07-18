@@ -57,11 +57,11 @@ body {
 }
 html,
 body {
-  font-size: 1.2em !important;
-  font-family: "roboto", sans-serif !important;
+  font-size: 1.2em;
+  font-family: "roboto", sans-serif;
 }
 .p-component {
-  font-family: "roboto", sans-serif !important;
+  font-family: "roboto", sans-serif;
 }
 </style>
 

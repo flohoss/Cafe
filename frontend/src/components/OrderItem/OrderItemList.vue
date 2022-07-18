@@ -51,7 +51,7 @@
           <InputText id="name" v-model.trim="orderItem.description" required="true" autofocus @keydown.enter="saveOrderItem" />
         </div>
         <div class="field">
-          <InputNumber id="currency-germany" v-model="orderItem.price" mode="currency" currency="EUR" locale="de-DE" />
+          <InputNumber id="currency-germany" v-model="orderItem.price" mode="currency" currency="EUR" locale="de-DE" @keydown.enter="saveOrderItem" />
         </div>
       </div>
       <div class="flex justify-content-end">

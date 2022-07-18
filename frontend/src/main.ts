@@ -6,13 +6,6 @@ import store from "./store";
 import PrimeVue from "primevue/config";
 import ConfirmationService from "primevue/confirmationservice";
 import ToastService from "primevue/toastservice";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faCheese } from "@fortawesome/free-solid-svg-icons";
-import { faChampagneGlasses } from "@fortawesome/free-solid-svg-icons";
-import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
-import { faArrowsSplitUpAndLeft } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-library.add(faCheese, faChampagneGlasses, faBoxOpen, faArrowsSplitUpAndLeft);
 
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
@@ -80,7 +73,6 @@ store
     app.use(store);
     app.use(ConfirmationService);
     app.use(ToastService);
-    app.component("font-awesome-icon", FontAwesomeIcon);
 
     router.isReady().then(() => {
       app.mount("#app");

@@ -24,7 +24,8 @@ const (
 
 const (
 	Food ItemType = iota
-	Drink
+	ColdDrink
+	HotDrink
 )
 
 var LiveCh chan WebSocketMsg
@@ -34,9 +35,9 @@ func ParseItemType(itemType string) ItemType {
 	case "0":
 		return Food
 	case "1":
-		return Drink
+		return ColdDrink
 	default:
-		return Food
+		return HotDrink
 	}
 }
 
