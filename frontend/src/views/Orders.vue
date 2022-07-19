@@ -6,7 +6,7 @@
       <div v-else>
         <OrderSection :orders="foodOrders" :itemType="ItemType.Food" @filterOrders="(id) => filterOrder(id)" />
         <OrderSection :orders="hotOrders" :itemType="ItemType.HotDrink" @filterOrders="(id) => filterOrder(id)" />
-        <OrderSection :orders="coldOrders" :itemType="ItemType.ColdDrink" @filterOrders="(id) => filterOrder(id)" :edit="false" />
+        <OrderSection :orders="coldOrders" :itemType="ItemType.ColdDrink" @filterOrders="(id) => filterOrder(id)" :collapse="true" />
       </div>
     </Transition>
   </BaseCard>

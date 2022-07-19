@@ -2,8 +2,8 @@
   <Toolbar class="border-0 shadow-1 my-2 p-2 bg-color">
     <template #start>
       <div class="flex align-items-center">
-        <div class="w-3rem"><i :class="icon" style="font-size: 1.7rem"></i></div>
         <div class="font-bold text-2xl">{{ title }}</div>
+        <div class="ml-3"><i :class="icon" style="font-size: 1.5rem"></i></div>
       </div>
     </template>
     <template #end>
