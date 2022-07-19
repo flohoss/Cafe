@@ -4,7 +4,7 @@
     <template #badgeOne>Tisch {{ order.table_id }}</template>
     <template #badgeTwo>{{ since }}</template>
     <template #right>
-      <div v-if="edit" class="flex align-items-center">
+      <div class="flex align-items-center">
         <Button v-if="!newOrder" :disabled="isDisabled" icon="pi pi-check" class="p-button-rounded p-button-success" @click="$emit('orderDone', order)" />
         <TheBadge v-else color="danger">NEU</TheBadge>
       </div>
@@ -27,7 +27,6 @@ export default defineComponent({
   props: {
     order: { type: Object as PropType<service_Order>, required: true },
     isDisabled: { type: Boolean, default: false },
-    edit: { type: Boolean, required: false, default: true },
   },
   emits: ["orderDone"],
   setup(props) {
