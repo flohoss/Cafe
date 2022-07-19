@@ -4,35 +4,37 @@
       <WaveSpinner v-if="isLoading" />
       <EmptyView v-else-if="orders.length === 0" message="Keine offenen Bestellungen" />
       <div v-else>
-        <BaseToolbar icon="fa-solid fa-box-open" title="Offen" btnIcon="check" @click="checkAllOpenOrders" />
-        <div class="grid">
-          <OrderCard v-for="entry in orders" v-bind:key="entry.id" :order="entry" :isDisabled="isDisabled" @orderDone="(order) => orderDone(order)" />
-        </div>
+        <OrderSection :orders="foodOrders" :itemType="ItemType.Food" @filterOrders="(id) => filterOrder(id)" />
+        <OrderSection :orders="hotOrders" :itemType="ItemType.HotDrink" @filterOrders="(id) => filterOrder(id)" />
+        <OrderSection :orders="coldOrders" :itemType="ItemType.ColdDrink" @filterOrders="(id) => filterOrder(id)" :edit="false" />
       </div>
     </Transition>
   </BaseCard>
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted, ref } from "vue";
+import { computed, defineComponent, onUnmounted, provide, ref } from "vue";
 import BaseCard from "@/components/UI/BaseCard.vue";
 import { OrdersService, service_Order } from "@/services/openapi";
-import OrderCard from "@/components/Orders/OrderCard.vue";
-import { errorToast, ItemType, NotifierType, WebSocketMsg } from "@/utils";
+import { detailedItemTypeIcon, detailedItemTypeString, ItemType, NotifierType, WebSocketMsg } from "@/utils";
 import { WEBSOCKET_ENDPOINT_URL } from "@/main";
-import BaseToolbar from "@/components/UI/BaseToolbar.vue";
-import { useToast } from "primevue/usetoast";
 import EmptyView from "@/views/Empty.vue";
 import WaveSpinner from "@/components/UI/WaveSpinner.vue";
+import { disabled, loading } from "@/keys";
+import OrderSection from "@/components/Orders/OrderSection.vue";
 
 export default defineComponent({
   name: "OrderView",
-  components: { EmptyView, BaseToolbar, OrderCard, BaseCard, WaveSpinner },
+  components: { OrderSection, EmptyView, BaseCard, WaveSpinner },
   setup() {
-    const toast = useToast();
     const isLoading = ref(true);
     const isDisabled = ref(false);
+    provide(disabled, isDisabled);
+    provide(loading, isDisabled);
     const orders = ref<service_Order[]>([]);
+    const foodOrders = computed(() => orders.value.filter((order) => order.order_item.item_type === ItemType.Food));
+    const hotOrders = computed(() => orders.value.filter((order) => order.order_item.item_type === ItemType.HotDrink));
+    const coldOrders = computed(() => orders.value.filter((order) => order.order_item.item_type === ItemType.ColdDrink));
     let ws = ref<WebSocket | null>(null);
 
     getData();
@@ -46,6 +48,10 @@ export default defineComponent({
         });
     }
     onUnmounted(() => stopWebsocket());
+
+    function filterOrder(id: number) {
+      orders.value = orders.value.filter((old) => old.id !== id);
+    }
 
     function startWebsocket() {
       ws.value = new WebSocket(WEBSOCKET_ENDPOINT_URL);
@@ -89,22 +95,18 @@ export default defineComponent({
       orders.value.sort((a, b) => (a.updated_at && b.updated_at ? a.updated_at - b.updated_at : 0));
     }
 
-    function orderDone(order: service_Order) {
-      isDisabled.value = true;
-      order.is_served = true;
-      OrdersService.putOrders(order)
-        .then(() => (orders.value = orders.value.filter((oldOrder) => oldOrder.id !== order.id)))
-        .catch((err) => errorToast(toast, err.body.error))
-        .finally(() => (isDisabled.value = false));
-    }
-
-    function checkAllOpenOrders() {
-      orders.value.forEach((order) => {
-        orderDone(order);
-      });
-    }
-
-    return { orders, ItemType, isLoading, isDisabled, orderDone, checkAllOpenOrders };
+    return {
+      orders,
+      hotOrders,
+      coldOrders,
+      foodOrders,
+      filterOrder,
+      ItemType,
+      isLoading,
+      isDisabled,
+      detailedItemTypeString,
+      detailedItemTypeIcon,
+    };
   },
 });
 </script>

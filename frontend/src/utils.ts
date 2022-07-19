@@ -18,7 +18,7 @@ export function detailedItemTypeString(type: ItemType) {
     case ItemType.ColdDrink:
       return "Kaltgetränke";
     default:
-      return "Heißgetränke";
+      return "Heiß/Eiskaffee";
   }
 }
 
@@ -72,6 +72,10 @@ export function errorToast(toast: ToastServiceMethods, message: string) {
 
 export function getCurrentTimeSince(updated_at: number | undefined) {
   return updated_at ? moment.unix(updated_at).fromNow() : "";
+}
+
+export function moreThanOneMinuteAgo(updated_at: number | undefined) {
+  return getCurrentTimeSince(updated_at) !== "vor ein paar Sekunden";
 }
 
 export const emptyBill: service_Bill = { table_id: 0, total: 0 };

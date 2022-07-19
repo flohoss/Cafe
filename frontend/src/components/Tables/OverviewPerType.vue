@@ -3,7 +3,9 @@
     <BaseToolbar :title="generalItemTypeString(type)" :icon="generalItemTypeIcon(type)" @click="$emit('openModal', type)" btnIcon="plus" />
     <div class="grid">
       <TableOrderCard v-for="order in OrdersForType" v-bind:key="order.id" :order="order">
-        <OrderAmountChange :order="order" :isDisabled="isLoading" @incrementOrder="incrementOrder(order)" @decrementOrder="decrementOrder(order)" />
+        <div class="flex align-items-end">
+          <OrderAmountChange :order="order" :isDisabled="isLoading" @incrementOrder="incrementOrder(order)" @decrementOrder="decrementOrder(order)" />
+        </div>
       </TableOrderCard>
     </div>
   </div>
